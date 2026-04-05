@@ -1,0 +1,251 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Arabic Identity Colors */
+  --color-gold: #D4A853;
+  --color-gold-dark: #B8923F;
+  --color-gold-light: #E8C87A;
+  --color-beige: #F5EDE0;
+  --color-beige-dark: #E8DFD0;
+  --color-green: #2D5A3D;
+  --color-green-light: #4A7A5C;
+  --color-green-dark: #1E4A2D;
+  --color-cream: #FFFEF7;
+  --color-brown: #5C4033;
+}
+
+:root {
+  --radius: 0.75rem;
+  /* Warm cream background */
+  --background: #FFFEF7;
+  --foreground: #3D3229;
+  /* Card with slight warmth */
+  --card: #FFFFFF;
+  --card-foreground: #3D3229;
+  /* Popover */
+  --popover: #FFFFFF;
+  --popover-foreground: #3D3229;
+  /* Primary: Gold - represents richness and tradition */
+  --primary: #D4A853;
+  --primary-foreground: #FFFFFF;
+  /* Secondary: Green - represents freshness and nature */
+  --secondary: #2D5A3D;
+  --secondary-foreground: #FFFFFF;
+  /* Muted: Beige tones */
+  --muted: #F5EDE0;
+  --muted-foreground: #7A6F63;
+  /* Accent: Light gold */
+  --accent: #E8DFD0;
+  --accent-foreground: #5C4033;
+  /* Destructive */
+  --destructive: #C53030;
+  /* Border and input */
+  --border: #E8DFD0;
+  --input: #F5EDE0;
+  --ring: #D4A853;
+  /* Chart colors */
+  --chart-1: #D4A853;
+  --chart-2: #2D5A3D;
+  --chart-3: #B8923F;
+  --chart-4: #4A7A5C;
+  --chart-5: #E8C87A;
+  /* Sidebar */
+  --sidebar: #2D5A3D;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #D4A853;
+  --sidebar-primary-foreground: #3D3229;
+  --sidebar-accent: #1E4A2D;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #4A7A5C;
+  --sidebar-ring: #D4A853;
+}
+
+.dark {
+  /* Dark mode with warm tones */
+  --background: #1A1612;
+  --foreground: #F5EDE0;
+  --card: #252018;
+  --card-foreground: #F5EDE0;
+  --popover: #252018;
+  --popover-foreground: #F5EDE0;
+  /* Primary stays gold */
+  --primary: #D4A853;
+  --primary-foreground: #1A1612;
+  /* Secondary: Lighter green for dark mode */
+  --secondary: #4A7A5C;
+  --secondary-foreground: #FFFFFF;
+  /* Muted */
+  --muted: #3D3229;
+  --muted-foreground: #B8A898;
+  /* Accent */
+  --accent: #3D3229;
+  --accent-foreground: #F5EDE0;
+  /* Destructive */
+  --destructive: #E53E3E;
+  /* Border and input */
+  --border: #3D3229;
+  --input: #3D3229;
+  --ring: #D4A853;
+  /* Chart colors */
+  --chart-1: #D4A853;
+  --chart-2: #4A7A5C;
+  --chart-3: #E8C87A;
+  --chart-4: #2D5A3D;
+  --chart-5: #B8923F;
+  /* Sidebar */
+  --sidebar: #1E4A2D;
+  --sidebar-foreground: #F5EDE0;
+  --sidebar-primary: #D4A853;
+  --sidebar-primary-foreground: #1A1612;
+  --sidebar-accent: #2D5A3D;
+  --sidebar-accent-foreground: #F5EDE0;
+  --sidebar-border: #4A7A5C;
+  --sidebar-ring: #D4A853;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Custom scrollbar with Arabic theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5EDE0;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4A853;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B8923F;
+}
+
+/* Arabic pattern background */
+.arabic-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4A853' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Gold gradient for headers */
+.gold-gradient {
+  background: linear-gradient(135deg, #D4A853 0%, #E8C87A 50%, #B8923F 100%);
+}
+
+/* Green gradient */
+.green-gradient {
+  background: linear-gradient(135deg, #2D5A3D 0%, #4A7A5C 100%);
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(212, 168, 83, 0.2);
+}
+
+/* RTL support */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* Animation for loading */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #F5EDE0 25%, #FFFEF7 50%, #F5EDE0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Status badge colors */
+.status-pending {
+  background-color: #E8C87A;
+  color: #5C4033;
+}
+
+.status-confirmed {
+  background-color: #4A7A5C;
+  color: #FFFFFF;
+}
+
+.status-in_delivery {
+  background-color: #D4A853;
+  color: #FFFFFF;
+}
+
+.status-delivered {
+  background-color: #2D5A3D;
+  color: #FFFFFF;
+}
+
+.status-cancelled {
+  background-color: #C53030;
+  color: #FFFFFF;
+}

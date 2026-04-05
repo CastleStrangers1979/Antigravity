@@ -1,0 +1,1224 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== المنتجات ====================
+model Product {
+  id            String   @id @default(cuid())
+  nameAr        String
+  nameEn        String
+  nameNl        String
+  nameKu        String?
+  description   String?
+  price         Float
+  wholesalePrice Float?
+  image         String?
+  category      String
+  sku           String?
+  barcode       String?
+  weight        Int?
+  packSize      Int      @default(5)
+  boxSize       Int?
+  stock         Int      @default(0)
+  minStock      Int      @default(20)
+  maxStock      Int?
+  expiryDays    Int?
+  costPrice     Float?
+  isActive      Boolean  @default(true)
+  isFeatured    Boolean  @default(false)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  orderItems       OrderItem[]
+  inventoryMovements InventoryMovement[]
+  subscriptionItems SubscriptionItem[]
+  productionItems  ProductionItem[]
+  qualityChecks    QualityCheck[]
+  demandPredictions DemandPrediction[]
+  productRecommendations ProductRecommendation[]
+  supplierProducts SupplierProduct[]
+  purchaseOrderItems PurchaseOrderItem[]
+  expiryTrackings  ExpiryTracking[]
+  preOrderItems    PreOrderItem[]
+  recurringOrderItems RecurringOrderItem[]
+}
+
+// ==================== خطوط التوزيع ====================
+model DeliveryLine {
+  id          String   @id @default(cuid())
+  nameAr      String
+  nameEn      String
+  nameNl      String
+  nameKu      String?
+  region      String
+  color       String?
+  isActive    Boolean  @default(true)
+  estimatedTime String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  drivers     Driver[]
+  orders      Order[]
+}
+
+// ==================== السائقين ====================
+model Driver {
+  id              String   @id @default(cuid())
+  name            String
+  phone           String
+  email           String?
+  password        String?
+  avatar          String?
+  deliveryLineId  String?
+  deliveryLine    DeliveryLine? @relation(fields: [deliveryLineId], references: [id])
+  isActive        Boolean  @default(true)
+  isOnline        Boolean  @default(false)
+  currentLocation String?
+  latitude        Float?
+  longitude       Float?
+  lastLocationUpdate DateTime?
+  totalDeliveries Int     @default(0)
+  completedToday  Int     @default(0)
+  rating          Float   @default(5.0)
+  vehicleId       String?
+  vehicle         Vehicle? @relation(fields: [vehicleId], references: [id])
+  salaryBase      Float?
+  salaryPerDelivery Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  orders          Order[]
+  notifications   Notification[]
+  deliverySchedules DeliverySchedule[]
+  driverLocations  DriverLocation[]
+  salaryPayments   SalaryPayment[]
+}
+
+// ==================== موقع السائق ====================
+model DriverLocation {
+  id          String   @id @default(cuid())
+  driverId    String
+  driver      Driver   @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  latitude    Float
+  longitude   Float
+  speed       Float?
+  heading     Float?
+  battery     Int?
+  createdAt   DateTime @default(now())
+}
+
+// ==================== العملاء ====================
+model Customer {
+  id              String   @id @default(cuid())
+  name            String
+  phone           String
+  email           String?
+  password        String?
+  avatar          String?
+  address         String
+  city            String
+  postalCode      String?
+  latitude        Float?
+  longitude       Float?
+  notes           String?
+  customerType    String   @default("retail")
+  segment         String   @default("regular")
+  loyaltyPoints   Int      @default(0)
+  loyaltyTier     String   @default("bronze")
+  totalOrders     Int      @default(0)
+  totalSpent      Float    @default(0)
+  lastOrderDate   DateTime?
+  preferredLanguage String?
+  notificationsEnabled Boolean @default(true)
+  referralCode    String?
+  referredBy      String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  orders          Order[]
+  notifications   Notification[]
+  loyaltyTransactions LoyaltyTransaction[]
+  payments        Payment[]
+  subscriptions   Subscription[]
+  addresses       CustomerAddress[]
+  productRecommendations ProductRecommendation[]
+  preOrders       PreOrder[]
+  recurringOrders RecurringOrder[]
+  campaignCustomers CampaignCustomer[]
+  referrals       Referral[]
+}
+
+// ==================== عناوين العميل ====================
+model CustomerAddress {
+  id          String   @id @default(cuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id])
+  label       String
+  address     String
+  city        String
+  postalCode  String?
+  latitude    Float?
+  longitude   Float?
+  isDefault   Boolean  @default(false)
+  deliveryInstructions String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ==================== الطلبات ====================
+model Order {
+  id                String   @id @default(cuid())
+  orderNumber       String   @unique
+  customerId        String
+  customer          Customer @relation(fields: [customerId], references: [id])
+  driverId          String?
+  driver            Driver?  @relation(fields: [driverId], references: [id])
+  deliveryLineId    String?
+  deliveryLine      DeliveryLine? @relation(fields: [deliveryLineId], references: [id])
+  deliveryScheduleId String?
+  deliverySchedule  DeliverySchedule? @relation(fields: [deliveryScheduleId], references: [id])
+  subscriptionId    String?
+  subscription      Subscription? @relation(fields: [subscriptionId], references: [id])
+  recurringOrderId  String?
+  recurringOrder    RecurringOrder? @relation(fields: [recurringOrderId], references: [id])
+  status            String   @default("pending")
+  paymentStatus     String   @default("pending")
+  paymentMethod     String?
+  totalAmount       Float
+  subtotal          Float    @default(0)
+  discount          Float    @default(0)
+  deliveryFee       Float    @default(0)
+  taxAmount         Float    @default(0)
+  pointsUsed        Int      @default(0)
+  pointsEarned      Int      @default(0)
+  deliveryDate      DateTime?
+  deliveryTime      String?
+  timeWindow        String?
+  priority          String   @default("normal")
+  notes             String?
+  internalNotes     String?
+  invoiceNumber     String?
+  invoiceSent       Boolean  @default(false)
+  invoiceSentAt     DateTime?
+  cancellationReason String?
+  rating            Int?
+  ratingComment     String?
+  signatureImage    String?
+  deliveredAt       DateTime?
+  isAnomaly         Boolean  @default(false)
+  anomalyScore      Float?
+  anomalyReason     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  orderItems        OrderItem[]
+  notifications     Notification[]
+  payments          Payment[]
+  deliveryTracks    DeliveryTrack[]
+  invoice           Invoice?
+}
+
+// ==================== عناصر الطلب ====================
+model OrderItem {
+  id            String   @id @default(cuid())
+  orderId       String
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+  quantity      Int
+  unitPrice     Float
+  total         Float
+  notes         String?
+  createdAt     DateTime @default(now())
+}
+
+// ==================== سلة التسوق ====================
+model CartItem {
+  id          String   @id @default(cuid())
+  customerId  String
+  quantity    Int      @default(1)
+  productId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ==================== الاشتراكات ====================
+model Subscription {
+  id              String   @id @default(cuid())
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id])
+  name            String
+  frequency       String
+  daysOfWeek      String?
+  preferredTime   String?
+  status          String   @default("active")
+  startDate       DateTime
+  endDate         DateTime?
+  nextDeliveryDate DateTime?
+  totalDeliveries Int      @default(0)
+  discount        Float    @default(0)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  subscriptionItems SubscriptionItem[]
+  orders          Order[]
+}
+
+// ==================== عناصر الاشتراك ====================
+model SubscriptionItem {
+  id             String   @id @default(cuid())
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  productId      String
+  product        Product  @relation(fields: [productId], references: [id])
+  quantity       Int
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ==================== حركة المخزون ====================
+model InventoryMovement {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  type        String
+  quantity    Int
+  previousStock Int?
+  newStock    Int?
+  reason      String?
+  reference   String?
+  notes       String?
+  expiryDate  DateTime?
+  batchNumber String?
+  createdAt   DateTime @default(now())
+  createdBy   String?
+}
+
+// ==================== الإشعارات ====================
+model Notification {
+  id            String   @id @default(cuid())
+  type          String
+  title         String
+  message       String
+  customerId    String?
+  customer      Customer? @relation(fields: [customerId], references: [id])
+  driverId      String?
+  driver        Driver?  @relation(fields: [driverId], references: [id])
+  orderId       String?
+  order         Order?   @relation(fields: [orderId], references: [id])
+  channels      String?
+  smsSent       Boolean  @default(false)
+  emailSent     Boolean  @default(false)
+  whatsappSent  Boolean  @default(false)
+  pushSent      Boolean  @default(false)
+  isRead        Boolean  @default(false)
+  isSent        Boolean  @default(false)
+  sentAt        DateTime?
+  readAt        DateTime?
+  scheduledAt   DateTime?
+  createdAt     DateTime @default(now())
+}
+
+// ==================== نقاط الولاء ====================
+model LoyaltyTransaction {
+  id          String   @id @default(cuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id])
+  points      Int
+  type        String
+  description String?
+  orderId     String?
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+}
+
+// ==================== جدول التوصيل ====================
+model DeliverySchedule {
+  id           String   @id @default(cuid())
+  driverId     String?
+  driver       Driver?  @relation(fields: [driverId], references: [id])
+  deliveryDate DateTime
+  timeWindow   String
+  capacity     Int      @default(20)
+  ordersCount  Int      @default(0)
+  totalWeight  Float    @default(0)
+  status       String   @default("available")
+  route        String?
+  routeDistance Float?
+  estimatedDuration Int?
+  actualDuration Int?
+  startedAt    DateTime?
+  completedAt  DateTime?
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  orders       Order[]
+}
+
+// ==================== تتبع التوصيل ====================
+model DeliveryTrack {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  driverId    String?
+  status      String
+  latitude    Float?
+  longitude   Float?
+  location    String?
+  notes       String?
+  photo       String?
+  signature   String?
+  createdAt   DateTime @default(now())
+}
+
+// ==================== المدفوعات ====================
+model Payment {
+  id              String   @id @default(cuid())
+  orderId         String?
+  order           Order?   @relation(fields: [orderId], references: [id])
+  customerId      String?
+  customer        Customer? @relation(fields: [customerId], references: [id])
+  amount          Float
+  currency        String   @default("EUR")
+  method          String
+  status          String   @default("pending")
+  transactionId   String?
+  paymentProvider String?
+  paymentData     String?
+  checkoutUrl     String?
+  refundedAmount  Float    @default(0)
+  refundedAt      DateTime?
+  refundReason    String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ==================== الفواتير ====================
+model Invoice {
+  id              String   @id @default(cuid())
+  orderId         String   @unique
+  order           Order    @relation(fields: [orderId], references: [id])
+  invoiceNumber   String   @unique
+  customerId      String
+  totalAmount     Float
+  taxAmount       Float    @default(0)
+  subtotal        Float
+  discount        Float    @default(0)
+  status          String   @default("draft")
+  dueDate         DateTime?
+  paidAt          DateTime?
+  pdfUrl          String?
+  sentAt          DateTime?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ==================== الإعدادات ====================
+model Setting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String?
+  category    String?
+  description String?
+  updatedAt   DateTime @updatedAt
+}
+
+// ==================== سجل النشاط ====================
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  userType    String?
+  action      String
+  entity      String?
+  entityId    String?
+  details     String?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+}
+
+// ==================== =================================== ====================
+// ==================== الميزات الجديدة - 5 Major Features ====================
+// ==================== =================================== ====================
+
+// ==================== 1. نظام الذكاء الاصطناعي للتنبؤات ====================
+
+// توقعات الطلب
+model DemandPrediction {
+  id              String   @id @default(cuid())
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  predictionDate  DateTime // تاريخ التوقع
+  predictedQty    Int      // الكمية المتوقعة
+  confidence      Float    // نسبة الثقة (0-1)
+  actualQty       Int?     // الكمية الفعلية (للمقارنة لاحقاً)
+  factors         String?  // العوامل المؤثرة (JSON)
+  model           String?  // نوع النموذج المستخدم
+  accuracy        Float?   // دقة التوقع
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// اقتراحات المنتجات للعملاء
+model ProductRecommendation {
+  id              String   @id @default(cuid())
+  customerId      String?
+  customer        Customer? @relation(fields: [customerId], references: [id])
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  score           Float    // درجة التوصية
+  reason          String?  // سبب التوصية
+  type            String   // similar, frequently_bought, seasonal, trending
+  isClicked       Boolean  @default(false)
+  isOrdered       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// سجل الشاذات (Anomalies)
+model AnomalyLog {
+  id              String   @id @default(cuid())
+  type            String   // order, inventory, delivery, payment
+  entityId        String   // معرف الكيان المتأثر
+  entityType      String   // Order, Product, etc.
+  anomalyScore    Float    // درجة الشذوذ (0-1)
+  reason          String?  // سبب الشذوذ
+  details         String?  // تفاصيل إضافية (JSON)
+  isResolved      Boolean  @default(false)
+  resolvedBy      String?
+  resolvedAt      DateTime?
+  action          String?  // الإجراء المتخذ
+  createdAt       DateTime @default(now())
+}
+
+// نموذج ML للتدريب
+model MLModel {
+  id              String   @id @default(cuid())
+  name            String
+  type            String   // demand_prediction, recommendation, anomaly_detection
+  version         String
+  accuracy        Float?
+  precision       Float?
+  recall          Float?
+  f1Score         Float?
+  trainingData    String?  // معلومات بيانات التدريب
+  hyperparameters String?  // JSON
+  isActive        Boolean  @default(false)
+  lastTrainedAt   DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ==================== 2. نظام إدارة المخبز الداخلي ====================
+
+// وصفات المنتجات
+model Recipe {
+  id              String   @id @default(cuid())
+  name            String
+  productId       String?
+  description     String?
+  yieldQty        Int      @default(1) // كمية الإنتاج
+  yieldUnit       String   @default("piece")
+  prepTime        Int?     // وقت التحضير بالدقائق
+  bakeTime        Int?     // وقت الخبز بالدقائق
+  bakeTemp        Int?     // درجة حرارة الخبز
+  instructions    String?  // خطوات التحضير
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  recipeIngredients RecipeIngredient[]
+  productionBatches ProductionBatch[]
+}
+
+// مكونات الوصفة
+model RecipeIngredient {
+  id              String   @id @default(cuid())
+  recipeId        String
+  recipe          Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  name            String
+  quantity        Float
+  unit            String   // g, kg, ml, l, piece
+  cost            Float?
+  notes           String?
+  createdAt       DateTime @default(now())
+}
+
+// دفعات الإنتاج
+model ProductionBatch {
+  id              String   @id @default(cuid())
+  batchNumber     String   @unique
+  recipeId        String?
+  recipe          Recipe?  @relation(fields: [recipeId], references: [id])
+  productId       String?
+  plannedQty      Int
+  actualQty       Int?
+  status          String   @default("planned") // planned, mixing, proofing, baking, cooling, completed, cancelled
+  startTime       DateTime?
+  endTime         DateTime?
+  mixerId         String?
+  mixer           Mixer?   @relation(fields: [mixerId], references: [id])
+  ovenId          String?
+  oven            Oven?    @relation(fields: [ovenId], references: [id])
+  ovenTemp        Int?
+  bakeStartTime   DateTime?
+  bakeEndTime     DateTime?
+  qualityScore    Float?
+  notes           String?
+  createdBy       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  productionItems ProductionItem[]
+  qualityChecks   QualityCheck[]
+}
+
+// عناصر الإنتاج
+model ProductionItem {
+  id              String   @id @default(cuid())
+  batchId         String
+  batch           ProductionBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  quantity        Int
+  notes           String?
+  createdAt       DateTime @default(now())
+}
+
+// العجانات (Mixers)
+model Mixer {
+  id              String   @id @default(cuid())
+  name            String
+  capacity        Float    // بالكيلوغرام
+  isActive        Boolean  @default(true)
+  currentBatchId  String?
+  lastMaintenance DateTime?
+  nextMaintenance DateTime?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  productionBatches ProductionBatch[]
+}
+
+// الأفران
+model Oven {
+  id              String   @id @default(cuid())
+  name            String
+  type            String   // electric, gas
+  capacity        Int      // عدد الصواني
+  minTemp         Int      @default(50)
+  maxTemp         Int      @default(300)
+  currentTemp     Float?
+  targetTemp      Float?
+  isActive        Boolean  @default(true)
+  isHeating       Boolean  @default(false)
+  currentBatchId  String?
+  lastMaintenance DateTime?
+  nextMaintenance DateTime?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  productionBatches ProductionBatch[]
+  ovenTemps       OvenTemp[]
+}
+
+// سجل درجات حرارة الأفران
+model OvenTemp {
+  id              String   @id @default(cuid())
+  ovenId          String
+  oven            Oven     @relation(fields: [ovenId], references: [id], onDelete: Cascade)
+  temp            Float
+  recordedAt      DateTime @default(now())
+}
+
+// جداول الإنتاج
+model ProductionSchedule {
+  id              String   @id @default(cuid())
+  scheduleDate    DateTime
+  shift           String   // morning, afternoon, evening
+  status          String   @default("planned")
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  scheduleItems   ProductionScheduleItem[]
+}
+
+// عناصر جدول الإنتاج
+model ProductionScheduleItem {
+  id              String   @id @default(cuid())
+  scheduleId      String
+  schedule        ProductionSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  productId       String
+  plannedQty      Int
+  actualQty       Int?
+  startTime       DateTime?
+  endTime         DateTime?
+  status          String   @default("pending")
+  notes           String?
+  createdAt       DateTime @default(now())
+}
+
+// ==================== 3. نظام الجودة والسلامة ====================
+
+// فحوصات الجودة
+model QualityCheck {
+  id              String   @id @default(cuid())
+  type            String   // incoming, in_process, final, delivery
+  productId       String?
+  product         Product? @relation(fields: [productId], references: [id])
+  batchId         String?
+  batch           ProductionBatch? @relation(fields: [batchId], references: [id])
+  orderId         String?
+  checklist       String?  // JSON array of check items
+  score           Float?
+  passed          Boolean?
+  issues          String?  // JSON array of issues found
+  correctiveAction String?
+  checkedBy       String?
+  checkedAt       DateTime @default(now())
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// معايير الجودة
+model QualityStandard {
+  id              String   @id @default(cuid())
+  name            String
+  productId       String?
+  category        String?
+  description     String?
+  criteria        String?  // JSON
+  minScore        Float    @default(70)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// الشهادات الصحية
+model HealthCertificate {
+  id              String   @id @default(cuid())
+  type            String   // employee, vehicle, facility
+  entityId        String   // معرف الموظف أو المركبة
+  entityName      String
+  certNumber      String?
+  issueDate       DateTime
+  expiryDate      DateTime
+  issuingAuthority String?
+  documentUrl     String?
+  status          String   @default("valid") // valid, expired, revoked
+  reminderSent    Boolean  @default(false)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// فحوصات السلامة
+model SafetyCheck {
+  id              String   @id @default(cuid())
+  type            String   // facility, vehicle, equipment
+  entityId        String?
+  checklist       String?  // JSON
+  score           Float?
+  passed          Boolean?
+  issues          String?
+  checkedBy       String?
+  checkedAt       DateTime @default(now())
+  nextCheckDate   DateTime?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// تتبع الصلاحية
+model ExpiryTracking {
+  id              String   @id @default(cuid())
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  batchNumber     String?
+  productionDate  DateTime
+  expiryDate      DateTime
+  quantity        Int
+  remainingQty    Int
+  status          String   @default("fresh") // fresh, approaching, expired
+  daysToExpiry    Int?
+  discountApplied Float?
+  reminderSent    Boolean  @default(false)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ==================== 4. نظام المحاسبة المتقدم ====================
+
+// رواتب السائقين والعمال
+model SalaryPayment {
+  id              String   @id @default(cuid())
+  driverId        String?
+  driver          Driver?  @relation(fields: [driverId], references: [id])
+  employeeName    String?
+  periodStart     DateTime
+  periodEnd       DateTime
+  baseSalary      Float    @default(0)
+  deliveryBonus   Float    @default(0)
+  overtime        Float    @default(0)
+  deductions      Float    @default(0)
+  totalAmount     Float
+  currency        String   @default("EUR")
+  status          String   @default("pending") // pending, paid, cancelled
+  paidAt          DateTime?
+  paymentMethod   String?
+  reference       String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// المصاريف
+model Expense {
+  id              String   @id @default(cuid())
+  category        String   // ingredients, utilities, rent, salaries, maintenance, fuel, other
+  subcategory     String?
+  description     String
+  amount          Float
+  currency        String   @default("EUR")
+  date            DateTime
+  vendor          String?
+  invoiceNumber   String?
+  invoiceUrl      String?
+  isRecurring     Boolean  @default(false)
+  recurrencePeriod String?
+  status          String   @default("pending") // pending, approved, paid, cancelled
+  approvedBy      String?
+  approvedAt      DateTime?
+  paidAt          DateTime?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// التقارير الضريبية
+model TaxReport {
+  id              String   @id @default(cuid())
+  type            String   // btw, income, payroll
+  periodStart     DateTime
+  periodEnd       DateTime
+  totalSales      Float    @default(0)
+  totalPurchases  Float    @default(0)
+  taxableAmount   Float    @default(0)
+  taxRate         Float    @default(21.0)
+  taxAmount       Float    @default(0)
+  status          String   @default("draft") // draft, submitted, paid
+  submittedAt     DateTime?
+  paidAt          DateTime?
+  reference       String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// التكاليف التشغيلية
+model CostCenter {
+  id              String   @id @default(cuid())
+  name            String
+  type            String   // production, delivery, admin, sales
+  budget          Float?
+  actual          Float?
+  variance        Float?
+  periodStart     DateTime?
+  periodEnd       DateTime?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  costs           CostEntry[]
+}
+
+// مدخلات التكاليف
+model CostEntry {
+  id              String   @id @default(cuid())
+  costCenterId    String
+  costCenter      CostCenter @relation(fields: [costCenterId], references: [id])
+  category        String
+  description     String
+  amount          Float
+  date            DateTime
+  notes           String?
+  createdAt       DateTime @default(now())
+}
+
+// التكاملات المحاسبية
+model AccountingIntegration {
+  id              String   @id @default(cuid())
+  name            String   // quickbooks, exact, afas
+  isActive        Boolean  @default(false)
+  apiEndpoint     String?
+  apiKey          String?
+  secretKey       String?
+  companyid       String?
+  lastSyncAt      DateTime?
+  syncStatus      String?
+  settings        String?  // JSON
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ==================== 5. نظام إدارة المركبات ====================
+
+// المركبات
+model Vehicle {
+  id              String   @id @default(cuid())
+  plateNumber     String   @unique
+  type            String   // car, van, truck, motorcycle, bicycle
+  brand           String?
+  model           String?
+  year            Int?
+  color           String?
+  fuelType        String?  // petrol, diesel, electric, hybrid
+  mileage         Int      @default(0)
+  capacity        Float?   // بالكيلوغرام
+  isActive        Boolean  @default(true)
+  purchaseDate    DateTime?
+  currentValue    Float?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  drivers         Driver[]
+  maintenances    VehicleMaintenance[]
+  fuelRecords     FuelRecord[]
+  insurances      VehicleInsurance[]
+  expenses        VehicleExpense[]
+}
+
+// صيانة المركبات
+model VehicleMaintenance {
+  id              String   @id @default(cuid())
+  vehicleId       String
+  vehicle         Vehicle  @relation(fields: [vehicleId], references: [id])
+  type            String   // routine, repair, emergency
+  description     String
+  garage          String?
+  cost            Float
+  mileage         Int?
+  startDate       DateTime
+  endDate         DateTime?
+  status          String   @default("scheduled") // scheduled, in_progress, completed, cancelled
+  nextMaintenanceDate DateTime?
+  nextMaintenanceMileage Int?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// سجل الوقود
+model FuelRecord {
+  id              String   @id @default(cuid())
+  vehicleId       String
+  vehicle         Vehicle  @relation(fields: [vehicleId], references: [id])
+  driverId        String?
+  date            DateTime
+  quantity        Float    // باللتر
+  pricePerLiter   Float
+  totalCost       Float
+  mileage         Int
+  station         String?
+  receiptUrl      String?
+  notes           String?
+  createdAt       DateTime @default(now())
+}
+
+// تأمين المركبات
+model VehicleInsurance {
+  id              String   @id @default(cuid())
+  vehicleId       String
+  vehicle         Vehicle  @relation(fields: [vehicleId], references: [id])
+  provider        String
+  policyNumber    String
+  type            String   // liability, comprehensive, third_party
+  startDate       DateTime
+  endDate         DateTime
+  premium         Float
+  coverage        String?  // JSON
+  documentUrl     String?
+  status          String   @default("active")
+  reminderSent    Boolean  @default(false)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// مصاريف المركبات
+model VehicleExpense {
+  id              String   @id @default(cuid())
+  vehicleId       String
+  vehicle         Vehicle  @relation(fields: [vehicleId], references: [id])
+  type            String   // fuel, maintenance, insurance, parking, toll, other
+  description     String
+  amount          Float
+  date            DateTime
+  receiptUrl      String?
+  notes           String?
+  createdAt       DateTime @default(now())
+}
+
+// تفتيش المركبات
+model VehicleInspection {
+  id              String   @id @default(cuid())
+  vehicleId       String
+  date            DateTime
+  type            String   // routine, pre_trip, post_trip, annual
+  checklist       String?  // JSON
+  issues          String?  // JSON
+  passed          Boolean?
+  inspectedBy     String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ==================== 6. نظام إدارة المخزون المتقدم ====================
+
+// الموردين
+model Supplier {
+  id              String   @id @default(cuid())
+  name            String
+  nameAr          String?
+  contactPerson   String?
+  email           String?
+  phone           String?
+  address         String?
+  city            String?
+  country         String   @default("Netherlands")
+  postalCode      String?
+  website         String?
+  taxNumber       String?
+  paymentTerms    String?  // net_30, net_60, cod, prepaid
+  currency        String   @default("EUR")
+  rating          Float    @default(5.0)
+  leadTime        Int      @default(7) // days
+  minOrderAmount  Float?
+  isActive        Boolean  @default(true)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  purchaseOrders  PurchaseOrder[]
+  supplierProducts SupplierProduct[]
+}
+
+// منتجات المورد
+model SupplierProduct {
+  id              String   @id @default(cuid())
+  supplierId      String
+  supplier        Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  supplierSku     String?
+  costPrice       Float
+  minOrderQty     Int      @default(1)
+  leadTime        Int?     // override supplier lead time
+  isActive        Boolean  @default(true)
+  lastPurchaseDate DateTime?
+  lastPurchasePrice Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// أوامر الشراء
+model PurchaseOrder {
+  id              String   @id @default(cuid())
+  orderNumber     String   @unique
+  supplierId      String
+  supplier        Supplier @relation(fields: [supplierId], references: [id])
+  status          String   @default("draft") // draft, submitted, confirmed, partial, received, cancelled
+  orderDate       DateTime @default(now())
+  expectedDate    DateTime?
+  receivedDate    DateTime?
+  subtotal        Float    @default(0)
+  taxAmount       Float    @default(0)
+  shippingCost    Float    @default(0)
+  totalAmount     Float    @default(0)
+  currency        String   @default("EUR")
+  paymentStatus   String   @default("pending") // pending, partial, paid
+  paymentDueDate  DateTime?
+  notes           String?
+  internalNotes   String?
+  createdBy       String?
+  approvedBy      String?
+  approvedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  orderItems      PurchaseOrderItem[]
+}
+
+// عناصر أمر الشراء
+model PurchaseOrderItem {
+  id              String   @id @default(cuid())
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  quantity        Int
+  receivedQty     Int      @default(0)
+  unitPrice       Float
+  totalPrice      Float
+  notes           String?
+  createdAt       DateTime @default(now())
+}
+
+// ==================== 7. نظام الطلبات المسبقة ====================
+
+// الطلبات المسبقة
+model PreOrder {
+  id              String   @id @default(cuid())
+  preOrderNumber  String   @unique
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id])
+  status          String   @default("pending") // pending, confirmed, processing, completed, cancelled
+  deliveryDate    DateTime
+  deliveryTime    String?
+  priority        Int      @default(0) // 0=Normal, 1=High, 2=Urgent, 3=VIP
+  totalAmount     Float    @default(0)
+  depositAmount   Float    @default(0)
+  isPaid          Boolean  @default(false)
+  notes           String?
+  internalNotes   String?
+  reminderSent    Boolean  @default(false)
+  reminderSentAt  DateTime?
+  convertedToOrderId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  preOrderItems   PreOrderItem[]
+}
+
+// عناصر الطلب المسبق
+model PreOrderItem {
+  id            String   @id @default(cuid())
+  preOrderId    String
+  preOrder      PreOrder @relation(fields: [preOrderId], references: [id], onDelete: Cascade)
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+  quantity      Int
+  unitPrice     Float
+  total         Float
+  notes         String?
+  createdAt     DateTime @default(now())
+}
+
+// الطلبات المتكررة
+model RecurringOrder {
+  id              String   @id @default(cuid())
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id])
+  name            String
+  frequency       String   // weekly, biweekly, monthly
+  daysOfWeek      String?  // JSON array for weekly: ["monday", "wednesday"]
+  dayOfMonth      Int?     // 1-31 for monthly
+  preferredTime   String?
+  status          String   @default("active") // active, paused, cancelled
+  startDate       DateTime
+  endDate         DateTime?
+  nextDeliveryDate DateTime?
+  totalDeliveries Int      @default(0)
+  lastDeliveryDate DateTime?
+  priority        Int      @default(0)
+  discount        Float    @default(0)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  recurringItems  RecurringOrderItem[]
+  generatedOrders Order[]
+}
+
+// عناصر الطلب المتكرر
+model RecurringOrderItem {
+  id              String   @id @default(cuid())
+  recurringOrderId String
+  recurringOrder  RecurringOrder @relation(fields: [recurringOrderId], references: [id], onDelete: Cascade)
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  quantity        Int
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// تحديث علاقة المنتج لإضافة العلاقات الجديدة
+// Adding to Product model relations
+
+// ==================== نظام إدارة العملاء المتقدم ====================
+
+// الحملات التسويقية
+model Campaign {
+  id              String   @id @default(cuid())
+  name            String
+  description     String?
+  type            String   // discount, points, free_delivery, product
+  channel         String   @default("all") // sms, email, whatsapp, all
+  targetSegment   String?  // vip, active, inactive, new, all
+  discountPercent Float?
+  discountAmount  Float?
+  pointsBonus     Int?
+  productId       String?
+  messageTemplate String?
+  subject         String?
+  startDate       DateTime
+  endDate         DateTime
+  isActive        Boolean  @default(true)
+  totalSent       Int      @default(0)
+  totalOpened     Int      @default(0)
+  totalClicked    Int      @default(0)
+  totalConverted  Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  campaignCustomers CampaignCustomer[]
+}
+
+// عملاء الحملة
+model CampaignCustomer {
+  id          String   @id @default(cuid())
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id])
+  sentAt      DateTime?
+  openedAt    DateTime?
+  clickedAt   DateTime?
+  convertedAt DateTime?
+  createdAt   DateTime @default(now())
+}
+
+// برنامج الإحالة
+model Referral {
+  id              String   @id @default(cuid())
+  code            String   @unique
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id])
+  referredEmail   String?
+  referredPhone   String?
+  referredName    String?
+  referredCustomerId String?
+  status          String   @default("pending") // pending, registered, completed, rewarded
+  pointsEarned    Int      @default(0)
+  rewardType      String?  // points, discount, cash
+  rewardAmount    Float?
+  completedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  referralTransactions ReferralTransaction[]
+}
+
+// معاملات الإحالة
+model ReferralTransaction {
+  id          String   @id @default(cuid())
+  referralId  String
+  referral    Referral @relation(fields: [referralId], references: [id], onDelete: Cascade)
+  type        String   // referral_bonus, referred_discount
+  points      Int
+  description String?
+  createdAt   DateTime @default(now())
+}
