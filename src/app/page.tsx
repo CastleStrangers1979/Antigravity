@@ -21,7 +21,8 @@ import {
   Globe, RefreshCw, Send, Store, Timer,
   TrendingUp, User, MapPinned, ChevronLeft, ChevronRight, CircleDot, Cookie, Heart, Scale, Box,
   Car, Fuel, Wrench, Shield, Receipt, Gauge, Calendar, AlertTriangle,
-  ShieldCheck, Wallet, Link2, Warehouse
+  ShieldCheck, Wallet, Link2, Warehouse, CreditCard, ShoppingCart, ChefHat,
+  Star, MessageSquare, Bot, Bell, Smartphone, FileText
 } from 'lucide-react';
 import QualitySafetyTab from '@/components/quality-safety-tab';
 import BakeryTab from '@/components/bakery-tab';
@@ -33,6 +34,15 @@ import WebshopTab from '@/components/webshop-tab';
 import IntegrationsTab from '@/components/integrations-tab';
 import InventoryTab from '@/components/inventory-tab';
 import AdvancedDashboardTab from '@/components/advanced-dashboard-tab';
+import AdvancedReportsTab from '@/components/advanced-reports-tab';
+import PaymentSystemTab from '@/components/payment-system-tab';
+import POSTab from '@/components/pos-tab';
+import DailyProductionTab from '@/components/daily-production-tab';
+import CustomerReviewsTab from '@/components/customer-reviews-tab';
+import CustomerChatbotTab from '@/components/customer-chatbot-tab';
+import LiveTrackingTab from '@/components/live-tracking-tab';
+import CustomerAppTab from '@/components/customer-app-tab';
+import NotificationsTab from '@/components/NotificationsTab';
 
 // Types
 interface Product {
@@ -1913,6 +1923,42 @@ function AppContent() {
                 <Link2 className="h-4 w-4 mr-2" />
                 <span className="hidden lg:inline">{t('nav.integrations')}</span>
               </TabsTrigger>
+              <TabsTrigger value="reports" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
+                <FileText className="h-4 w-4 mr-2" />
+                <span className="hidden xl:inline">{language === 'ar' ? 'التقارير' : 'Reports'}</span>
+              </TabsTrigger>
+              <TabsTrigger value="payments" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
+                <CreditCard className="h-4 w-4 mr-2" />
+                <span className="hidden xl:inline">{language === 'ar' ? 'الدفع' : 'Payments'}</span>
+              </TabsTrigger>
+              <TabsTrigger value="pos" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                <span className="hidden xl:inline">{language === 'ar' ? 'نقطة البيع' : 'POS'}</span>
+              </TabsTrigger>
+              <TabsTrigger value="production" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
+                <ChefHat className="h-4 w-4 mr-2" />
+                <span className="hidden xl:inline">{language === 'ar' ? 'الإنتاج' : 'Production'}</span>
+              </TabsTrigger>
+              <TabsTrigger value="reviews" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
+                <Star className="h-4 w-4 mr-2" />
+                <span className="hidden xl:inline">{language === 'ar' ? 'التقييمات' : 'Reviews'}</span>
+              </TabsTrigger>
+              <TabsTrigger value="chatbot" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
+                <Bot className="h-4 w-4 mr-2" />
+                <span className="hidden xl:inline">{language === 'ar' ? 'Chatbot' : 'Chatbot'}</span>
+              </TabsTrigger>
+              <TabsTrigger value="tracking" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
+                <MapPin className="h-4 w-4 mr-2" />
+                <span className="hidden xl:inline">{language === 'ar' ? 'التتبع' : 'Tracking'}</span>
+              </TabsTrigger>
+              <TabsTrigger value="customerApp" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
+                <Smartphone className="h-4 w-4 mr-2" />
+                <span className="hidden xl:inline">{language === 'ar' ? 'تطبيق العملاء' : 'Customer App'}</span>
+              </TabsTrigger>
+              <TabsTrigger value="notifications" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
+                <Bell className="h-4 w-4 mr-2" />
+                <span className="hidden xl:inline">{language === 'ar' ? 'الإشعارات' : 'Notifications'}</span>
+              </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -1983,6 +2029,42 @@ function AppContent() {
 
           <TabsContent value="integrations" className="mt-0">
             <IntegrationsTab />
+          </TabsContent>
+
+          <TabsContent value="reports" className="mt-0">
+            <AdvancedReportsTab />
+          </TabsContent>
+
+          <TabsContent value="payments" className="mt-0">
+            <PaymentSystemTab />
+          </TabsContent>
+
+          <TabsContent value="pos" className="mt-0">
+            <POSTab />
+          </TabsContent>
+
+          <TabsContent value="production" className="mt-0">
+            <DailyProductionTab />
+          </TabsContent>
+
+          <TabsContent value="reviews" className="mt-0">
+            <CustomerReviewsTab />
+          </TabsContent>
+
+          <TabsContent value="chatbot" className="mt-0">
+            <CustomerChatbotTab />
+          </TabsContent>
+
+          <TabsContent value="tracking" className="mt-0">
+            <LiveTrackingTab />
+          </TabsContent>
+
+          <TabsContent value="customerApp" className="mt-0">
+            <CustomerAppTab />
+          </TabsContent>
+
+          <TabsContent value="notifications" className="mt-0">
+            <NotificationsTab />
           </TabsContent>
         </Tabs>
       </main>
