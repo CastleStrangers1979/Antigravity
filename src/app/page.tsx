@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from '@/components/ui/dropdown-menu';
 import { 
   Package, Truck, Users, MapPin, Plus, Edit, Trash2, Eye, Phone, Navigation,
   CheckCircle, Clock, AlertCircle, DollarSign, ShoppingBag, BarChart3,
@@ -22,7 +23,7 @@ import {
   TrendingUp, User, MapPinned, ChevronLeft, ChevronRight, CircleDot, Cookie, Heart, Scale, Box,
   Car, Fuel, Wrench, Shield, Receipt, Gauge, Calendar, AlertTriangle,
   ShieldCheck, Wallet, Link2, Warehouse, CreditCard, ShoppingCart, ChefHat,
-  Star, MessageSquare, Bot, Bell, Smartphone, FileText
+  Star, MessageSquare, Bot, Bell, Smartphone, FileText, Menu, ChevronDown
 } from 'lucide-react';
 import QualitySafetyTab from '@/components/quality-safety-tab';
 import BakeryTab from '@/components/bakery-tab';
@@ -1856,120 +1857,210 @@ function AppContent() {
 
       {/* Navigation Tabs */}
       <div className="sticky top-16 z-40 bg-white border-b border-[#E8DFD0] shadow-sm">
-        <div className="relative">
-          {/* Left scroll indicator */}
-          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none hidden sm:block" />
-          {/* Right scroll indicator */}
-          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none hidden sm:block" />
-          
-          <div className="overflow-x-auto scrollbar-thin pb-1" style={{ scrollBehavior: 'smooth' }}>
-            <div className="container mx-auto px-4">
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="h-12 bg-transparent gap-1 w-max min-w-full flex-nowrap inline-flex">
-              <TabsTrigger value="dashboard" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <BarChart3 className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('app.dashboard')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="orders" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <ShoppingBag className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('nav.orders')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="products" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Package className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('nav.products')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="drivers" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Users className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('nav.drivers')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="customers" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Users className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('nav.customers')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="deliveryLines" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <MapPin className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('nav.deliveryLines')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="driverApp" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Truck className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('app.driverApp')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="aiPredictions" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <TrendingUp className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('nav.aiPredictions')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="qualitySafety" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <ShieldCheck className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('nav.qualitySafety')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="vehicles" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Car className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('nav.vehicles')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="bakery" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Cookie className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('nav.bakery')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="accounting" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Wallet className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('accounting.title')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="preorders" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Calendar className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('nav.preorders')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="inventory" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Warehouse className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('nav.inventory') || 'Inventory'}</span>
-              </TabsTrigger>
-              <TabsTrigger value="webshop" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Store className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('nav.webshop')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="integrations" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Link2 className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{t('nav.integrations')}</span>
-              </TabsTrigger>
-              <TabsTrigger value="reports" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <FileText className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{language === 'ar' ? 'التقارير' : 'Reports'}</span>
-              </TabsTrigger>
-              <TabsTrigger value="payments" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <CreditCard className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{language === 'ar' ? 'الدفع' : 'Payments'}</span>
-              </TabsTrigger>
-              <TabsTrigger value="pos" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <ShoppingCart className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{language === 'ar' ? 'نقطة البيع' : 'POS'}</span>
-              </TabsTrigger>
-              <TabsTrigger value="production" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <ChefHat className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{language === 'ar' ? 'الإنتاج' : 'Production'}</span>
-              </TabsTrigger>
-              <TabsTrigger value="reviews" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Star className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{language === 'ar' ? 'التقييمات' : 'Reviews'}</span>
-              </TabsTrigger>
-              <TabsTrigger value="chatbot" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Bot className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{language === 'ar' ? 'المحادثة' : 'Chatbot'}</span>
-              </TabsTrigger>
-              <TabsTrigger value="tracking" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <MapPinned className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{language === 'ar' ? 'التتبع' : 'Tracking'}</span>
-              </TabsTrigger>
-              <TabsTrigger value="customerApp" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Smartphone className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{language === 'ar' ? 'تطبيق العملاء' : 'Customer App'}</span>
-              </TabsTrigger>
-              <TabsTrigger value="notifications" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
-                <Bell className="h-4 w-4 mr-1.5 flex-shrink-0" />
-                <span>{language === 'ar' ? 'الإشعارات' : 'Notifications'}</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+        <div className="container mx-auto px-4 py-2">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <div className="flex items-center gap-2">
+              {/* Dropdown Menu for All Tabs */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2 border-[#D4A853] text-[#5C4033] hover:bg-[#F5EDE0]">
+                    <Menu className="h-4 w-4" />
+                    <span>{language === 'ar' ? 'جميع الأقسام' : 'All Sections'}</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-64 max-h-[70vh] overflow-y-auto bg-white" align="start">
+                  {/* Main Sections */}
+                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
+                    {language === 'ar' ? '📊 الأقسام الرئيسية' : '📊 Main Sections'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => setActiveTab('dashboard')} className="gap-2 cursor-pointer">
+                    <BarChart3 className="h-4 w-4 text-[#2D5A3D]" />
+                    <span>{language === 'ar' ? 'لوحة التحكم' : 'Dashboard'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('orders')} className="gap-2 cursor-pointer">
+                    <ShoppingBag className="h-4 w-4 text-[#2D5A3D]" />
+                    <span>{language === 'ar' ? 'الطلبات' : 'Orders'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('products')} className="gap-2 cursor-pointer">
+                    <Package className="h-4 w-4 text-[#2D5A3D]" />
+                    <span>{language === 'ar' ? 'المنتجات' : 'Products'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('customers')} className="gap-2 cursor-pointer">
+                    <Users className="h-4 w-4 text-[#D4A853]" />
+                    <span>{language === 'ar' ? 'العملاء' : 'Customers'}</span>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuSeparator />
+                  
+                  {/* Delivery & Drivers */}
+                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
+                    {language === 'ar' ? '🚚 التوصيل والسائقين' : '🚚 Delivery & Drivers'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => setActiveTab('drivers')} className="gap-2 cursor-pointer">
+                    <Users className="h-4 w-4 text-[#2D5A3D]" />
+                    <span>{language === 'ar' ? 'السائقين' : 'Drivers'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('deliveryLines')} className="gap-2 cursor-pointer">
+                    <MapPin className="h-4 w-4 text-[#2D5A3D]" />
+                    <span>{language === 'ar' ? 'خطوط التوزيع' : 'Delivery Lines'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('driverApp')} className="gap-2 cursor-pointer">
+                    <Truck className="h-4 w-4 text-[#D4A853]" />
+                    <span>{language === 'ar' ? 'تطبيق السائق' : 'Driver App'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('tracking')} className="gap-2 cursor-pointer">
+                    <MapPinned className="h-4 w-4 text-[#D4A853]" />
+                    <span>{language === 'ar' ? 'التتبع المباشر' : 'Live Tracking'}</span>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuSeparator />
+                  
+                  {/* Production & Quality */}
+                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
+                    {language === 'ar' ? '🍞 الإنتاج والجودة' : '🍞 Production & Quality'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => setActiveTab('bakery')} className="gap-2 cursor-pointer">
+                    <Cookie className="h-4 w-4 text-[#D4A853]" />
+                    <span>{language === 'ar' ? 'المخبز' : 'Bakery'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('production')} className="gap-2 cursor-pointer">
+                    <ChefHat className="h-4 w-4 text-[#2D5A3D]" />
+                    <span>{language === 'ar' ? 'الإنتاج اليومي' : 'Daily Production'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('qualitySafety')} className="gap-2 cursor-pointer">
+                    <ShieldCheck className="h-4 w-4 text-[#D4A853]" />
+                    <span>{language === 'ar' ? 'الجودة والسلامة' : 'Quality & Safety'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('inventory')} className="gap-2 cursor-pointer">
+                    <Warehouse className="h-4 w-4 text-[#D4A853]" />
+                    <span>{language === 'ar' ? 'المخزون' : 'Inventory'}</span>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuSeparator />
+                  
+                  {/* Sales & Finance */}
+                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
+                    {language === 'ar' ? '💰 المبيعات والمالية' : '💰 Sales & Finance'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => setActiveTab('accounting')} className="gap-2 cursor-pointer">
+                    <Wallet className="h-4 w-4 text-[#2D5A3D]" />
+                    <span>{language === 'ar' ? 'المحاسبة' : 'Accounting'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('payments')} className="gap-2 cursor-pointer">
+                    <CreditCard className="h-4 w-4 text-[#2D5A3D]" />
+                    <span>{language === 'ar' ? 'نظام الدفع' : 'Payment System'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('pos')} className="gap-2 cursor-pointer">
+                    <ShoppingCart className="h-4 w-4 text-[#D4A853]" />
+                    <span>{language === 'ar' ? 'نقطة البيع' : 'POS'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('webshop')} className="gap-2 cursor-pointer">
+                    <Store className="h-4 w-4 text-[#D4A853]" />
+                    <span>{language === 'ar' ? 'المتجر الإلكتروني' : 'Webshop'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('preorders')} className="gap-2 cursor-pointer">
+                    <Calendar className="h-4 w-4 text-[#D4A853]" />
+                    <span>{language === 'ar' ? 'الطلبات المسبقة' : 'Pre-orders'}</span>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuSeparator />
+                  
+                  {/* Vehicles & Assets */}
+                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
+                    {language === 'ar' ? '🚗 المركبات والأصول' : '🚗 Vehicles & Assets'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => setActiveTab('vehicles')} className="gap-2 cursor-pointer">
+                    <Car className="h-4 w-4 text-[#2D5A3D]" />
+                    <span>{language === 'ar' ? 'المركبات' : 'Vehicles'}</span>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuSeparator />
+                  
+                  {/* Analytics & Reports */}
+                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
+                    {language === 'ar' ? '📈 التحليلات والتقارير' : '📈 Analytics & Reports'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => setActiveTab('aiPredictions')} className="gap-2 cursor-pointer">
+                    <TrendingUp className="h-4 w-4 text-[#2D5A3D]" />
+                    <span>{language === 'ar' ? 'الذكاء الاصطناعي' : 'AI Predictions'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('reports')} className="gap-2 cursor-pointer">
+                    <FileText className="h-4 w-4 text-[#D4A853]" />
+                    <span>{language === 'ar' ? 'التقارير' : 'Reports'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('reviews')} className="gap-2 cursor-pointer">
+                    <Star className="h-4 w-4 text-[#D4A853]" />
+                    <span>{language === 'ar' ? 'التقييمات' : 'Reviews'}</span>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuSeparator />
+                  
+                  {/* Customer Experience */}
+                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
+                    {language === 'ar' ? '📱 تجربة العملاء' : '📱 Customer Experience'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => setActiveTab('customerApp')} className="gap-2 cursor-pointer">
+                    <Smartphone className="h-4 w-4 text-[#2D5A3D]" />
+                    <span>{language === 'ar' ? 'تطبيق العملاء' : 'Customer App'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('chatbot')} className="gap-2 cursor-pointer">
+                    <Bot className="h-4 w-4 text-[#2D5A3D]" />
+                    <span>{language === 'ar' ? 'المحادثة الذكية' : 'Chatbot'}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('notifications')} className="gap-2 cursor-pointer">
+                    <Bell className="h-4 w-4 text-[#D4A853]" />
+                    <span>{language === 'ar' ? 'الإشعارات' : 'Notifications'}</span>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuSeparator />
+                  
+                  {/* System */}
+                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
+                    {language === 'ar' ? '⚙️ النظام' : '⚙️ System'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => setActiveTab('integrations')} className="gap-2 cursor-pointer">
+                    <Link2 className="h-4 w-4 text-[#2D5A3D]" />
+                    <span>{language === 'ar' ? 'التكاملات' : 'Integrations'}</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
+              {/* Quick Access Tabs - Horizontal Scrollable */}
+              <div className="flex-1 overflow-x-auto scrollbar-thin">
+                <TabsList className="h-10 bg-transparent gap-1 w-max min-w-full flex-nowrap inline-flex">
+                  <TabsTrigger value="dashboard" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-1.5 whitespace-nowrap text-sm">
+                    <BarChart3 className="h-4 w-4 mr-1 flex-shrink-0" />
+                    <span className="hidden sm:inline">{t('app.dashboard')}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="orders" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-1.5 whitespace-nowrap text-sm">
+                    <ShoppingBag className="h-4 w-4 mr-1 flex-shrink-0" />
+                    <span className="hidden sm:inline">{t('nav.orders')}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="products" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-1.5 whitespace-nowrap text-sm">
+                    <Package className="h-4 w-4 mr-1 flex-shrink-0" />
+                    <span className="hidden sm:inline">{t('nav.products')}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="customers" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-1.5 whitespace-nowrap text-sm">
+                    <Users className="h-4 w-4 mr-1 flex-shrink-0" />
+                    <span className="hidden sm:inline">{t('nav.customers')}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="drivers" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-1.5 whitespace-nowrap text-sm">
+                    <Truck className="h-4 w-4 mr-1 flex-shrink-0" />
+                    <span className="hidden sm:inline">{t('nav.drivers')}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="accounting" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-1.5 whitespace-nowrap text-sm">
+                    <Wallet className="h-4 w-4 mr-1 flex-shrink-0" />
+                    <span className="hidden md:inline">{t('accounting.title')}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="reports" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-1.5 whitespace-nowrap text-sm">
+                    <FileText className="h-4 w-4 mr-1 flex-shrink-0" />
+                    <span className="hidden lg:inline">{language === 'ar' ? 'التقارير' : 'Reports'}</span>
+                  </TabsTrigger>
+                </TabsList>
+              </div>
             </div>
-          </div>
+          </Tabs>
         </div>
       </div>
 
