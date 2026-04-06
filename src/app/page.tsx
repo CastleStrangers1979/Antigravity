@@ -32,6 +32,7 @@ import AdvancedCustomerManagementTab from '@/components/AdvancedCustomerManageme
 import WebshopTab from '@/components/webshop-tab';
 import IntegrationsTab from '@/components/integrations-tab';
 import InventoryTab from '@/components/inventory-tab';
+import AdvancedDashboardTab from '@/components/advanced-dashboard-tab';
 
 // Types
 interface Product {
@@ -1921,121 +1922,7 @@ function AppContent() {
       <main className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsContent value="dashboard" className="mt-0 space-y-6">
-            {!seeded && stats.todayOrders === 0 && (
-              <Card className="border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 shadow-md">
-                <CardContent className="p-5">
-                  <div className="flex flex-col sm:flex-row items-center gap-4">
-                    <div className="p-3 rounded-full bg-[#D4A853] text-white">
-                      <AlertCircle className="h-6 w-6" />
-                    </div>
-                    <div className="flex-1 text-center sm:text-right">
-                      <h3 className="font-bold text-[#5C4033]">قاعدة البيانات فارغة</h3>
-                      <p className="text-sm text-[#7A6F63]">انقر لإنشاء بيانات تجريبية للمخبز</p>
-                    </div>
-                    <Button onClick={seedDatabase} className="gold-gradient text-white border-0 shadow-md">
-                      <Send className="h-4 w-4 mr-2" />
-                      إنشاء بيانات تجريبية
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <StatsCard 
-                title={t('stats.todayOrders')} 
-                value={stats.todayOrders} 
-                icon={ShoppingBag}
-                trend="+12% من الأمس"
-              />
-              <StatsCard 
-                title={t('stats.pendingOrders')} 
-                value={stats.pendingOrders} 
-                icon={Clock}
-              />
-              <StatsCard 
-                title={t('stats.inDelivery')} 
-                value={stats.inDelivery} 
-                icon={Truck}
-              />
-              <StatsCard 
-                title={t('stats.totalRevenue')} 
-                value={`€${stats.totalRevenue.toFixed(2)}`} 
-                icon={DollarSign}
-                trend="+8% هذا الأسبوع"
-              />
-            </div>
-
-            {/* Quick Actions */}
-            <Card className="border-0 shadow-md">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-[#3D3229] flex items-center gap-2">
-                  <Store className="h-5 w-5 text-[#D4A853]" />
-                  {t('app.dashboard')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <Button variant="outline" className="h-24 flex-col gap-2 border-[#E8DFD0] hover:border-[#D4A853] hover:bg-[#FFFEF7]" onClick={() => setActiveTab('orders')}>
-                    <ShoppingBag className="h-8 w-8 text-[#D4A853]" />
-                    <span className="text-[#3D3229]">{t('nav.orders')}</span>
-                  </Button>
-                  <Button variant="outline" className="h-24 flex-col gap-2 border-[#E8DFD0] hover:border-[#2D5A3D] hover:bg-[#FFFEF7]" onClick={() => setActiveTab('products')}>
-                    <Package className="h-8 w-8 text-[#2D5A3D]" />
-                    <span className="text-[#3D3229]">{t('nav.products')}</span>
-                  </Button>
-                  <Button variant="outline" className="h-24 flex-col gap-2 border-[#E8DFD0] hover:border-[#2D5A3D] hover:bg-[#FFFEF7]" onClick={() => setActiveTab('drivers')}>
-                    <Users className="h-8 w-8 text-[#2D5A3D]" />
-                    <span className="text-[#3D3229]">{t('nav.drivers')}</span>
-                  </Button>
-                  <Button variant="outline" className="h-24 flex-col gap-2 border-[#E8DFD0] hover:border-[#D4A853] hover:bg-[#FFFEF7]" onClick={() => setActiveTab('driverApp')}>
-                    <Truck className="h-8 w-8 text-[#D4A853]" />
-                    <span className="text-[#3D3229]">{t('app.driverApp')}</span>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Info Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <Card className="border-0 shadow-md overflow-hidden">
-                <div className="h-2 green-gradient" />
-                <CardHeader>
-                  <CardTitle className="text-[#3D3229] flex items-center gap-2">
-                    <MapPinned className="h-5 w-5 text-[#2D5A3D]" />
-                    {t('nav.deliveryLines')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-[#7A6F63]">6 {t('lines.title')} تغطي جميع أنحاء هولندا</p>
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    <Badge className="bg-[#2D5A3D]">أمستردام</Badge>
-                    <Badge className="bg-[#2D5A3D]">روتردام</Badge>
-                    <Badge className="bg-[#2D5A3D]">لاهاي</Badge>
-                    <Badge className="bg-[#2D5A3D]">أوترخت</Badge>
-                    <Badge className="bg-[#2D5A3D]">آيندهوفن</Badge>
-                    <Badge className="bg-[#2D5A3D]">ألميلو</Badge>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="border-0 shadow-md overflow-hidden">
-                <div className="h-2 gold-gradient" />
-                <CardHeader>
-                  <CardTitle className="text-[#3D3229] flex items-center gap-2">
-                    <Timer className="h-5 w-5 text-[#D4A853]" />
-                    ساعات العمل
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2 text-[#7A6F63]">
-                    <p>الثلاثاء - الأحد</p>
-                    <p className="font-medium text-[#3D3229]">11:00 - 15:00 | 17:00 - 23:00</p>
-                    <p className="text-sm">مغلق يوم الاثنين</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <AdvancedDashboardTab />
           </TabsContent>
 
           <TabsContent value="orders" className="mt-0">
