@@ -2508,6 +2508,166 @@ const translations: Translations = {
     nl: 'Einddatum',
     ku: 'بەرواری کۆتایی',
   },
+  
+  // AI & Predictions
+  'ai.title': {
+    ar: 'الذكاء الاصطناعي والتوقعات',
+    en: 'AI & Predictions',
+    nl: 'AI & Voorspellingen',
+    ku: 'ژیرەکاری و پێشبینی',
+  },
+  'ai.demandForecast': {
+    ar: 'توقعات الطلب',
+    en: 'Demand Forecast',
+    nl: 'Vraagvoorspelling',
+    ku: 'پێشبینی داواکاری',
+  },
+  'ai.recommendations': {
+    ar: 'التوصيات',
+    en: 'Recommendations',
+    nl: 'Aanbevelingen',
+    ku: 'پێشنیارەکان',
+  },
+  'ai.anomalyDetection': {
+    ar: 'كشف الشذوذ',
+    en: 'Anomaly Detection',
+    nl: 'Anomaliedetectie',
+    ku: 'دۆزینەوەی نائاسایی',
+  },
+  'ai.confidence': {
+    ar: 'مستوى الثقة',
+    en: 'Confidence',
+    nl: 'Zekerheid',
+    ku: 'ئاستی متمانە',
+  },
+  'ai.trending': {
+    ar: 'المنتجات الرائجة',
+    en: 'Trending',
+    nl: 'Trending',
+    ku: 'بەرەو سەرەوە',
+  },
+  'ai.frequentlyBought': {
+    ar: 'المشتريات المتكررة',
+    en: 'Frequently Bought',
+    nl: 'Vaak Gekocht',
+    ku: 'زۆر کڕدراو',
+  },
+  'ai.seasonal': {
+    ar: 'موسمي',
+    en: 'Seasonal',
+    nl: 'Seizoensgebonden',
+    ku: 'وەرزی',
+  },
+  'ai.customerBased': {
+    ar: 'حسب العميل',
+    en: 'Customer Based',
+    nl: 'Klantgebaseerd',
+    ku: 'لەسەر بنەمای کڕیار',
+  },
+  'ai.critical': {
+    ar: 'حرج',
+    en: 'Critical',
+    nl: 'Kritiek',
+    ku: 'گرنگ',
+  },
+  'ai.high': {
+    ar: 'عالي',
+    en: 'High',
+    nl: 'Hoog',
+    ku: 'بەرز',
+  },
+  'ai.medium': {
+    ar: 'متوسط',
+    en: 'Medium',
+    nl: 'Gemiddeld',
+    ku: 'ناوەند',
+  },
+  'ai.low': {
+    ar: 'منخفض',
+    en: 'Low',
+    nl: 'Laag',
+    ku: 'نزم',
+  },
+  'ai.variance': {
+    ar: 'الانحراف',
+    en: 'Variance',
+    nl: 'Afwijking',
+    ku: 'لادان',
+  },
+  'ai.suggestedAction': {
+    ar: 'الإجراء المقترح',
+    en: 'Suggested Action',
+    nl: 'Voorgestelde Actie',
+    ku: 'کرداری پێشنیارکراو',
+  },
+  'ai.predictedDemand': {
+    ar: 'الطلب المتوقع',
+    en: 'Predicted Demand',
+    nl: 'Voorspelde Vraag',
+    ku: 'داواکاری پێشبینی‌کراو',
+  },
+  'ai.product': {
+    ar: 'المنتج',
+    en: 'Product',
+    nl: 'Product',
+    ku: 'بەرهەم',
+  },
+  'ai.trend': {
+    ar: 'الاتجاه',
+    en: 'Trend',
+    nl: 'Trend',
+    ku: 'مەیلی',
+  },
+  
+  // Webshop
+  'webshop.title': {
+    ar: 'المتجر الإلكتروني',
+    en: 'Webshop',
+    nl: 'Webshop',
+    ku: 'دوکانی ئەلکترۆنی',
+  },
+  'webshop.products': {
+    ar: 'منتجات المتجر',
+    en: 'Webshop Products',
+    nl: 'Webshop Producten',
+    ku: 'بەرهەمەکانی دوکان',
+  },
+  'webshop.customers': {
+    ar: 'عملاء المتجر',
+    en: 'Webshop Customers',
+    nl: 'Webshop Klanten',
+    ku: 'کڕیارەکانی دوکان',
+  },
+  'webshop.orders': {
+    ar: 'طلبات المتجر',
+    en: 'Webshop Orders',
+    nl: 'Webshop Bestellingen',
+    ku: 'داواکارییەکانی دوکان',
+  },
+  'webshop.promotions': {
+    ar: 'العروض الترويجية',
+    en: 'Promotions',
+    nl: 'Promoties',
+    ku: 'بانگەشەکان',
+  },
+  'webshop.analytics': {
+    ar: 'تحليلات المتجر',
+    en: 'Store Analytics',
+    nl: 'Winkelanalytics',
+    ku: 'شیکردنەوەی دوکان',
+  },
+  'webshop.settings': {
+    ar: 'إعدادات المتجر',
+    en: 'Store Settings',
+    nl: 'Winkelinstellingen',
+    ku: 'ڕێکخستنەکانی دوکان',
+  },
+  'webshop.paymentProviders': {
+    ar: 'بوابات الدفع',
+    en: 'Payment Providers',
+    nl: 'Betalingsproviders',
+    ku: 'دەرگای پارەدان',
+  },
 };
 
 interface LanguageContextType {
