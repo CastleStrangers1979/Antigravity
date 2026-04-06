@@ -1856,108 +1856,108 @@ function AppContent() {
 
       {/* Navigation Tabs */}
       <div className="sticky top-16 z-40 bg-white border-b border-[#E8DFD0] shadow-sm">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 overflow-x-auto scrollbar-thin">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="h-12 bg-transparent gap-1">
-              <TabsTrigger value="dashboard" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <BarChart3 className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">{t('app.dashboard')}</span>
+            <TabsList className="h-12 bg-transparent gap-1 w-max min-w-full flex-nowrap">
+              <TabsTrigger value="dashboard" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <BarChart3 className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('app.dashboard')}</span>
               </TabsTrigger>
-              <TabsTrigger value="orders" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <ShoppingBag className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">{t('nav.orders')}</span>
+              <TabsTrigger value="orders" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <ShoppingBag className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('nav.orders')}</span>
               </TabsTrigger>
-              <TabsTrigger value="products" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Package className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">{t('nav.products')}</span>
+              <TabsTrigger value="products" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Package className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('nav.products')}</span>
               </TabsTrigger>
-              <TabsTrigger value="drivers" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Users className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">{t('nav.drivers')}</span>
+              <TabsTrigger value="drivers" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Users className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('nav.drivers')}</span>
               </TabsTrigger>
-              <TabsTrigger value="customers" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Users className="h-4 w-4 mr-2" />
-                <span className="hidden md:inline">{t('nav.customers')}</span>
+              <TabsTrigger value="customers" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Users className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('nav.customers')}</span>
               </TabsTrigger>
-              <TabsTrigger value="deliveryLines" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <MapPin className="h-4 w-4 mr-2" />
-                <span className="hidden md:inline">{t('nav.deliveryLines')}</span>
+              <TabsTrigger value="deliveryLines" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <MapPin className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('nav.deliveryLines')}</span>
               </TabsTrigger>
-              <TabsTrigger value="driverApp" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Truck className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">{t('app.driverApp')}</span>
+              <TabsTrigger value="driverApp" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Truck className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('app.driverApp')}</span>
               </TabsTrigger>
-              <TabsTrigger value="aiPredictions" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <TrendingUp className="h-4 w-4 mr-2" />
-                <span className="hidden lg:inline">{t('nav.aiPredictions')}</span>
+              <TabsTrigger value="aiPredictions" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <TrendingUp className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('nav.aiPredictions')}</span>
               </TabsTrigger>
-              <TabsTrigger value="qualitySafety" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <ShieldCheck className="h-4 w-4 mr-2" />
-                <span className="hidden lg:inline">{t('nav.qualitySafety')}</span>
+              <TabsTrigger value="qualitySafety" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <ShieldCheck className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('nav.qualitySafety')}</span>
               </TabsTrigger>
-              <TabsTrigger value="vehicles" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Car className="h-4 w-4 mr-2" />
-                <span className="hidden lg:inline">{t('nav.vehicles')}</span>
+              <TabsTrigger value="vehicles" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Car className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('nav.vehicles')}</span>
               </TabsTrigger>
-              <TabsTrigger value="bakery" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Cookie className="h-4 w-4 mr-2" />
-                <span className="hidden lg:inline">{t('nav.bakery')}</span>
+              <TabsTrigger value="bakery" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Cookie className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('nav.bakery')}</span>
               </TabsTrigger>
-              <TabsTrigger value="accounting" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Wallet className="h-4 w-4 mr-2" />
-                <span className="hidden lg:inline">{t('accounting.title')}</span>
+              <TabsTrigger value="accounting" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Wallet className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('accounting.title')}</span>
               </TabsTrigger>
-              <TabsTrigger value="preorders" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Calendar className="h-4 w-4 mr-2" />
-                <span className="hidden lg:inline">{t('nav.preorders')}</span>
+              <TabsTrigger value="preorders" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Calendar className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('nav.preorders')}</span>
               </TabsTrigger>
-              <TabsTrigger value="inventory" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Warehouse className="h-4 w-4 mr-2" />
-                <span className="hidden lg:inline">{t('nav.inventory') || 'Inventory'}</span>
+              <TabsTrigger value="inventory" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Warehouse className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('nav.inventory') || 'Inventory'}</span>
               </TabsTrigger>
-              <TabsTrigger value="webshop" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Store className="h-4 w-4 mr-2" />
-                <span className="hidden lg:inline">{t('nav.webshop')}</span>
+              <TabsTrigger value="webshop" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Store className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('nav.webshop')}</span>
               </TabsTrigger>
-              <TabsTrigger value="integrations" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Link2 className="h-4 w-4 mr-2" />
-                <span className="hidden lg:inline">{t('nav.integrations')}</span>
+              <TabsTrigger value="integrations" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Link2 className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{t('nav.integrations')}</span>
               </TabsTrigger>
-              <TabsTrigger value="reports" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <FileText className="h-4 w-4 mr-2" />
-                <span className="hidden xl:inline">{language === 'ar' ? 'التقارير' : 'Reports'}</span>
+              <TabsTrigger value="reports" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <FileText className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{language === 'ar' ? 'التقارير' : 'Reports'}</span>
               </TabsTrigger>
-              <TabsTrigger value="payments" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <CreditCard className="h-4 w-4 mr-2" />
-                <span className="hidden xl:inline">{language === 'ar' ? 'الدفع' : 'Payments'}</span>
+              <TabsTrigger value="payments" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <CreditCard className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{language === 'ar' ? 'الدفع' : 'Payments'}</span>
               </TabsTrigger>
-              <TabsTrigger value="pos" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                <span className="hidden xl:inline">{language === 'ar' ? 'نقطة البيع' : 'POS'}</span>
+              <TabsTrigger value="pos" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <ShoppingCart className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{language === 'ar' ? 'نقطة البيع' : 'POS'}</span>
               </TabsTrigger>
-              <TabsTrigger value="production" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <ChefHat className="h-4 w-4 mr-2" />
-                <span className="hidden xl:inline">{language === 'ar' ? 'الإنتاج' : 'Production'}</span>
+              <TabsTrigger value="production" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <ChefHat className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{language === 'ar' ? 'الإنتاج' : 'Production'}</span>
               </TabsTrigger>
-              <TabsTrigger value="reviews" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Star className="h-4 w-4 mr-2" />
-                <span className="hidden xl:inline">{language === 'ar' ? 'التقييمات' : 'Reviews'}</span>
+              <TabsTrigger value="reviews" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Star className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{language === 'ar' ? 'التقييمات' : 'Reviews'}</span>
               </TabsTrigger>
-              <TabsTrigger value="chatbot" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Bot className="h-4 w-4 mr-2" />
-                <span className="hidden xl:inline">{language === 'ar' ? 'Chatbot' : 'Chatbot'}</span>
+              <TabsTrigger value="chatbot" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Bot className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{language === 'ar' ? 'المحادثة' : 'Chatbot'}</span>
               </TabsTrigger>
-              <TabsTrigger value="tracking" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <MapPin className="h-4 w-4 mr-2" />
-                <span className="hidden xl:inline">{language === 'ar' ? 'التتبع' : 'Tracking'}</span>
+              <TabsTrigger value="tracking" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <MapPinned className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{language === 'ar' ? 'التتبع' : 'Tracking'}</span>
               </TabsTrigger>
-              <TabsTrigger value="customerApp" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Smartphone className="h-4 w-4 mr-2" />
-                <span className="hidden xl:inline">{language === 'ar' ? 'تطبيق العملاء' : 'Customer App'}</span>
+              <TabsTrigger value="customerApp" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Smartphone className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{language === 'ar' ? 'تطبيق العملاء' : 'Customer App'}</span>
               </TabsTrigger>
-              <TabsTrigger value="notifications" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-4">
-                <Bell className="h-4 w-4 mr-2" />
-                <span className="hidden xl:inline">{language === 'ar' ? 'الإشعارات' : 'Notifications'}</span>
+              <TabsTrigger value="notifications" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
+                <Bell className="h-4 w-4 mr-1.5 flex-shrink-0" />
+                <span>{language === 'ar' ? 'الإشعارات' : 'Notifications'}</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
