@@ -18,7 +18,7 @@ import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import {
   Calendar, Clock, Plus, Edit, Trash2, CheckCircle, AlertTriangle,
-  Package, Users, Truck, RefreshCw, ChefHat, Oven, Timer, Check, X
+  Package, Users, Truck, RefreshCw, ChefHat, Flame, Timer, Check, X
 } from 'lucide-react';
 
 // Types
@@ -447,7 +447,7 @@ export default function DailyProductionTab() {
         {schedules.length === 0 ? (
           <Card className="border-0 shadow-md">
             <CardContent className="p-12 text-center">
-              <Oven className="h-12 w-12 mx-auto mb-3 text-[#D4A853] opacity-30" />
+              <Flame className="h-12 w-12 mx-auto mb-3 text-[#D4A853] opacity-30" />
               <p className="text-[#7A6F63]">{t('noItems')}</p>
             </CardContent>
           </Card>
