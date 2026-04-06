@@ -1856,9 +1856,16 @@ function AppContent() {
 
       {/* Navigation Tabs */}
       <div className="sticky top-16 z-40 bg-white border-b border-[#E8DFD0] shadow-sm">
-        <div className="container mx-auto px-4 overflow-x-auto scrollbar-thin">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="h-12 bg-transparent gap-1 w-max min-w-full flex-nowrap">
+        <div className="relative">
+          {/* Left scroll indicator */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none hidden sm:block" />
+          {/* Right scroll indicator */}
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none hidden sm:block" />
+          
+          <div className="overflow-x-auto scrollbar-thin pb-1" style={{ scrollBehavior: 'smooth' }}>
+            <div className="container mx-auto px-4">
+              <Tabs value={activeTab} onValueChange={setActiveTab}>
+                <TabsList className="h-12 bg-transparent gap-1 w-max min-w-full flex-nowrap inline-flex">
               <TabsTrigger value="dashboard" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-2 whitespace-nowrap">
                 <BarChart3 className="h-4 w-4 mr-1.5 flex-shrink-0" />
                 <span>{t('app.dashboard')}</span>
@@ -1961,6 +1968,8 @@ function AppContent() {
               </TabsTrigger>
             </TabsList>
           </Tabs>
+            </div>
+          </div>
         </div>
       </div>
 
