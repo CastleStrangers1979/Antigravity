@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense, memo, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { LanguageProvider, useLanguage, Language } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -23,27 +24,99 @@ import {
   TrendingUp, User, MapPinned, ChevronLeft, ChevronRight, CircleDot, Cookie, Heart, Scale, Box,
   Car, Fuel, Wrench, Shield, Receipt, Gauge, Calendar, AlertTriangle,
   ShieldCheck, Wallet, Link2, Warehouse, CreditCard, ShoppingCart, ChefHat,
-  Star, MessageSquare, Bot, Bell, Smartphone, FileText, Menu, ChevronDown
+  Star, MessageSquare, Bot, Bell, Smartphone, FileText, Menu, ChevronDown, Loader2
 } from 'lucide-react';
-import QualitySafetyTab from '@/components/quality-safety-tab';
-import BakeryTab from '@/components/bakery-tab';
-import VehiclesTab from '@/components/vehicles-tab';
-import AccountingTab from '@/components/accounting-tab';
-import PreOrdersTab from '@/components/preorders-tab';
-import AdvancedCustomerManagementTab from '@/components/AdvancedCustomerManagementTab';
-import WebshopTab from '@/components/webshop-tab';
-import IntegrationsTab from '@/components/integrations-tab';
-import InventoryTab from '@/components/inventory-tab';
-import AdvancedDashboardTab from '@/components/advanced-dashboard-tab';
-import AdvancedReportsTab from '@/components/advanced-reports-tab';
-import PaymentSystemTab from '@/components/payment-system-tab';
-import POSTab from '@/components/pos-tab';
-import DailyProductionTab from '@/components/daily-production-tab';
-import CustomerReviewsTab from '@/components/customer-reviews-tab';
-import CustomerChatbotTab from '@/components/customer-chatbot-tab';
-import LiveTrackingTab from '@/components/live-tracking-tab';
-import CustomerAppTab from '@/components/customer-app-tab';
-import NotificationsTab from '@/components/NotificationsTab';
+
+// Lazy load heavy tab components for better performance
+const QualitySafetyTab = dynamic(() => import('@/components/quality-safety-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const BakeryTab = dynamic(() => import('@/components/bakery-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const VehiclesTab = dynamic(() => import('@/components/vehicles-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const AccountingTab = dynamic(() => import('@/components/accounting-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const PreOrdersTab = dynamic(() => import('@/components/preorders-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const AdvancedCustomerManagementTab = dynamic(() => import('@/components/AdvancedCustomerManagementTab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const WebshopTab = dynamic(() => import('@/components/webshop-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const IntegrationsTab = dynamic(() => import('@/components/integrations-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const InventoryTab = dynamic(() => import('@/components/inventory-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const AdvancedDashboardTab = dynamic(() => import('@/components/advanced-dashboard-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const AdvancedReportsTab = dynamic(() => import('@/components/advanced-reports-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const PaymentSystemTab = dynamic(() => import('@/components/payment-system-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const POSTab = dynamic(() => import('@/components/pos-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const DailyProductionTab = dynamic(() => import('@/components/daily-production-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const CustomerReviewsTab = dynamic(() => import('@/components/customer-reviews-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const CustomerChatbotTab = dynamic(() => import('@/components/customer-chatbot-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const LiveTrackingTab = dynamic(() => import('@/components/live-tracking-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const CustomerAppTab = dynamic(() => import('@/components/customer-app-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const NotificationsTab = dynamic(() => import('@/components/NotificationsTab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+const DemoTab = dynamic(() => import('@/components/demo-tab'), { 
+  loading: () => <TabLoadingSkeleton />,
+  ssr: false 
+});
+
+// Loading skeleton component
+function TabLoadingSkeleton() {
+  return (
+    <div className="flex items-center justify-center py-12">
+      <Loader2 className="h-8 w-8 animate-spin text-[#D4A853]" />
+    </div>
+  );
+}
 
 // Types
 interface Product {
@@ -2023,6 +2096,10 @@ function AppContent() {
                     <Link2 className="h-4 w-4 text-[#2D5A3D]" />
                     <span>{language === 'ar' ? 'التكاملات' : 'Integrations'}</span>
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('demo')} className="gap-2 cursor-pointer bg-gradient-to-l from-[#2D5A3D] to-[#D4A853] text-white">
+                    <Store className="h-4 w-4" />
+                    <span>🥖 النموذج التجريبي</span>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
               
@@ -2165,6 +2242,10 @@ function AppContent() {
 
           <TabsContent value="notifications" className="mt-0">
             <NotificationsTab />
+          </TabsContent>
+
+          <TabsContent value="demo" className="mt-0">
+            <DemoTab />
           </TabsContent>
         </Tabs>
       </main>
