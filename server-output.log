@@ -1,0 +1,10 @@
+$ next dev -p 3000
+▲ Next.js 16.1.3 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://21.0.3.124:3000
+- Environments: .env
+
+✓ Starting...
+✓ Ready in 1886ms
+prisma:query SELECT `main`.`Product`.`id`, `main`.`Product`.`nameAr`, `main`.`Product`.`nameEn`, `main`.`Product`.`nameNl`, `main`.`Product`.`nameKu`, `main`.`Product`.`description`, `main`.`Product`.`price`, `main`.`Product`.`wholesalePrice`, `main`.`Product`.`image`, `main`.`Product`.`category`, `main`.`Product`.`sku`, `main`.`Product`.`barcode`, `main`.`Product`.`weight`, `main`.`Product`.`packSize`, `main`.`Product`.`boxSize`, `main`.`Product`.`stock`, `main`.`Product`.`minStock`, `main`.`Product`.`maxStock`, `main`.`Product`.`expiryDays`, `main`.`Product`.`costPrice`, `main`.`Product`.`isActive`, `main`.`Product`.`isFeatured`, `main`.`Product`.`sortOrder`, `main`.`Product`.`createdAt`, `main`.`Product`.`updatedAt` FROM `main`.`Product` WHERE 1=1 ORDER BY `main`.`Product`.`createdAt` DESC LIMIT ? OFFSET ?
+ GET /api/products 200 in 676ms (compile: 618ms, render: 57ms)
