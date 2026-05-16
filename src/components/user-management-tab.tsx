@@ -56,10 +56,11 @@ export default function UserManagementTab() {
     try {
       const res = await fetch('/api/users');
       const data = await res.json();
-      setUsers(data || []);
+      setUsers(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error:', error);
       toast.error(isRTL ? 'فشل تحميل المستخدمين' : 'Failed to load users');
+      setUsers([]);
     } finally {
       setLoading(false);
     }
