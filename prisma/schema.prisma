@@ -50,6 +50,10 @@ model Product {
   expiryTrackings  ExpiryTracking[]
   preOrderItems    PreOrderItem[]
   recurringOrderItems RecurringOrderItem[]
+  scheduleItems    ProductionScheduleItem[]
+  unitCostAnalyses UnitCostAnalysis[]
+  donationLogs     DonationLog[]
+  wasteLogs        WasteLog[]
 }
 
 // ==================== خطوط التوزيع ====================
@@ -139,6 +143,9 @@ model Customer {
   notificationsEnabled Boolean @default(true)
   referralCode    String?
   referredBy      String?
+  totalDebt       Float    @default(0)
+  debtStage       String   @default("good") // good, warning, critical, blocked
+  creditLimit     Float    @default(1000)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   orders          Order[]
@@ -210,6 +217,8 @@ model Order {
   rating            Int?
   ratingComment     String?
   signatureImage    String?
+  signedByName      String?
+  signedAt          DateTime?
   deliveredAt       DateTime?
   isAnomaly         Boolean  @default(false)
   anomalyScore      Float?
@@ -416,6 +425,16 @@ model Invoice {
   paidAt          DateTime?
   pdfUrl          String?
   sentAt          DateTime?
+  remindersCount  Int      @default(0)
+  lastReminderAt  DateTime?
+  escalationStage String   @default("none") // none, green, yellow, orange, red, robot, incasso
+  paymentLink     String?
+  isFormal        Boolean  @default(false)
+  formalizedAt    DateTime?
+  snelStartId     String?
+  signatureUrl    String?
+  signedByName    String?
+  signedAt        DateTime?
   notes           String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -577,6 +596,8 @@ model ProductionBatch {
   updatedAt       DateTime @updatedAt
   productionItems ProductionItem[]
   qualityChecks   QualityCheck[]
+  donationLogs    DonationLog[]
+  wasteLogs       WasteLog[]
 }
 
 // عناصر الإنتاج
@@ -660,8 +681,12 @@ model ProductionScheduleItem {
   startTime       DateTime?
   endTime         DateTime?
   status          String   @default("pending")
+  packedQty       Int      @default(0)
+  donationQty     Int      @default(0)
+  wasteQty        Int      @default(0)
   notes           String?
   createdAt       DateTime @default(now())
+  product         Product  @relation(fields: [productId], references: [id])
 }
 
 // ==================== 3. نظام الجودة والسلامة ====================
@@ -823,7 +848,6 @@ model TaxReport {
   updatedAt       DateTime @updatedAt
 }
 
-// التكاليف التشغيلية
 model CostCenter {
   id              String   @id @default(cuid())
   name            String
@@ -833,13 +857,14 @@ model CostCenter {
   variance        Float?
   periodStart     DateTime?
   periodEnd       DateTime?
+  entityId        String?  // ID of Vehicle, Product, or Driver
+  entityType      String?  // Vehicle, Product, Driver, Department
   notes           String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   costs           CostEntry[]
 }
 
-// مدخلات التكاليف
 model CostEntry {
   id              String   @id @default(cuid())
   costCenterId    String
@@ -850,6 +875,32 @@ model CostEntry {
   date            DateTime
   notes           String?
   createdAt       DateTime @default(now())
+}
+
+// تحليل تكلفة الوحدة (ربطة الخبز)
+model UnitCostAnalysis {
+  id              String   @id @default(cuid())
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  period          DateTime
+  
+  // مكونات التكلفة
+  rawMaterialCost Float    // طحين، خميرة، ملح، إلخ
+  laborCost       Float    // أجور العمال
+  overheadCost    Float    // كهرباء، غاز، إيجار، ديزل التوزيع
+  
+  // الانحرافات (Variances)
+  timeVariance    Float    @default(0) // خسارة توقت خط الإنتاج
+  quantityVariance Float   @default(0) // اختلاف الاستهلاك (صيف/شتاء)
+  priceVariance   Float    @default(0) // تقلبات أسعار السوق
+  
+  baseCost        Float    // التكلفة المعيارية
+  totalUnitCost   Float    // التكلفة النهائية الفعلية للربطة
+  margin          Float    // هامش الربح الحالي
+  
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 // التكاملات المحاسبية
@@ -1221,4 +1272,45 @@ model ReferralTransaction {
   points      Int
   description String?
   createdAt   DateTime @default(now())
+}
+
+// ==================== نظام الصلاحيات والمستخدمين ====================
+
+model User {
+  id              String   @id @default(cuid())
+  name            String
+  username        String   @unique
+  password        String
+  role            String   @default("employee") // admin, senior_accountant, junior_accountant, production_head, delivery_head, employee
+  permissions     String?  // JSON array of specific permissions
+  lastLogin       DateTime?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// سجل التبرعات (الخبز المجاني)
+model DonationLog {
+  id              String   @id @default(cuid())
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  quantity        Int
+  recipient       String?  // الجهة المستلمة أو "فقراء المنطقة"
+  batchId         String?
+  productionBatch ProductionBatch? @relation(fields: [batchId], references: [id])
+  notes           String?
+  createdAt       DateTime @default(now())
+}
+
+// سجل الهدر (الخبز التالف)
+model WasteLog {
+  id              String   @id @default(cuid())
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  quantity        Int
+  reason          String?  // حرق، كسر، عطل فني
+  batchId         String?
+  productionBatch ProductionBatch? @relation(fields: [batchId], references: [id])
+  notes           String?
+  createdAt       DateTime @default(now())
 }

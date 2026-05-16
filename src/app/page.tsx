@@ -1,275 +1,98 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
-import { useState, useEffect, useCallback, Suspense, memo, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { LanguageProvider, useLanguage, Language } from '@/lib/i18n';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from '@/components/ui/dropdown-menu';
 import { 
-  Package, Truck, Users, MapPin, Plus, Edit, Trash2, Eye, Phone, Navigation,
-  CheckCircle, Clock, AlertCircle, DollarSign, ShoppingBag, BarChart3,
-  Globe, RefreshCw, Send, Store, Timer,
-  TrendingUp, User, MapPinned, ChevronLeft, ChevronRight, CircleDot, Cookie, Heart, Scale, Box,
-  Car, Fuel, Wrench, Shield, Receipt, Gauge, Calendar, AlertTriangle,
-  ShieldCheck, Wallet, Link2, Warehouse, CreditCard, ShoppingCart, ChefHat,
-  Star, MessageSquare, Bot, Bell, Smartphone, FileText, Menu, ChevronDown, Loader2
+  BarChart3, ShoppingBag, Package, Users, Truck, Wallet, FileText, 
+  RefreshCw, Menu, ChevronDown, MapPin, MapPinned, Cookie, ChefHat, 
+  ShieldCheck, Warehouse, CreditCard, ShoppingCart, Store, Calendar, 
+  Car, TrendingUp, Star, Smartphone, Bot, Bell, Link2, Globe, Shield
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Order, Product, Driver, DeliveryLine, Vehicle } from '@/lib/types';
 
-// Lazy load heavy tab components for better performance
-const QualitySafetyTab = dynamic(() => import('@/components/quality-safety-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const BakeryTab = dynamic(() => import('@/components/bakery-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const VehiclesTab = dynamic(() => import('@/components/vehicles-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const AccountingTab = dynamic(() => import('@/components/accounting-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const PreOrdersTab = dynamic(() => import('@/components/preorders-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const AdvancedCustomerManagementTab = dynamic(() => import('@/components/AdvancedCustomerManagementTab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const WebshopTab = dynamic(() => import('@/components/webshop-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const IntegrationsTab = dynamic(() => import('@/components/integrations-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const InventoryTab = dynamic(() => import('@/components/inventory-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const AdvancedDashboardTab = dynamic(() => import('@/components/advanced-dashboard-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const AdvancedReportsTab = dynamic(() => import('@/components/advanced-reports-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const PaymentSystemTab = dynamic(() => import('@/components/payment-system-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const POSTab = dynamic(() => import('@/components/pos-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const DailyProductionTab = dynamic(() => import('@/components/daily-production-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const CustomerReviewsTab = dynamic(() => import('@/components/customer-reviews-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const CustomerChatbotTab = dynamic(() => import('@/components/customer-chatbot-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const LiveTrackingTab = dynamic(() => import('@/components/live-tracking-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const CustomerAppTab = dynamic(() => import('@/components/customer-app-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const NotificationsTab = dynamic(() => import('@/components/NotificationsTab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-const DemoTab = dynamic(() => import('@/components/demo-tab'), { 
-  loading: () => <TabLoadingSkeleton />,
-  ssr: false 
-});
-
-// Loading skeleton component
-function TabLoadingSkeleton() {
-  return (
-    <div className="flex items-center justify-center py-12">
-      <Loader2 className="h-8 w-8 animate-spin text-[#D4A853]" />
+// Loading fallback
+const TabLoading = () => (
+  <div className="space-y-6 animate-pulse">
+    <div className="flex justify-between items-center">
+      <div className="h-8 w-48 bg-[#F5EDE0] rounded-lg" />
+      <div className="h-10 w-32 bg-[#F5EDE0] rounded-lg" />
     </div>
-  );
-}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <div key={i} className="h-48 bg-[#F5EDE0] rounded-2xl" />
+      ))}
+    </div>
+  </div>
+);
 
-// Types
-interface Product {
-  id: string;
-  nameAr: string;
-  nameEn: string;
-  nameNl: string;
-  description: string | null;
-  price: number;
-  image: string | null;
-  category: string;
-  sku: string | null;
-  weight: number | null;
-  packSize: number;
-  boxSize: number | null;
-  stock: number;
-  isActive: boolean;
-}
+// Dynamic Imports
+const AdvancedDashboardTab = dynamic(() => import('@/components/advanced-dashboard-tab'), { loading: () => <TabLoading /> });
+const OrdersTab = dynamic(() => import('@/components/orders-tab-main'), { loading: () => <TabLoading /> });
+const ProductsTab = dynamic(() => import('@/components/products-tab-main'), { loading: () => <TabLoading /> });
+const DriversTab = dynamic(() => import('@/components/drivers-tab-main'), { loading: () => <TabLoading /> });
+const AdvancedCustomerManagementTab = dynamic(() => import('@/components/AdvancedCustomerManagementTab'), { loading: () => <TabLoading /> });
+const DeliveryLinesTab = dynamic(() => import('@/components/delivery-lines-tab-main'), { loading: () => <TabLoading /> });
+const DriverApp = dynamic(() => import('@/components/driver-app-main'), { loading: () => <TabLoading /> });
+const AIPredictionsTab = dynamic(() => import('@/components/ai-predictions-tab'), { loading: () => <TabLoading /> });
+const QualitySafetyTab = dynamic(() => import('@/components/quality-safety-tab'), { loading: () => <TabLoading /> });
+const AccountingTab = dynamic(() => import('@/components/accounting-tab'), { loading: () => <TabLoading /> });
+const PreOrdersTab = dynamic(() => import('@/components/preorders-tab'), { loading: () => <TabLoading /> });
+const InventoryTab = dynamic(() => import('@/components/inventory-tab'), { loading: () => <TabLoading /> });
+const VehiclesTab = dynamic(() => import('@/components/vehicles-tab'), { loading: () => <TabLoading /> });
+const BakeryTab = dynamic(() => import('@/components/bakery-tab'), { loading: () => <TabLoading /> });
+const WebshopTab = dynamic(() => import('@/components/webshop-tab'), { loading: () => <TabLoading /> });
+const IntegrationsTab = dynamic(() => import('@/components/integrations-tab'), { loading: () => <TabLoading /> });
+const AdvancedReportsTab = dynamic(() => import('@/components/advanced-reports-tab'), { loading: () => <TabLoading /> });
+const PaymentSystemTab = dynamic(() => import('@/components/payment-system-tab'), { loading: () => <TabLoading /> });
+const POSTab = dynamic(() => import('@/components/pos-tab'), { loading: () => <TabLoading /> });
+const DailyProductionTab = dynamic(() => import('@/components/daily-production-tab'), { loading: () => <TabLoading /> });
+const CustomerReviewsTab = dynamic(() => import('@/components/customer-reviews-tab'), { loading: () => <TabLoading /> });
+const CustomerChatbotTab = dynamic(() => import('@/components/customer-chatbot-tab'), { loading: () => <TabLoading /> });
+const LiveTrackingTab = dynamic(() => import('@/components/live-tracking-tab'), { loading: () => <TabLoading /> });
+const CustomerAppTab = dynamic(() => import('@/components/customer-app-tab'), { loading: () => <TabLoading /> });
+const NotificationsTab = dynamic(() => import('@/components/NotificationsTab'), { loading: () => <TabLoading /> });
+const ProductionAutomationTab = dynamic(() => import('@/components/production-automation-tab'), { loading: () => <TabLoading /> });
+const UserManagementTab = dynamic(() => import('@/components/user-management-tab'), { loading: () => <TabLoading /> });
 
-interface Driver {
-  id: string;
-  name: string;
-  phone: string;
-  email: string | null;
-  deliveryLineId: string | null;
-  deliveryLine: { id: string; nameAr: string; nameEn: string; nameNl?: string; region?: string } | null;
-  isActive: boolean;
-  currentLocation: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  orders?: Order[];
-}
 
-interface DeliveryLine {
-  id: string;
-  nameAr: string;
-  nameEn: string;
-  nameNl: string;
-  region: string;
-  isActive: boolean;
-  drivers?: Driver[];
-  _count?: { orders: number };
-}
 
-interface Customer {
-  id: string;
-  name: string;
-  phone: string;
-  email: string | null;
-  address: string;
-  city: string;
-  notes: string | null;
-}
 
-interface OrderItem {
-  id: string;
-  productId: string;
-  product: Product;
-  quantity: number;
-  unitPrice: number;
-  total: number;
-}
-
-interface Order {
-  id: string;
-  orderNumber: string;
-  customerId: string;
-  customer: Customer;
-  driverId: string | null;
-  driver: Driver | null;
-  deliveryLineId: string | null;
-  deliveryLine: DeliveryLine | null;
-  status: string;
-  totalAmount: number;
-  deliveryDate: string | null;
-  deliveryTime: string | null;
-  notes: string | null;
-  orderItems: OrderItem[];
-  createdAt: string;
-}
-
-// Vehicle Types
-interface Vehicle {
-  id: string;
-  plateNumber: string;
-  type: string;
-  brand: string | null;
-  model: string | null;
-  year: number | null;
-  color: string | null;
-  fuelType: string | null;
-  mileage: number;
-  capacity: number | null;
-  isActive: boolean;
-  purchaseDate: string | null;
-  currentValue: number | null;
-  notes: string | null;
-  drivers?: { id: string; name: string }[];
-  _count?: {
-    maintenances: number;
-    fuelRecords: number;
-    insurances: number;
-    expenses: number;
-  };
-}
-
-interface VehicleMaintenance {
-  id: string;
-  vehicleId: string;
-  vehicle: Vehicle;
-  type: string;
-  description: string;
-  garage: string | null;
-  cost: number;
-  mileage: number | null;
-  startDate: string;
-  endDate: string | null;
-  status: string;
-  nextMaintenanceDate: string | null;
-  nextMaintenanceMileage: number | null;
-  notes: string | null;
-}
-
-interface FuelRecord {
-  id: string;
-  vehicleId: string;
-  vehicle: Vehicle;
-  driverId: string | null;
-  date: string;
-  quantity: number;
-  pricePerLiter: number;
-  totalCost: number;
-  mileage: number;
-  station: string | null;
-  receiptUrl: string | null;
-  notes: string | null;
-}
-
-interface VehicleInsurance {
-  id: string;
-  vehicleId: string;
-  vehicle: Vehicle;
-  provider: string;
-  policyNumber: string;
-  type: string;
-  startDate: string;
-  endDate: string;
-  premium: number;
-  coverage: string | null;
-  documentUrl: string | null;
-  status: string;
-  notes: string | null;
-}
 
 interface VehicleExpense {
   id: string;
@@ -283,32 +106,39 @@ interface VehicleExpense {
   notes: string | null;
 }
 
-// Status Badge Component
-function StatusBadge({ status, t }: { status: string; t: (key: string) => string }) {
-  const statusConfig: Record<string, { className: string; label: string }> = {
-    pending: { className: 'status-pending', label: t('orders.pending') },
-    confirmed: { className: 'status-confirmed', label: t('orders.confirmed') },
-    in_delivery: { className: 'status-in_delivery', label: t('orders.inDelivery') },
-    delivered: { className: 'status-delivered', label: t('orders.delivered') },
-    cancelled: { className: 'status-cancelled', label: t('orders.cancelled') },
-  };
-
-  const config = statusConfig[status] || { className: 'bg-gray-500 text-white', label: status };
-
+function GoldDust() {
+  const [isClient, setIsClient] = useState(false);
+  
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+  
+  // Don't render on server to avoid hydration mismatch
+  if (!isClient) return null;
+  
   return (
-    <Badge className={`${config.className} font-medium`}>{config.label}</Badge>
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {[...Array(12)].map((_, i) => (
+        <div 
+          key={i}
+          className="gold-dust-particle"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${100 + Math.random() * 20}%`,
+            animationDelay: `${Math.random() * 4}s`,
+            width: `${Math.random() * 4 + 1}px`,
+            height: `${Math.random() * 4 + 1}px`,
+            opacity: Math.random() * 0.5 + 0.3
+          }}
+        />
+      ))}
+    </div>
   );
 }
 
-// Category Icon Component
-function CategoryIcon({ category }: { category: string }) {
-  const icons: Record<string, React.ReactNode> = {
-    bread: <CircleDot className="h-5 w-5" />,
-    pastry: <Cookie className="h-5 w-5" />,
-    sweets: <Heart className="h-5 w-5" />,
-  };
-  return icons[category] || <Package className="h-5 w-5" />;
-}
+
+
+
 
 // Language Selector Component
 function LanguageSelector() {
@@ -325,1542 +155,17 @@ function LanguageSelector() {
           <SelectItem value="ar" className="hover:bg-[#F5EDE0]">العربية</SelectItem>
           <SelectItem value="en" className="hover:bg-[#F5EDE0]">English</SelectItem>
           <SelectItem value="nl" className="hover:bg-[#F5EDE0]">Nederlands</SelectItem>
-          <SelectItem value="ku" className="hover:bg-[#F5EDE0]">کوردی</SelectItem>
+          <SelectItem value="ku" className="hover:bg-[#F5EDE0]">Kurdish</SelectItem>
+          <SelectItem value="tr" className="hover:bg-[#F5EDE0]">Turkish</SelectItem>
         </SelectContent>
       </Select>
     </div>
   );
 }
 
-// Stats Card Component
-function StatsCard({ title, value, icon: Icon, trend }: { 
-  title: string; 
-  value: string | number; 
-  icon: React.ElementType;
-  trend?: string;
-}) {
-  return (
-    <Card className="card-hover border-0 shadow-lg bg-white overflow-hidden">
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-[#7A6F63]">{title}</p>
-            <p className="text-3xl font-bold text-[#3D3229]">{value}</p>
-            {trend && (
-              <p className="text-xs text-[#2D5A3D] flex items-center gap-1">
-                <TrendingUp className="h-3 w-3" />
-                {trend}
-              </p>
-            )}
-          </div>
-          <div className="p-3 rounded-xl bg-gradient-to-br from-[#D4A853] to-[#B8923F] shadow-md">
-            <Icon className="h-6 w-6 text-white" />
-          </div>
-        </div>
-      </CardContent>
-      <div className="h-1 gold-gradient" />
-    </Card>
-  );
-}
 
-// Orders Tab Component
-function OrdersTab() {
-  const { t, language } = useLanguage();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [deliveryLines, setDeliveryLines] = useState<DeliveryLine[]>([]);
-  const [filterStatus, setFilterStatus] = useState<string>('all');
 
-  const fetchOrders = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/orders');
-      const data = await res.json();
-      setOrders(data);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-    }
-    setLoading(false);
-  }, []);
 
-  const fetchDrivers = useCallback(async () => {
-    try {
-      const res = await fetch('/api/drivers');
-      const data = await res.json();
-      setDrivers(data);
-    } catch (error) {
-      console.error('Error fetching drivers:', error);
-    }
-  }, []);
-
-  const fetchDeliveryLines = useCallback(async () => {
-    try {
-      const res = await fetch('/api/delivery-lines');
-      const data = await res.json();
-      setDeliveryLines(data);
-    } catch (error) {
-      console.error('Error fetching delivery lines:', error);
-    }
-  }, []);
-
-  useEffect(() => {
-    void fetchOrders();
-    void fetchDrivers();
-    void fetchDeliveryLines();
-  }, [fetchOrders, fetchDrivers, fetchDeliveryLines]);
-
-  const updateOrderStatus = async (orderId: string, status: string, driverId?: string) => {
-    try {
-      const updateData: { status: string; driverId?: string } = { status };
-      if (driverId) updateData.driverId = driverId;
-      
-      await fetch(`/api/orders/${orderId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updateData),
-      });
-      fetchOrders();
-    } catch (error) {
-      console.error('Error updating order:', error);
-    }
-  };
-
-  const getProductName = (product: Product) => {
-    if (language === 'ar') return product.nameAr;
-    if (language === 'nl') return product.nameNl;
-    if (language === 'ku') return product.nameAr;
-    return product.nameEn;
-  };
-
-  const filteredOrders = filterStatus === 'all' 
-    ? orders 
-    : orders.filter(o => o.status === filterStatus);
-
-  const statusCounts = {
-    all: orders.length,
-    pending: orders.filter(o => o.status === 'pending').length,
-    confirmed: orders.filter(o => o.status === 'confirmed').length,
-    in_delivery: orders.filter(o => o.status === 'in_delivery').length,
-    delivered: orders.filter(o => o.status === 'delivered').length,
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-[#3D3229]">{t('orders.title')}</h2>
-          <p className="text-sm text-[#7A6F63]">{orders.length} {t('orders.total')}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-[180px] border-[#E8DFD0] bg-white">
-              <SelectValue placeholder={t('actions.filter')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t('orders.title')} ({statusCounts.all})</SelectItem>
-              <SelectItem value="pending">{t('orders.pending')} ({statusCounts.pending})</SelectItem>
-              <SelectItem value="confirmed">{t('orders.confirmed')} ({statusCounts.confirmed})</SelectItem>
-              <SelectItem value="in_delivery">{t('orders.inDelivery')} ({statusCounts.in_delivery})</SelectItem>
-              <SelectItem value="delivered">{t('orders.delivered')} ({statusCounts.delivered})</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button onClick={fetchOrders} variant="outline" className="border-[#D4A853] text-[#D4A853] hover:bg-[#D4A853] hover:text-white">
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="grid gap-4">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} className="border-0">
-              <CardContent className="p-6">
-                <div className="shimmer h-24 rounded-lg" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <ScrollArea className="h-[600px] pr-4">
-          <div className="space-y-4">
-            {filteredOrders.map((order) => (
-              <Card key={order.id} className="card-hover border-0 shadow-md bg-white overflow-hidden">
-                <div className="flex flex-col lg:flex-row">
-                  <div className="flex-1 p-5">
-                    <div className="flex flex-wrap items-start justify-between gap-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-3">
-                          <span className="text-lg font-bold text-[#2D5A3D]">{order.orderNumber}</span>
-                          <StatusBadge status={order.status} t={t} />
-                        </div>
-                        <div className="flex items-center gap-4 text-sm text-[#7A6F63]">
-                          <span className="flex items-center gap-1">
-                            <User className="h-4 w-4" />
-                            {order.customer.name}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Phone className="h-4 w-4" />
-                            {order.customer.phone}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-[#D4A853]">€{order.totalAmount.toFixed(2)}</div>
-                        <div className="text-sm text-[#7A6F63]">{order.deliveryTime || '-'}</div>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {order.orderItems.map((item) => (
-                        <div key={item.id} className="px-3 py-1.5 bg-[#F5EDE0] rounded-full text-sm text-[#5C4033]">
-                          {getProductName(item.product)} × {item.quantity}
-                        </div>
-                      ))}
-                    </div>
-                    
-                    {order.driver && (
-                      <div className="mt-3 flex items-center gap-2 text-sm text-[#2D5A3D]">
-                        <Truck className="h-4 w-4" />
-                        <span>{order.driver.name}</span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="lg:w-auto border-t lg:border-t-0 lg:border-l border-[#E8DFD0] bg-[#FFFEF7] p-4 flex lg:flex-col items-center justify-center gap-2">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="ghost" size="sm" className="text-[#2D5A3D] hover:bg-[#2D5A3D] hover:text-white">
-                          <Eye className="h-4 w-4 mr-1" />
-                          {t('actions.view')}
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-lg bg-white border-[#E8DFD0]">
-                        <DialogHeader>
-                          <DialogTitle className="text-[#3D3229]">{t('orders.orderNumber')}: {order.orderNumber}</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-5">
-                          <div>
-                            <Label className="text-[#7A6F63]">{t('orders.status')}</Label>
-                            <Select 
-                              value={order.status} 
-                              onValueChange={(value) => updateOrderStatus(order.id, value)}
-                            >
-                              <SelectTrigger className="mt-1.5 border-[#E8DFD0]">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="pending">{t('orders.pending')}</SelectItem>
-                                <SelectItem value="confirmed">{t('orders.confirmed')}</SelectItem>
-                                <SelectItem value="in_delivery">{t('orders.inDelivery')}</SelectItem>
-                                <SelectItem value="delivered">{t('orders.delivered')}</SelectItem>
-                                <SelectItem value="cancelled">{t('orders.cancelled')}</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label className="text-[#7A6F63]">{t('orders.driver')}</Label>
-                            <Select 
-                              value={order.driverId || ''} 
-                              onValueChange={(value) => updateOrderStatus(order.id, order.status, value)}
-                            >
-                              <SelectTrigger className="mt-1.5 border-[#E8DFD0]">
-                                <SelectValue placeholder={t('orders.driver')} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {drivers.map((driver) => (
-                                  <SelectItem key={driver.id} value={driver.id}>
-                                    {driver.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="p-4 bg-[#F5EDE0] rounded-xl">
-                            <div className="font-medium text-[#3D3229]">{order.customer.name}</div>
-                            <div className="text-sm text-[#7A6F63] mt-1">{order.customer.phone}</div>
-                            <div className="text-sm text-[#7A6F63]">{order.customer.address}, {order.customer.city}</div>
-                          </div>
-                          <div>
-                            <Label className="text-[#7A6F63]">{t('orders.items')}</Label>
-                            <div className="mt-2 space-y-2">
-                              {order.orderItems.map((item) => (
-                                <div key={item.id} className="flex justify-between items-center p-3 bg-[#FFFEF7] rounded-lg border border-[#E8DFD0]">
-                                  <span className="text-[#3D3229]">{getProductName(item.product)} × {item.quantity}</span>
-                                  <span className="font-medium text-[#D4A853]">€{item.total.toFixed(2)}</span>
-                                </div>
-                              ))}
-                              <Separator className="my-2" />
-                              <div className="flex justify-between font-bold text-[#3D3229]">
-                                <span>{t('orders.total')}</span>
-                                <span className="text-[#D4A853]">€{order.totalAmount.toFixed(2)}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                </div>
-              </Card>
-            ))}
-            {filteredOrders.length === 0 && (
-              <div className="text-center py-12 text-[#7A6F63]">
-                <ShoppingBag className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>{t('messages.noData')}</p>
-              </div>
-            )}
-          </div>
-        </ScrollArea>
-      )}
-    </div>
-  );
-}
-
-// Products Tab Component
-function ProductsTab() {
-  const { t, language } = useLanguage();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [formData, setFormData] = useState({
-    nameAr: '', nameEn: '', nameNl: '', description: '', price: '', category: 'bread', stock: '',
-    sku: '', weight: '', packSize: '5', boxSize: ''
-  });
-
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/products');
-      const data = await res.json();
-      setProducts(data);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    }
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    void fetchProducts();
-  }, [fetchProducts]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      if (editingProduct) {
-        await fetch(`/api/products/${editingProduct.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-        });
-      } else {
-        await fetch('/api/products', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-        });
-      }
-      setIsDialogOpen(false);
-      setEditingProduct(null);
-      setFormData({ nameAr: '', nameEn: '', nameNl: '', description: '', price: '', category: 'bread', stock: '', sku: '', weight: '', packSize: '5', boxSize: '' });
-      fetchProducts();
-    } catch (error) {
-      console.error('Error saving product:', error);
-    }
-  };
-
-  const handleEdit = (product: Product) => {
-    setEditingProduct(product);
-    setFormData({
-      nameAr: product.nameAr,
-      nameEn: product.nameEn,
-      nameNl: product.nameNl,
-      description: product.description || '',
-      price: product.price.toString(),
-      category: product.category,
-      stock: product.stock.toString(),
-      sku: product.sku || '',
-      weight: product.weight?.toString() || '',
-      packSize: product.packSize.toString(),
-      boxSize: product.boxSize?.toString() || '',
-    });
-    setIsDialogOpen(true);
-  };
-
-  const handleDelete = async (productId: string) => {
-    if (confirm(t('messages.confirmDelete'))) {
-      try {
-        await fetch(`/api/products/${productId}`, { method: 'DELETE' });
-        fetchProducts();
-      } catch (error) {
-        console.error('Error deleting product:', error);
-      }
-    }
-  };
-
-  const getProductName = (product: Product) => {
-    if (language === 'ar') return product.nameAr;
-    if (language === 'nl') return product.nameNl;
-    if (language === 'ku') return product.nameAr;
-    return product.nameEn;
-  };
-
-  const getCategoryLabel = (category: string) => {
-    const categories: Record<string, string> = {
-      bread: t('products.bread'),
-      pastry: t('products.pastry'),
-      sweets: t('products.sweets'),
-    };
-    return categories[category] || category;
-  };
-
-  const filteredProducts = selectedCategory === 'all' 
-    ? products 
-    : products.filter(p => p.category === selectedCategory);
-
-  const categoryColors: Record<string, string> = {
-    bread: 'from-amber-500 to-amber-600',
-    pastry: 'from-orange-500 to-orange-600',
-    sweets: 'from-rose-500 to-rose-600',
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-[#3D3229]">{t('products.title')}</h2>
-          <p className="text-sm text-[#7A6F63]">{products.length} {t('products.stock')}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-[150px] border-[#E8DFD0] bg-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t('products.category')}</SelectItem>
-              <SelectItem value="bread">{t('products.bread')}</SelectItem>
-              <SelectItem value="pastry">{t('products.pastry')}</SelectItem>
-              <SelectItem value="sweets">{t('products.sweets')}</SelectItem>
-            </SelectContent>
-          </Select>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="green-gradient text-white border-0" onClick={() => { setEditingProduct(null); setFormData({ nameAr: '', nameEn: '', nameNl: '', description: '', price: '', category: 'bread', stock: '', sku: '', weight: '', packSize: '5', boxSize: '' }); }}>
-                <Plus className="h-4 w-4 mr-2" />
-                {t('products.add')}
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md bg-white border-[#E8DFD0]">
-              <DialogHeader>
-                <DialogTitle className="text-[#3D3229]">{editingProduct ? t('products.edit') : t('products.add')}</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label className="text-[#7A6F63]">{t('products.nameAr')}</Label>
-                  <Input value={formData.nameAr} onChange={(e) => setFormData({...formData, nameAr: e.target.value})} className="mt-1.5 border-[#E8DFD0]" required />
-                </div>
-                <div>
-                  <Label className="text-[#7A6F63]">{t('products.nameEn')}</Label>
-                  <Input value={formData.nameEn} onChange={(e) => setFormData({...formData, nameEn: e.target.value})} className="mt-1.5 border-[#E8DFD0]" required />
-                </div>
-                <div>
-                  <Label className="text-[#7A6F63]">{t('products.nameNl')}</Label>
-                  <Input value={formData.nameNl} onChange={(e) => setFormData({...formData, nameNl: e.target.value})} className="mt-1.5 border-[#E8DFD0]" required />
-                </div>
-                <div>
-                  <Label className="text-[#7A6F63]">{t('products.description')}</Label>
-                  <Textarea value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="mt-1.5 border-[#E8DFD0]" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-[#7A6F63]">{t('orders.price')} (€)</Label>
-                    <Input type="number" step="0.01" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} className="mt-1.5 border-[#E8DFD0]" required />
-                  </div>
-                  <div>
-                    <Label className="text-[#7A6F63]">{t('products.stock')}</Label>
-                    <Input type="number" value={formData.stock} onChange={(e) => setFormData({...formData, stock: e.target.value})} className="mt-1.5 border-[#E8DFD0]" />
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-[#7A6F63]">{t('products.category')}</Label>
-                  <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
-                    <SelectTrigger className="mt-1.5 border-[#E8DFD0]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="bread">{t('products.bread')}</SelectItem>
-                      <SelectItem value="pastry">{t('products.pastry')}</SelectItem>
-                      <SelectItem value="sweets">{t('products.sweets')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-[#7A6F63]">SKU</Label>
-                    <Input value={formData.sku} onChange={(e) => setFormData({...formData, sku: e.target.value})} className="mt-1.5 border-[#E8DFD0]" placeholder="B001" />
-                  </div>
-                  <div>
-                    <Label className="text-[#7A6F63]">{language === 'ar' ? 'الوزن (غرام)' : 'Weight (g)'}</Label>
-                    <Input type="number" value={formData.weight} onChange={(e) => setFormData({...formData, weight: e.target.value})} className="mt-1.5 border-[#E8DFD0]" placeholder="320" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-[#7A6F63]">{language === 'ar' ? 'الأرغفة/الربطة' : 'Loaves/Pack'}</Label>
-                    <Input type="number" value={formData.packSize} onChange={(e) => setFormData({...formData, packSize: e.target.value})} className="mt-1.5 border-[#E8DFD0]" />
-                  </div>
-                  <div>
-                    <Label className="text-[#7A6F63]">{language === 'ar' ? 'الربطات/الصندوق' : 'Packs/Box'}</Label>
-                    <Input type="number" value={formData.boxSize} onChange={(e) => setFormData({...formData, boxSize: e.target.value})} className="mt-1.5 border-[#E8DFD0]" placeholder="15" />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button type="submit" className="gold-gradient text-white border-0">{t('actions.save')}</Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Card key={i} className="border-0">
-              <CardContent className="p-4">
-                <div className="shimmer h-40 rounded-lg" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {filteredProducts.map((product) => (
-            <Card key={product.id} className={`card-hover border-0 shadow-md overflow-hidden ${!product.isActive ? 'opacity-60' : ''}`}>
-              <div className={`h-2 bg-gradient-to-r ${categoryColors[product.category]}`} />
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg bg-gradient-to-r ${categoryColors[product.category]} text-white`}>
-                      <CategoryIcon category={product.category} />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg text-[#3D3229]">{getProductName(product)}</CardTitle>
-                      <CardDescription className="text-[#7A6F63]">{getCategoryLabel(product.category)}</CardDescription>
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {/* Product Specifications */}
-                <div className="grid grid-cols-3 gap-2 mb-3">
-                  {product.weight && (
-                    <div className="flex flex-col items-center p-2 bg-[#F5EDE0] rounded-lg">
-                      <Scale className="h-4 w-4 text-[#D4A853] mb-1" />
-                      <span className="text-xs text-[#7A6F63]">{language === 'ar' ? 'الوزن' : 'Weight'}</span>
-                      <span className="text-sm font-bold text-[#3D3229]">{product.weight}g</span>
-                    </div>
-                  )}
-                  <div className="flex flex-col items-center p-2 bg-[#F5EDE0] rounded-lg">
-                    <Package className="h-4 w-4 text-[#D4A853] mb-1" />
-                    <span className="text-xs text-[#7A6F63]">{language === 'ar' ? 'الربطة' : 'Pack'}</span>
-                    <span className="text-sm font-bold text-[#3D3229]">{product.packSize} {language === 'ar' ? 'رغيف' : 'pcs'}</span>
-                  </div>
-                  {product.boxSize && (
-                    <div className="flex flex-col items-center p-2 bg-[#F5EDE0] rounded-lg">
-                      <Box className="h-4 w-4 text-[#D4A853] mb-1" />
-                      <span className="text-xs text-[#7A6F63]">{language === 'ar' ? 'الصندوق' : 'Box'}</span>
-                      <span className="text-sm font-bold text-[#3D3229]">{product.boxSize} {language === 'ar' ? 'ربطة' : 'packs'}</span>
-                    </div>
-                  )}
-                </div>
-                
-                {product.sku && (
-                  <div className="text-xs text-[#7A6F63] mb-2">
-                    SKU: <span className="font-mono font-medium">{product.sku}</span>
-                  </div>
-                )}
-                
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-2xl font-bold text-[#D4A853]">€{product.price.toFixed(2)}</span>
-                  <Badge variant={product.stock < 20 ? 'destructive' : 'secondary'} className={product.stock < 20 ? '' : 'bg-[#2D5A3D] text-white'}>
-                    {product.stock} {t('products.stock')}
-                  </Badge>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1 border-[#E8DFD0] text-[#7A6F63] hover:bg-[#F5EDE0]" onClick={() => handleEdit(product)}>
-                    <Edit className="h-4 w-4 mr-1" />
-                    {t('actions.edit')}
-                  </Button>
-                  <Button variant="outline" size="sm" className="border-red-200 text-red-500 hover:bg-red-50" onClick={() => handleDelete(product.id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-          {filteredProducts.length === 0 && (
-            <div className="col-span-full text-center py-12 text-[#7A6F63]">
-              <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>{t('messages.noData')}</p>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Drivers Tab Component
-function DriversTab() {
-  const { t, language } = useLanguage();
-  const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [deliveryLines, setDeliveryLines] = useState<DeliveryLine[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: '', phone: '', email: '', deliveryLineId: '' });
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [driversRes, linesRes] = await Promise.all([
-        fetch('/api/drivers'),
-        fetch('/api/delivery-lines'),
-      ]);
-      const driversData = await driversRes.json();
-      const linesData = await linesRes.json();
-      setDrivers(driversData);
-      setDeliveryLines(linesData);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    void fetchData();
-  }, [fetchData]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await fetch('/api/drivers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      setIsDialogOpen(false);
-      setFormData({ name: '', phone: '', email: '', deliveryLineId: '' });
-      fetchData();
-    } catch (error) {
-      console.error('Error saving driver:', error);
-    }
-  };
-
-  const getLineName = (line: DeliveryLine | { id: string; nameAr: string; nameEn: string; nameNl?: string; region?: string } | null) => {
-    if (!line) return '-';
-    if (language === 'ar') return line.nameAr;
-    if (language === 'nl') return line.nameNl || line.nameEn;
-    if (language === 'ku') return line.nameAr;
-    return line.nameEn;
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-[#3D3229]">{t('drivers.title')}</h2>
-          <p className="text-sm text-[#7A6F63]">{drivers.length} {t('drivers.title')}</p>
-        </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="green-gradient text-white border-0" onClick={() => setFormData({ name: '', phone: '', email: '', deliveryLineId: '' })}>
-              <Plus className="h-4 w-4 mr-2" />
-              {t('drivers.add')}
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="bg-white border-[#E8DFD0]">
-            <DialogHeader>
-              <DialogTitle className="text-[#3D3229]">{t('drivers.add')}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label className="text-[#7A6F63]">{t('drivers.name')}</Label>
-                <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="mt-1.5 border-[#E8DFD0]" required />
-              </div>
-              <div>
-                <Label className="text-[#7A6F63]">{t('drivers.phone')}</Label>
-                <Input value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="mt-1.5 border-[#E8DFD0]" required />
-              </div>
-              <div>
-                <Label className="text-[#7A6F63]">{t('drivers.email')}</Label>
-                <Input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="mt-1.5 border-[#E8DFD0]" />
-              </div>
-              <div>
-                <Label className="text-[#7A6F63]">{t('drivers.line')}</Label>
-                <Select value={formData.deliveryLineId} onValueChange={(value) => setFormData({...formData, deliveryLineId: value})}>
-                  <SelectTrigger className="mt-1.5 border-[#E8DFD0]">
-                    <SelectValue placeholder={t('drivers.line')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {deliveryLines.map((line) => (
-                      <SelectItem key={line.id} value={line.id}>
-                        {getLineName(line)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <DialogFooter>
-                <Button type="submit" className="gold-gradient text-white border-0">{t('actions.save')}</Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} className="border-0">
-              <CardContent className="p-4">
-                <div className="shimmer h-32 rounded-lg" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {drivers.map((driver) => (
-            <Card key={driver.id} className={`card-hover border-0 shadow-md overflow-hidden ${!driver.isActive ? 'opacity-60' : ''}`}>
-              <div className="h-2 green-gradient" />
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full green-gradient flex items-center justify-center text-white font-bold text-lg">
-                    {driver.name.charAt(0)}
-                  </div>
-                  <div>
-                    <CardTitle className="text-[#3D3229]">{driver.name}</CardTitle>
-                    <Badge variant={driver.isActive ? 'default' : 'secondary'} className={driver.isActive ? 'bg-[#2D5A3D]' : ''}>
-                      {driver.isActive ? t('products.active') : 'غير نشط'}
-                    </Badge>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2 text-[#7A6F63]">
-                    <Phone className="h-4 w-4 text-[#D4A853]" />
-                    <span dir="ltr">{driver.phone}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-[#7A6F63]">
-                    <MapPin className="h-4 w-4 text-[#D4A853]" />
-                    <span>{getLineName(driver.deliveryLine)}</span>
-                  </div>
-                  {driver.orders && driver.orders.length > 0 && (
-                    <div className="mt-3 pt-3 border-t border-[#E8DFD0]">
-                      <span className="text-[#7A6F63]">{t('drivers.activeOrders')}: </span>
-                      <Badge className="bg-[#D4A853]">{driver.orders.length}</Badge>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Delivery Lines Tab Component
-function DeliveryLinesTab() {
-  const { t, language } = useLanguage();
-  const [deliveryLines, setDeliveryLines] = useState<DeliveryLine[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formData, setFormData] = useState({ nameAr: '', nameEn: '', nameNl: '', region: '' });
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/delivery-lines');
-      const data = await res.json();
-      setDeliveryLines(data);
-    } catch (error) {
-      console.error('Error fetching delivery lines:', error);
-    }
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    void fetchData();
-  }, [fetchData]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await fetch('/api/delivery-lines', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      setIsDialogOpen(false);
-      setFormData({ nameAr: '', nameEn: '', nameNl: '', region: '' });
-      fetchData();
-    } catch (error) {
-      console.error('Error saving delivery line:', error);
-    }
-  };
-
-  const getLineName = (line: DeliveryLine) => {
-    if (language === 'ar') return line.nameAr;
-    if (language === 'nl') return line.nameNl;
-    if (language === 'ku') return line.nameAr;
-    return line.nameEn;
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-[#3D3229]">{t('lines.title')}</h2>
-          <p className="text-sm text-[#7A6F63]">{deliveryLines.length} {t('lines.title')}</p>
-        </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="green-gradient text-white border-0">
-              <Plus className="h-4 w-4 mr-2" />
-              {t('lines.add')}
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="bg-white border-[#E8DFD0]">
-            <DialogHeader>
-              <DialogTitle className="text-[#3D3229]">{t('lines.add')}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label className="text-[#7A6F63]">{t('products.nameAr')}</Label>
-                <Input value={formData.nameAr} onChange={(e) => setFormData({...formData, nameAr: e.target.value})} className="mt-1.5 border-[#E8DFD0]" required />
-              </div>
-              <div>
-                <Label className="text-[#7A6F63]">{t('products.nameEn')}</Label>
-                <Input value={formData.nameEn} onChange={(e) => setFormData({...formData, nameEn: e.target.value})} className="mt-1.5 border-[#E8DFD0]" required />
-              </div>
-              <div>
-                <Label className="text-[#7A6F63]">{t('products.nameNl')}</Label>
-                <Input value={formData.nameNl} onChange={(e) => setFormData({...formData, nameNl: e.target.value})} className="mt-1.5 border-[#E8DFD0]" required />
-              </div>
-              <div>
-                <Label className="text-[#7A6F63]">{t('lines.region')}</Label>
-                <Input value={formData.region} onChange={(e) => setFormData({...formData, region: e.target.value})} className="mt-1.5 border-[#E8DFD0]" required />
-              </div>
-              <DialogFooter>
-                <Button type="submit" className="gold-gradient text-white border-0">{t('actions.save')}</Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} className="border-0">
-              <CardContent className="p-4">
-                <div className="shimmer h-28 rounded-lg" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {deliveryLines.map((line) => (
-            <Card key={line.id} className="card-hover border-0 shadow-md overflow-hidden">
-              <div className="h-2 bg-gradient-to-r from-[#2D5A3D] to-[#4A7A5C]" />
-              <CardHeader className="pb-2">
-                <CardTitle className="text-[#3D3229]">{getLineName(line)}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center gap-3 p-2 bg-[#F5EDE0] rounded-lg">
-                    <MapPin className="h-4 w-4 text-[#2D5A3D]" />
-                    <span className="text-[#5C4033]">{t('lines.region')}: {line.region}</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-2 bg-[#F5EDE0] rounded-lg">
-                    <Users className="h-4 w-4 text-[#2D5A3D]" />
-                    <span className="text-[#5C4033]">{t('drivers.title')}: {line.drivers?.length || 0}</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-2 bg-[#F5EDE0] rounded-lg">
-                    <ShoppingBag className="h-4 w-4 text-[#2D5A3D]" />
-                    <span className="text-[#5C4033]">{t('orders.title')}: {line._count?.orders || 0}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Driver App Component
-function DriverApp() {
-  const { t, language } = useLanguage();
-  const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [selectedDriver, setSelectedDriver] = useState<string>('');
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchDrivers = useCallback(async () => {
-    try {
-      const res = await fetch('/api/drivers?activeOnly=true');
-      const data = await res.json();
-      setDrivers(data);
-    } catch (error) {
-      console.error('Error fetching drivers:', error);
-    }
-  }, []);
-
-  const fetchOrders = useCallback(async () => {
-    if (!selectedDriver) return;
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/orders?driverId=${selectedDriver}`);
-      const data = await res.json();
-      setOrders(data);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-    }
-    setLoading(false);
-  }, [selectedDriver]);
-
-  useEffect(() => {
-    void fetchDrivers();
-  }, [fetchDrivers]);
-
-  useEffect(() => {
-    void fetchOrders();
-  }, [fetchOrders]);
-
-  const updateOrderStatus = async (orderId: string, status: string) => {
-    try {
-      await fetch(`/api/orders/${orderId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status }),
-      });
-      fetchOrders();
-    } catch (error) {
-      console.error('Error updating order:', error);
-    }
-  };
-
-  const updateLocation = async () => {
-    if (!selectedDriver) return;
-    const latitude = 52.0 + Math.random() * 0.5;
-    const longitude = 4.0 + Math.random() * 1.5;
-    try {
-      await fetch(`/api/drivers/${selectedDriver}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          latitude, 
-          longitude,
-          currentLocation: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
-        }),
-      });
-      alert(t('messages.success'));
-    } catch (error) {
-      console.error('Error updating location:', error);
-    }
-  };
-
-  const getProductName = (product: Product) => {
-    if (language === 'ar') return product.nameAr;
-    if (language === 'nl') return product.nameNl;
-    if (language === 'ku') return product.nameAr;
-    return product.nameEn;
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-[#3D3229]">{t('driver.myOrders')}</h2>
-          <p className="text-sm text-[#7A6F63]">{orders.length} {t('orders.title')}</p>
-        </div>
-        <div className="flex gap-3">
-          <Select value={selectedDriver} onValueChange={setSelectedDriver}>
-            <SelectTrigger className="w-[200px] border-[#E8DFD0] bg-white">
-              <SelectValue placeholder={t('orders.driver')} />
-            </SelectTrigger>
-            <SelectContent>
-              {drivers.map((driver) => (
-                <SelectItem key={driver.id} value={driver.id}>
-                  {driver.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button variant="outline" onClick={updateLocation} className="border-[#2D5A3D] text-[#2D5A3D] hover:bg-[#2D5A3D] hover:text-white">
-            <Navigation className="h-4 w-4 mr-2" />
-            {t('driver.updateLocation')}
-          </Button>
-        </div>
-      </div>
-
-      {!selectedDriver ? (
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-12 text-center">
-            <Truck className="h-16 w-16 mx-auto mb-4 text-[#D4A853] opacity-50" />
-            <p className="text-[#7A6F63]">{t('messages.noData')}</p>
-          </CardContent>
-        </Card>
-      ) : loading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} className="border-0">
-              <CardContent className="p-4">
-                <div className="shimmer h-48 rounded-lg" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {orders.length === 0 ? (
-            <Card className="border-0 shadow-md">
-              <CardContent className="p-12 text-center">
-                <ShoppingBag className="h-16 w-16 mx-auto mb-4 text-[#D4A853] opacity-50" />
-                <p className="text-[#7A6F63]">{t('messages.noData')}</p>
-              </CardContent>
-            </Card>
-          ) : (
-            orders.map((order) => (
-              <Card key={order.id} className="card-hover border-0 shadow-md overflow-hidden">
-                <div className="h-1.5 status-in_delivery" />
-                <CardHeader className="pb-2">
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-[#2D5A3D] text-white">
-                        <ShoppingBag className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-[#3D3229]">{order.orderNumber}</span>
-                          <StatusBadge status={order.status} t={t} />
-                        </div>
-                        <span className="text-sm text-[#7A6F63]">{order.deliveryTime}</span>
-                      </div>
-                    </div>
-                    <div className="text-2xl font-bold text-[#D4A853]">€{order.totalAmount.toFixed(2)}</div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-[#3D3229] flex items-center gap-2">
-                        <User className="h-4 w-4 text-[#D4A853]" />
-                        {t('driver.customerInfo')}
-                      </h4>
-                      <div className="p-4 bg-[#F5EDE0] rounded-xl space-y-2">
-                        <div className="font-medium text-[#3D3229]">{order.customer.name}</div>
-                        <div className="flex items-center gap-2 text-sm text-[#7A6F63]">
-                          <Phone className="h-4 w-4" />
-                          <a href={`tel:${order.customer.phone}`} className="text-[#2D5A3D] hover:underline">
-                            {order.customer.phone}
-                          </a>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-[#7A6F63]">
-                          <MapPin className="h-4 w-4" />
-                          <span>{order.customer.address}, {order.customer.city}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-[#3D3229] flex items-center gap-2">
-                        <Package className="h-4 w-4 text-[#D4A853]" />
-                        {t('orders.items')}
-                      </h4>
-                      <div className="p-4 bg-[#FFFEF7] rounded-xl border border-[#E8DFD0] space-y-2">
-                        {order.orderItems.map((item) => (
-                          <div key={item.id} className="flex justify-between text-sm">
-                            <span className="text-[#3D3229]">{getProductName(item.product)} × {item.quantity}</span>
-                            <span className="text-[#D4A853] font-medium">€{item.total.toFixed(2)}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {order.notes && (
-                    <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
-                      <strong>{t('orders.notes')}:</strong> {order.notes}
-                    </div>
-                  )}
-
-                  <div className="mt-5 flex flex-wrap gap-3">
-                    {order.status === 'pending' && (
-                      <Button onClick={() => updateOrderStatus(order.id, 'confirmed')} className="flex-1 green-gradient text-white border-0">
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        {t('actions.confirm')}
-                      </Button>
-                    )}
-                    {order.status === 'confirmed' && (
-                      <Button onClick={() => updateOrderStatus(order.id, 'in_delivery')} className="flex-1 gold-gradient text-white border-0">
-                        <Truck className="h-4 w-4 mr-2" />
-                        {t('driver.startDelivery')}
-                      </Button>
-                    )}
-                    {order.status === 'in_delivery' && (
-                      <Button onClick={() => updateOrderStatus(order.id, 'delivered')} className="flex-1 bg-[#2D5A3D] hover:bg-[#1E4A2D] text-white">
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        {t('driver.completeDelivery')}
-                      </Button>
-                    )}
-                    {order.status === 'delivered' && (
-                      <Badge className="bg-[#2D5A3D] text-white px-4 py-2 text-base">{t('orders.delivered')}</Badge>
-                    )}
-                    <Button variant="outline" asChild className="border-[#D4A853] text-[#D4A853]">
-                      <a href={`tel:${order.customer.phone}`}>
-                        <Phone className="h-4 w-4 mr-2" />
-                        {t('driver.callCustomer')}
-                      </a>
-                    </Button>
-                    <Button variant="outline" asChild className="border-[#2D5A3D] text-[#2D5A3D]">
-                      <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(order.customer.address + ', ' + order.customer.city)}`} target="_blank" rel="noopener noreferrer">
-                        <Navigation className="h-4 w-4 mr-2" />
-                        {t('driver.navigate')}
-                      </a>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// AI & Predictions Tab Component
-function AIPredictionsTab() {
-  const { t, language } = useLanguage();
-  const [activeSection, setActiveSection] = useState<'predictions' | 'recommendations' | 'anomalies'>('predictions');
-  const [predictions, setPredictions] = useState<any[]>([]);
-  const [recommendations, setRecommendations] = useState<any[]>([]);
-  const [anomalies, setAnomalies] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [summary, setSummary] = useState({
-    predictions: { totalProducts: 0, averageConfidence: 0, highDemandProducts: 0 },
-    recommendations: { total: 0, byType: { frequently_bought: 0, seasonal: 0, trending: 0, customer_based: 0 } },
-    anomalies: { total: 0, bySeverity: { critical: 0, high: 0, medium: 0, low: 0 } }
-  });
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [predRes, recRes, anomRes] = await Promise.all([
-        fetch('/api/ai/predictions'),
-        fetch('/api/ai/recommendations'),
-        fetch('/api/ai/anomalies')
-      ]);
-      
-      const predData = await predRes.json();
-      const recData = await recRes.json();
-      const anomData = await anomRes.json();
-      
-      setPredictions(predData.predictions || []);
-      setRecommendations(recData.recommendations || []);
-      setAnomalies(anomData.anomalies || []);
-      setSummary({
-        predictions: predData.summary || { totalProducts: 0, averageConfidence: 0, highDemandProducts: 0 },
-        recommendations: recData.summary || { total: 0, byType: { frequently_bought: 0, seasonal: 0, trending: 0, customer_based: 0 } },
-        anomalies: anomData.summary || { total: 0, bySeverity: { critical: 0, high: 0, medium: 0, low: 0 } }
-      });
-    } catch (error) {
-      console.error('Error fetching AI data:', error);
-    }
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    void fetchData();
-  }, [fetchData]);
-
-  const getTrendIcon = (trend: string) => {
-    if (trend === 'up') return <TrendingUp className="h-4 w-4 text-[#2D5A3D]" />;
-    if (trend === 'down') return <TrendingUp className="h-4 w-4 text-red-500 rotate-180" />;
-    return <div className="h-4 w-4 rounded-full bg-[#D4A853]" />;
-  };
-
-  const getSeverityColor = (severity: string) => {
-    const colors: Record<string, string> = {
-      critical: 'bg-red-500 text-white',
-      high: 'bg-orange-500 text-white',
-      medium: 'bg-yellow-500 text-white',
-      low: 'bg-blue-500 text-white'
-    };
-    return colors[severity] || 'bg-gray-500 text-white';
-  };
-
-  const getTypeLabel = (type: string) => {
-    const labels: Record<string, string> = {
-      frequently_bought: t('ai.frequentlyBought'),
-      seasonal: t('ai.seasonal'),
-      trending: t('ai.trending'),
-      customer_based: t('ai.customerBased')
-    };
-    return labels[type] || type;
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-[#3D3229]">{t('ai.title')}</h2>
-          <p className="text-sm text-[#7A6F63]">{language === 'ar' ? 'تحليلات ذكية للمخبز' : 'Smart analytics for the bakery'}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="flex bg-[#F5EDE0] rounded-lg p-1">
-            {(['predictions', 'recommendations', 'anomalies'] as const).map((section) => (
-              <Button
-                key={section}
-                variant="ghost"
-                size="sm"
-                onClick={() => setActiveSection(section)}
-                className={`${activeSection === section ? 'bg-white shadow-sm text-[#2D5A3D]' : 'text-[#7A6F63]'} rounded-md`}
-              >
-                {section === 'predictions' && t('ai.demandForecast')}
-                {section === 'recommendations' && t('ai.recommendations')}
-                {section === 'anomalies' && t('ai.anomalyDetection')}
-              </Button>
-            ))}
-          </div>
-          <Button onClick={fetchData} variant="outline" className="border-[#D4A853] text-[#D4A853] hover:bg-[#D4A853] hover:text-white">
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Summary Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {activeSection === 'predictions' && (
-          <>
-            <Card className="border-0 shadow-md overflow-hidden">
-              <div className="h-1 gold-gradient" />
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-[#7A6F63]">{language === 'ar' ? 'المنتجات المتوقعة' : 'Products Predicted'}</p>
-                    <p className="text-2xl font-bold text-[#3D3229]">{summary.predictions.totalProducts}</p>
-                  </div>
-                  <div className="p-2 rounded-lg bg-[#D4A853]/10">
-                    <Package className="h-6 w-6 text-[#D4A853]" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-md overflow-hidden">
-              <div className="h-1 green-gradient" />
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-[#7A6F63]">{t('ai.confidence')}</p>
-                    <p className="text-2xl font-bold text-[#3D3229]">{(summary.predictions.averageConfidence * 100).toFixed(1)}%</p>
-                  </div>
-                  <div className="p-2 rounded-lg bg-[#2D5A3D]/10">
-                    <TrendingUp className="h-6 w-6 text-[#2D5A3D]" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-md overflow-hidden">
-              <div className="h-1 bg-gradient-to-r from-amber-400 to-orange-500" />
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-[#7A6F63]">{language === 'ar' ? 'طلب مرتفع' : 'High Demand'}</p>
-                    <p className="text-2xl font-bold text-[#3D3229]">{summary.predictions.highDemandProducts}</p>
-                  </div>
-                  <div className="p-2 rounded-lg bg-amber-500/10">
-                    <TrendingUp className="h-6 w-6 text-amber-500" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </>
-        )}
-        {activeSection === 'recommendations' && (
-          <>
-            <Card className="border-0 shadow-md overflow-hidden">
-              <div className="h-1 gold-gradient" />
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-[#7A6F63]">{language === 'ar' ? 'إجمالي التوصيات' : 'Total Recommendations'}</p>
-                    <p className="text-2xl font-bold text-[#3D3229]">{summary.recommendations.total}</p>
-                  </div>
-                  <div className="p-2 rounded-lg bg-[#D4A853]/10">
-                    <Heart className="h-6 w-6 text-[#D4A853]" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-md overflow-hidden">
-              <div className="h-1 green-gradient" />
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-[#7A6F63]">{t('ai.trending')}</p>
-                    <p className="text-2xl font-bold text-[#3D3229]">{summary.recommendations.byType.trending}</p>
-                  </div>
-                  <div className="p-2 rounded-lg bg-[#2D5A3D]/10">
-                    <TrendingUp className="h-6 w-6 text-[#2D5A3D]" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-md overflow-hidden">
-              <div className="h-1 bg-gradient-to-r from-amber-400 to-orange-500" />
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-[#7A6F63]">{t('ai.frequentlyBought')}</p>
-                    <p className="text-2xl font-bold text-[#3D3229]">{summary.recommendations.byType.frequently_bought}</p>
-                  </div>
-                  <div className="p-2 rounded-lg bg-amber-500/10">
-                    <ShoppingBag className="h-6 w-6 text-amber-500" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </>
-        )}
-        {activeSection === 'anomalies' && (
-          <>
-            <Card className="border-0 shadow-md overflow-hidden">
-              <div className="h-1 bg-red-500" />
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-[#7A6F63]">{language === 'ar' ? 'إجمالي الشذوذات' : 'Total Anomalies'}</p>
-                    <p className="text-2xl font-bold text-[#3D3229]">{summary.anomalies.total}</p>
-                  </div>
-                  <div className="p-2 rounded-lg bg-red-500/10">
-                    <AlertTriangle className="h-6 w-6 text-red-500" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-md overflow-hidden">
-              <div className="h-1 bg-orange-500" />
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-[#7A6F63]">{t('ai.critical')} + {t('ai.high')}</p>
-                    <p className="text-2xl font-bold text-[#3D3229]">{summary.anomalies.bySeverity.critical + summary.anomalies.bySeverity.high}</p>
-                  </div>
-                  <div className="p-2 rounded-lg bg-orange-500/10">
-                    <AlertCircle className="h-6 w-6 text-orange-500" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-md overflow-hidden">
-              <div className="h-1 bg-yellow-500" />
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-[#7A6F63]">{t('ai.medium')}</p>
-                    <p className="text-2xl font-bold text-[#3D3229]">{summary.anomalies.bySeverity.medium}</p>
-                  </div>
-                  <div className="p-2 rounded-lg bg-yellow-500/10">
-                    <Clock className="h-6 w-6 text-yellow-500" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </>
-        )}
-      </div>
-
-      {/* Content Area */}
-      {loading ? (
-        <div className="grid gap-4">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} className="border-0">
-              <CardContent className="p-6">
-                <div className="shimmer h-32 rounded-lg" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <ScrollArea className="h-[500px] pr-4">
-          <div className="space-y-4">
-            {/* Predictions Section */}
-            {activeSection === 'predictions' && predictions.map((pred) => (
-              <Card key={pred.productId} className="card-hover border-0 shadow-md bg-white overflow-hidden">
-                <div className="flex flex-col lg:flex-row">
-                  <div className="flex-1 p-5">
-                    <div className="flex flex-wrap items-start justify-between gap-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-3">
-                          <span className="text-lg font-bold text-[#3D3229]">{pred.productName}</span>
-                          {getTrendIcon(pred.trend)}
-                          <Badge className="bg-[#F5EDE0] text-[#5C4033]">{pred.category}</Badge>
-                        </div>
-                        <div className="flex items-center gap-4 text-sm text-[#7A6F63]">
-                          <span>{t('ai.confidence')}: {(pred.predictions.daily.confidence * 100).toFixed(0)}%</span>
-                          <span>{t('ai.accuracy')}: {pred.accuracy?.toFixed(0) || 85}%</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-4 grid grid-cols-3 gap-4">
-                      <div className="p-3 bg-[#F5EDE0] rounded-lg text-center">
-                        <p className="text-xs text-[#7A6F63]">{t('ai.daily')}</p>
-                        <p className="text-xl font-bold text-[#D4A853]">{pred.predictions.daily.value}</p>
-                      </div>
-                      <div className="p-3 bg-[#F5EDE0] rounded-lg text-center">
-                        <p className="text-xs text-[#7A6F63]">{t('ai.weekly')}</p>
-                        <p className="text-xl font-bold text-[#2D5A3D]">{pred.predictions.weekly.value}</p>
-                      </div>
-                      <div className="p-3 bg-[#F5EDE0] rounded-lg text-center">
-                        <p className="text-xs text-[#7A6F63]">{t('ai.monthly')}</p>
-                        <p className="text-xl font-bold text-[#5C4033]">{pred.predictions.monthly.value}</p>
-                      </div>
-                    </div>
-
-                    {pred.factors && pred.factors.length > 0 && (
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {pred.factors.slice(0, 3).map((factor: any, idx: number) => (
-                          <div key={idx} className="px-3 py-1.5 bg-[#FFFEF7] border border-[#E8DFD0] rounded-full text-xs text-[#7A6F63]">
-                            {factor.name}: {factor.impact}%
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            ))}
-
-            {/* Recommendations Section */}
-            {activeSection === 'recommendations' && recommendations.map((rec) => (
-              <Card key={rec.id} className="card-hover border-0 shadow-md bg-white overflow-hidden">
-                <div className="flex flex-col lg:flex-row">
-                  <div className="flex-1 p-5">
-                    <div className="flex flex-wrap items-start justify-between gap-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-3">
-                          <span className="text-lg font-bold text-[#3D3229]">{rec.productName}</span>
-                          <Badge className="bg-[#2D5A3D] text-white">{getTypeLabel(rec.type)}</Badge>
-                        </div>
-                        <div className="text-sm text-[#7A6F63]">
-                          {rec.reason}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-[#D4A853]">€{rec.price?.toFixed(2)}</div>
-                        <div className="text-sm text-[#7A6F63]">{t('ai.score')}: {(rec.score * 100).toFixed(0)}%</div>
-                      </div>
-                    </div>
-                    
-                    {rec.metadata && (
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {rec.metadata.frequency && (
-                          <div className="px-3 py-1.5 bg-[#F5EDE0] rounded-full text-xs text-[#5C4033]">
-                            {language === 'ar' ? 'التكرار' : 'Frequency'}: {rec.metadata.frequency}
-                          </div>
-                        )}
-                        {rec.metadata.seasonality && (
-                          <div className="px-3 py-1.5 bg-[#F5EDE0] rounded-full text-xs text-[#5C4033]">
-                            {rec.metadata.seasonality}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            ))}
-
-            {/* Anomalies Section */}
-            {activeSection === 'anomalies' && anomalies.map((anom) => (
-              <Card key={anom.id} className="card-hover border-0 shadow-md bg-white overflow-hidden">
-                <div className="flex flex-col lg:flex-row">
-                  <div className="flex-1 p-5">
-                    <div className="flex flex-wrap items-start justify-between gap-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-3">
-                          <AlertTriangle className={`h-5 w-5 ${anom.severity === 'critical' ? 'text-red-500' : anom.severity === 'high' ? 'text-orange-500' : 'text-yellow-500'}`} />
-                          <span className="text-lg font-bold text-[#3D3229]">{anom.title}</span>
-                          <Badge className={getSeverityColor(anom.severity)}>{t(`ai.${anom.severity}`)}</Badge>
-                        </div>
-                        <div className="text-sm text-[#7A6F63]">
-                          {anom.description}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-[#D4A853]">{(anom.score * 100).toFixed(0)}%</div>
-                        <div className="text-sm text-[#7A6F63]">{t('ai.score')}</div>
-                      </div>
-                    </div>
-                    
-                    {anom.suggestedAction && (
-                      <div className="mt-3 p-3 bg-[#FFFEF7] border border-[#E8DFD0] rounded-lg">
-                        <p className="text-sm text-[#2D5A3D] font-medium">{t('ai.suggestedAction')}:</p>
-                        <p className="text-sm text-[#7A6F63]">{anom.suggestedAction}</p>
-                      </div>
-                    )}
-
-                    {anom.metadata && (
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {anom.metadata.value !== undefined && (
-                          <div className="px-3 py-1.5 bg-[#F5EDE0] rounded-full text-xs text-[#5C4033]">
-                            {language === 'ar' ? 'القيمة' : 'Value'}: {anom.metadata.value}
-                          </div>
-                        )}
-                        {anom.metadata.deviation !== undefined && (
-                          <div className="px-3 py-1.5 bg-[#F5EDE0] rounded-full text-xs text-[#5C4033]">
-                            {t('ai.variance')}: {anom.metadata.deviation}%
-                          </div>
-                        )}
-                        {anom.metadata.orderNumber && (
-                          <div className="px-3 py-1.5 bg-[#F5EDE0] rounded-full text-xs text-[#5C4033]">
-                            #{anom.metadata.orderNumber}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            ))}
-
-            {/* Empty State */}
-            {((activeSection === 'predictions' && predictions.length === 0) ||
-              (activeSection === 'recommendations' && recommendations.length === 0) ||
-              (activeSection === 'anomalies' && anomalies.length === 0)) && (
-              <div className="text-center py-12 text-[#7A6F63]">
-                <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>{t('messages.noData')}</p>
-              </div>
-            )}
-          </div>
-        </ScrollArea>
-      )}
-    </div>
-  );
-}
 
 // Main App Component
 function AppContent() {
@@ -1868,6 +173,18 @@ function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [stats, setStats] = useState({ todayOrders: 0, pendingOrders: 0, inDelivery: 0, totalRevenue: 0 });
   const [seeded, setSeeded] = useState(false);
+
+  // Role Simulator for Testing (In production, this comes from Auth)
+  const [userRole, setUserRole] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('simulated_role') || 'admin';
+    }
+    return 'admin';
+  });
+
+  const isProductionUser = userRole === 'production_head';
+  const isAccountant = userRole === 'senior_accountant' || userRole === 'junior_accountant';
+  const isAdmin = userRole === 'admin';
 
   const fetchStats = useCallback(async () => {
     try {
@@ -1902,23 +219,32 @@ function AppContent() {
   }, [fetchStats]);
 
   return (
-    <div className={`min-h-screen bg-[#FFFEF7] ${isRTL ? 'rtl' : 'ltr'} arabic-pattern`} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={`min-h-screen bg-background text-foreground ${isRTL ? 'rtl' : 'ltr'} arabic-pattern transition-colors duration-300`} dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-gradient-to-r from-[#2D5A3D] via-[#3A6B4A] to-[#2D5A3D] shadow-lg">
-        <div className="container mx-auto px-4">
+      <header className="sticky top-0 z-50 bg-gradient-to-r from-[#1A1A1A] via-[#2D2D2D] to-[#1A1A1A] shadow-lg overflow-hidden">
+        <GoldDust />
+        <div className="container mx-auto px-4 relative z-10">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className="w-11 h-11 rounded-xl gold-gradient flex items-center justify-center shadow-md">
-                  <Store className="h-6 w-6 text-white" />
+              <div className="relative group">
+                <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center shadow-xl overflow-hidden border-2 border-white/30 logo-shine-container animate-floating transition-all duration-500 group-hover:scale-110 group-hover:rotate-6">
+                  <Image 
+                    src="/logo.png" 
+                    alt="Al Malika Logo" 
+                    width={56} 
+                    height={56} 
+                    className="object-contain p-1"
+                    priority
+                  />
                 </div>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">{t('app.title')}</h1>
-                <p className="text-xs text-white/70">{t('app.subtitle')}</p>
+                <h1 className="text-2xl font-bold text-white font-arabic-premium leading-tight">{t('app.title')}</h1>
+                <p className="text-xs text-white/80 font-medium tracking-wide uppercase">{t('app.subtitle')}</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
+              <ThemeToggle />
               <LanguageSelector />
               <Button variant="ghost" size="icon" onClick={fetchStats} className="text-white/70 hover:text-white hover:bg-white/10">
                 <RefreshCw className="h-5 w-5" />
@@ -1929,7 +255,7 @@ function AppContent() {
       </header>
 
       {/* Navigation Tabs */}
-      <div className="sticky top-16 z-40 bg-white border-b border-[#E8DFD0] shadow-sm">
+      <div className="sticky top-16 z-40 bg-card border-b border-border shadow-sm transition-colors duration-300">
         <div className="container mx-auto px-4 py-2">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <div className="flex items-center gap-2">
@@ -1938,201 +264,216 @@ function AppContent() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="gap-2 border-[#D4A853] text-[#5C4033] hover:bg-[#F5EDE0]">
                     <Menu className="h-4 w-4" />
-                    <span>{language === 'ar' ? 'جميع الأقسام' : 'All Sections'}</span>
+                    <span>{t('nav.allSections')}</span>
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-64 max-h-[70vh] overflow-y-auto bg-white" align="start">
                   {/* Main Sections */}
                   <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                    {language === 'ar' ? '📊 الأقسام الرئيسية' : '📊 Main Sections'}
+                    {t('nav.mainSections')}
                   </DropdownMenuLabel>
                   <DropdownMenuItem onClick={() => setActiveTab('dashboard')} className="gap-2 cursor-pointer">
-                    <BarChart3 className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{language === 'ar' ? 'لوحة التحكم' : 'Dashboard'}</span>
+                    <BarChart3 className="h-4 w-4 text-primary" />
+                    <span>{t('app.dashboard')}</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setActiveTab('orders')} className="gap-2 cursor-pointer">
-                    <ShoppingBag className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{language === 'ar' ? 'الطلبات' : 'Orders'}</span>
+                    <ShoppingBag className="h-4 w-4 text-primary" />
+                    <span>{t('nav.orders')}</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setActiveTab('products')} className="gap-2 cursor-pointer">
-                    <Package className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{language === 'ar' ? 'المنتجات' : 'Products'}</span>
+                    <Package className="h-4 w-4 text-primary" />
+                    <span>{t('nav.products')}</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setActiveTab('customers')} className="gap-2 cursor-pointer">
                     <Users className="h-4 w-4 text-[#D4A853]" />
-                    <span>{language === 'ar' ? 'العملاء' : 'Customers'}</span>
+                    <span>{t('nav.customers')}</span>
                   </DropdownMenuItem>
                   
                   <DropdownMenuSeparator />
                   
                   {/* Delivery & Drivers */}
                   <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                    {language === 'ar' ? '🚚 التوصيل والسائقين' : '🚚 Delivery & Drivers'}
+                    {t('nav.deliveryDrivers')}
                   </DropdownMenuLabel>
                   <DropdownMenuItem onClick={() => setActiveTab('drivers')} className="gap-2 cursor-pointer">
-                    <Users className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{language === 'ar' ? 'السائقين' : 'Drivers'}</span>
+                    <Users className="h-4 w-4 text-primary" />
+                    <span>{t('nav.drivers')}</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setActiveTab('deliveryLines')} className="gap-2 cursor-pointer">
-                    <MapPin className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{language === 'ar' ? 'خطوط التوزيع' : 'Delivery Lines'}</span>
+                    <MapPin className="h-4 w-4 text-primary" />
+                    <span>{t('nav.deliveryLines')}</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setActiveTab('driverApp')} className="gap-2 cursor-pointer">
                     <Truck className="h-4 w-4 text-[#D4A853]" />
-                    <span>{language === 'ar' ? 'تطبيق السائق' : 'Driver App'}</span>
+                    <span>{t('app.driverApp')}</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setActiveTab('tracking')} className="gap-2 cursor-pointer">
                     <MapPinned className="h-4 w-4 text-[#D4A853]" />
-                    <span>{language === 'ar' ? 'التتبع المباشر' : 'Live Tracking'}</span>
+                    <span>{t('nav.liveTracking')}</span>
                   </DropdownMenuItem>
                   
                   <DropdownMenuSeparator />
                   
-                  {/* Production & Quality */}
-                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                    {language === 'ar' ? '🍞 الإنتاج والجودة' : '🍞 Production & Quality'}
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => setActiveTab('bakery')} className="gap-2 cursor-pointer">
-                    <Cookie className="h-4 w-4 text-[#D4A853]" />
-                    <span>{language === 'ar' ? 'المخبز' : 'Bakery'}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('production')} className="gap-2 cursor-pointer">
-                    <ChefHat className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{language === 'ar' ? 'الإنتاج اليومي' : 'Daily Production'}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('qualitySafety')} className="gap-2 cursor-pointer">
-                    <ShieldCheck className="h-4 w-4 text-[#D4A853]" />
-                    <span>{language === 'ar' ? 'الجودة والسلامة' : 'Quality & Safety'}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('inventory')} className="gap-2 cursor-pointer">
-                    <Warehouse className="h-4 w-4 text-[#D4A853]" />
-                    <span>{language === 'ar' ? 'المخزون' : 'Inventory'}</span>
-                  </DropdownMenuItem>
+                  {/* Production & Quality - Hidden from Accountants unless Admin */}
+                  {(isAdmin || isProductionUser) && (
+                    <>
+                      <DropdownMenuLabel className="text-[#D4A853] font-bold">
+                        {t('nav.productionQuality')}
+                      </DropdownMenuLabel>
+                      <DropdownMenuItem onClick={() => setActiveTab('bakery')} className="gap-2 cursor-pointer">
+                        <Cookie className="h-4 w-4 text-[#D4A853]" />
+                        <span>{t('nav.bakery')}</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setActiveTab('production')} className="gap-2 cursor-pointer">
+                        <ChefHat className="h-4 w-4 text-[#2D5A3D]" />
+                        <span>{t('nav.dailyProduction')}</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setActiveTab('packing')} className="gap-2 cursor-pointer">
+                        <Package className="h-4 w-4 text-[#2D5A3D]" />
+                        <span>{t('nav.packingDashboard')}</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setActiveTab('qualitySafety')} className="gap-2 cursor-pointer">
+                        <ShieldCheck className="h-4 w-4 text-[#D4A853]" />
+                        <span>{t('nav.qualitySafety')}</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setActiveTab('inventory')} className="gap-2 cursor-pointer">
+                        <Warehouse className="h-4 w-4 text-[#D4A853]" />
+                        <span>{t('nav.inventory')}</span>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   
                   <DropdownMenuSeparator />
                   
-                  {/* Sales & Finance */}
-                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                    {language === 'ar' ? '💰 المبيعات والمالية' : '💰 Sales & Finance'}
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => setActiveTab('accounting')} className="gap-2 cursor-pointer">
-                    <Wallet className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{language === 'ar' ? 'المحاسبة' : 'Accounting'}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('payments')} className="gap-2 cursor-pointer">
-                    <CreditCard className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{language === 'ar' ? 'نظام الدفع' : 'Payment System'}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('pos')} className="gap-2 cursor-pointer">
-                    <ShoppingCart className="h-4 w-4 text-[#D4A853]" />
-                    <span>{language === 'ar' ? 'نقطة البيع' : 'POS'}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('webshop')} className="gap-2 cursor-pointer">
-                    <Store className="h-4 w-4 text-[#D4A853]" />
-                    <span>{language === 'ar' ? 'المتجر الإلكتروني' : 'Webshop'}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('preorders')} className="gap-2 cursor-pointer">
-                    <Calendar className="h-4 w-4 text-[#D4A853]" />
-                    <span>{language === 'ar' ? 'الطلبات المسبقة' : 'Pre-orders'}</span>
-                  </DropdownMenuItem>
+                  {/* Sales & Finance - Hidden from Production unless Admin */}
+                  {(isAdmin || isAccountant) && (
+                    <>
+                      <DropdownMenuLabel className="text-[#D4A853] font-bold">
+                        {t('nav.salesFinance')}
+                      </DropdownMenuLabel>
+                      <DropdownMenuItem onClick={() => setActiveTab('accounting')} className="gap-2 cursor-pointer">
+                        <Wallet className="h-4 w-4 text-[#2D5A3D]" />
+                        <span>{t('nav.accounting')}</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setActiveTab('payments')} className="gap-2 cursor-pointer">
+                        <CreditCard className="h-4 w-4 text-[#2D5A3D]" />
+                        <span>{t('nav.paymentSystem')}</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setActiveTab('pos')} className="gap-2 cursor-pointer">
+                        <ShoppingCart className="h-4 w-4 text-[#D4A853]" />
+                        <span>{t('nav.pos')}</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setActiveTab('webshop')} className="gap-2 cursor-pointer">
+                        <Store className="h-4 w-4 text-[#D4A853]" />
+                        <span>{t('nav.webshop')}</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setActiveTab('preorders')} className="gap-2 cursor-pointer">
+                        <Calendar className="h-4 w-4 text-[#D4A853]" />
+                        <span>{t('nav.preorders')}</span>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   
                   <DropdownMenuSeparator />
                   
                   {/* Vehicles & Assets */}
                   <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                    {language === 'ar' ? '🚗 المركبات والأصول' : '🚗 Vehicles & Assets'}
+                    {t('nav.vehiclesAssets')}
                   </DropdownMenuLabel>
                   <DropdownMenuItem onClick={() => setActiveTab('vehicles')} className="gap-2 cursor-pointer">
                     <Car className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{language === 'ar' ? 'المركبات' : 'Vehicles'}</span>
+                    <span>{t('nav.vehicles')}</span>
                   </DropdownMenuItem>
                   
                   <DropdownMenuSeparator />
                   
                   {/* Analytics & Reports */}
                   <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                    {language === 'ar' ? '📈 التحليلات والتقارير' : '📈 Analytics & Reports'}
+                    {t('nav.analyticsReports')}
                   </DropdownMenuLabel>
                   <DropdownMenuItem onClick={() => setActiveTab('aiPredictions')} className="gap-2 cursor-pointer">
                     <TrendingUp className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{language === 'ar' ? 'الذكاء الاصطناعي' : 'AI Predictions'}</span>
+                    <span>{t('nav.aiPredictions')}</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setActiveTab('reports')} className="gap-2 cursor-pointer">
                     <FileText className="h-4 w-4 text-[#D4A853]" />
-                    <span>{language === 'ar' ? 'التقارير' : 'Reports'}</span>
+                    <span>{t('nav.reports')}</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setActiveTab('reviews')} className="gap-2 cursor-pointer">
                     <Star className="h-4 w-4 text-[#D4A853]" />
-                    <span>{language === 'ar' ? 'التقييمات' : 'Reviews'}</span>
+                    <span>{t('nav.reviews')}</span>
                   </DropdownMenuItem>
                   
                   <DropdownMenuSeparator />
                   
                   {/* Customer Experience */}
                   <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                    {language === 'ar' ? '📱 تجربة العملاء' : '📱 Customer Experience'}
+                    {t('nav.customerExperience')}
                   </DropdownMenuLabel>
                   <DropdownMenuItem onClick={() => setActiveTab('customerApp')} className="gap-2 cursor-pointer">
                     <Smartphone className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{language === 'ar' ? 'تطبيق العملاء' : 'Customer App'}</span>
+                    <span>{t('nav.customerApp')}</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setActiveTab('chatbot')} className="gap-2 cursor-pointer">
                     <Bot className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{language === 'ar' ? 'المحادثة الذكية' : 'Chatbot'}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('notifications')} className="gap-2 cursor-pointer">
-                    <Bell className="h-4 w-4 text-[#D4A853]" />
-                    <span>{language === 'ar' ? 'الإشعارات' : 'Notifications'}</span>
+                    <span>{t('nav.chatbot')}</span>
                   </DropdownMenuItem>
                   
-                  <DropdownMenuSeparator />
-                  
-                  {/* System */}
-                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                    {language === 'ar' ? '⚙️ النظام' : '⚙️ System'}
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => setActiveTab('integrations')} className="gap-2 cursor-pointer">
-                    <Link2 className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{language === 'ar' ? 'التكاملات' : 'Integrations'}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('demo')} className="gap-2 cursor-pointer bg-gradient-to-l from-[#2D5A3D] to-[#D4A853] text-white">
-                    <Store className="h-4 w-4" />
-                    <span>🥖 النموذج التجريبي</span>
-                  </DropdownMenuItem>
+                  {/* System & Settings - Hidden unless Admin */}
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel className="text-[#D4A853] font-bold">
+                        {t('nav.system')}
+                      </DropdownMenuLabel>
+                      <DropdownMenuItem onClick={() => setActiveTab('users')} className="gap-2 cursor-pointer">
+                        <Shield className="h-4 w-4 text-red-600" />
+                        <span>{isRTL ? 'إدارة المستخدمين' : 'User Management'}</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setActiveTab('notifications')} className="gap-2 cursor-pointer">
+                        <Bell className="h-4 w-4 text-[#D4A853]" />
+                        <span>{t('nav.notifications')}</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setActiveTab('integrations')} className="gap-2 cursor-pointer">
+                        <Link2 className="h-4 w-4 text-[#D4A853]" />
+                        <span>{t('nav.integrations')}</span>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
               
               {/* Quick Access Tabs - Horizontal Scrollable */}
               <div className="flex-1 overflow-x-auto scrollbar-thin">
                 <TabsList className="h-10 bg-transparent gap-1 w-max min-w-full flex-nowrap inline-flex">
-                  <TabsTrigger value="dashboard" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-1.5 whitespace-nowrap text-sm">
+                  <TabsTrigger value="dashboard" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground px-3 py-1.5 whitespace-nowrap text-sm">
                     <BarChart3 className="h-4 w-4 mr-1 flex-shrink-0" />
                     <span className="hidden sm:inline">{t('app.dashboard')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="orders" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-1.5 whitespace-nowrap text-sm">
+                  <TabsTrigger value="orders" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground px-3 py-1.5 whitespace-nowrap text-sm">
                     <ShoppingBag className="h-4 w-4 mr-1 flex-shrink-0" />
                     <span className="hidden sm:inline">{t('nav.orders')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="products" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-1.5 whitespace-nowrap text-sm">
+                  <TabsTrigger value="products" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground px-3 py-1.5 whitespace-nowrap text-sm">
                     <Package className="h-4 w-4 mr-1 flex-shrink-0" />
                     <span className="hidden sm:inline">{t('nav.products')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="customers" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-1.5 whitespace-nowrap text-sm">
+                  <TabsTrigger value="customers" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground px-3 py-1.5 whitespace-nowrap text-sm">
                     <Users className="h-4 w-4 mr-1 flex-shrink-0" />
                     <span className="hidden sm:inline">{t('nav.customers')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="drivers" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-1.5 whitespace-nowrap text-sm">
+                  <TabsTrigger value="drivers" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground px-3 py-1.5 whitespace-nowrap text-sm">
                     <Truck className="h-4 w-4 mr-1 flex-shrink-0" />
                     <span className="hidden sm:inline">{t('nav.drivers')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="accounting" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-3 py-1.5 whitespace-nowrap text-sm">
+                  <TabsTrigger value="accounting" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground px-3 py-1.5 whitespace-nowrap text-sm">
                     <Wallet className="h-4 w-4 mr-1 flex-shrink-0" />
                     <span className="hidden md:inline">{t('accounting.title')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="reports" className="data-[state=active]:bg-[#D4A853] data-[state=active]:text-white text-[#7A6F63] px-3 py-1.5 whitespace-nowrap text-sm">
+                  <TabsTrigger value="reports" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground px-3 py-1.5 whitespace-nowrap text-sm">
                     <FileText className="h-4 w-4 mr-1 flex-shrink-0" />
-                    <span className="hidden lg:inline">{language === 'ar' ? 'التقارير' : 'Reports'}</span>
+                    <span className="hidden lg:inline">{t('nav.reports')}</span>
                   </TabsTrigger>
                 </TabsList>
               </div>
@@ -2144,119 +485,129 @@ function AppContent() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsContent value="dashboard" className="mt-0 space-y-6">
+          <TabsContent value="dashboard" className="mt-0 space-y-6 tabs-content-animate">
             <AdvancedDashboardTab />
           </TabsContent>
 
-          <TabsContent value="orders" className="mt-0">
+          <TabsContent value="orders" className="mt-0 tabs-content-animate">
             <OrdersTab />
           </TabsContent>
 
-          <TabsContent value="products" className="mt-0">
+          <TabsContent value="products" className="mt-0 tabs-content-animate">
             <ProductsTab />
           </TabsContent>
 
-          <TabsContent value="drivers" className="mt-0">
+          <TabsContent value="drivers" className="mt-0 tabs-content-animate">
             <DriversTab />
           </TabsContent>
 
-          <TabsContent value="customers" className="mt-0">
+          <TabsContent value="customers" className="mt-0 tabs-content-animate">
             <AdvancedCustomerManagementTab />
           </TabsContent>
 
-          <TabsContent value="deliveryLines" className="mt-0">
+          <TabsContent value="deliveryLines" className="mt-0 tabs-content-animate">
             <DeliveryLinesTab />
           </TabsContent>
 
-          <TabsContent value="driverApp" className="mt-0">
+          <TabsContent value="driverApp" className="mt-0 tabs-content-animate">
             <DriverApp />
           </TabsContent>
 
-          <TabsContent value="aiPredictions" className="mt-0">
+          <TabsContent value="aiPredictions" className="mt-0 tabs-content-animate">
             <AIPredictionsTab />
           </TabsContent>
 
-          <TabsContent value="qualitySafety" className="mt-0">
+          <TabsContent value="qualitySafety" className="mt-0 tabs-content-animate">
             <QualitySafetyTab />
           </TabsContent>
 
-          <TabsContent value="accounting" className="mt-0">
+          <TabsContent value="accounting" className="mt-0 tabs-content-animate">
             <AccountingTab />
           </TabsContent>
 
-          <TabsContent value="preorders" className="mt-0">
+          <TabsContent value="preorders" className="mt-0 tabs-content-animate">
             <PreOrdersTab />
           </TabsContent>
 
-          <TabsContent value="inventory" className="mt-0">
+          <TabsContent value="inventory" className="mt-0 tabs-content-animate">
             <InventoryTab />
           </TabsContent>
 
-          <TabsContent value="vehicles" className="mt-0">
+          <TabsContent value="vehicles" className="mt-0 tabs-content-animate">
             <VehiclesTab />
           </TabsContent>
 
-          <TabsContent value="bakery" className="mt-0">
+          <TabsContent value="bakery" className="mt-0 tabs-content-animate">
             <BakeryTab />
           </TabsContent>
 
-          <TabsContent value="webshop" className="mt-0">
+          <TabsContent value="webshop" className="mt-0 tabs-content-animate">
             <WebshopTab />
           </TabsContent>
 
-          <TabsContent value="integrations" className="mt-0">
+          <TabsContent value="integrations" className="mt-0 tabs-content-animate">
             <IntegrationsTab />
           </TabsContent>
 
-          <TabsContent value="reports" className="mt-0">
+          <TabsContent value="reports" className="mt-0 tabs-content-animate">
             <AdvancedReportsTab />
           </TabsContent>
 
-          <TabsContent value="payments" className="mt-0">
+          <TabsContent value="payments" className="mt-0 tabs-content-animate">
             <PaymentSystemTab />
           </TabsContent>
 
-          <TabsContent value="pos" className="mt-0">
+          <TabsContent value="pos" className="mt-0 tabs-content-animate">
             <POSTab />
           </TabsContent>
 
-          <TabsContent value="production" className="mt-0">
+          <TabsContent value="production" className="mt-0 tabs-content-animate">
             <DailyProductionTab />
           </TabsContent>
 
-          <TabsContent value="reviews" className="mt-0">
+          <TabsContent value="packing" className="mt-0 tabs-content-animate">
+            <ProductionAutomationTab />
+          </TabsContent>
+
+          <TabsContent value="reviews" className="mt-0 tabs-content-animate">
             <CustomerReviewsTab />
           </TabsContent>
 
-          <TabsContent value="chatbot" className="mt-0">
+          <TabsContent value="chatbot" className="mt-0 tabs-content-animate">
             <CustomerChatbotTab />
           </TabsContent>
 
-          <TabsContent value="tracking" className="mt-0">
+          <TabsContent value="tracking" className="mt-0 tabs-content-animate">
             <LiveTrackingTab />
           </TabsContent>
 
-          <TabsContent value="customerApp" className="mt-0">
+          <TabsContent value="customerApp" className="mt-0 tabs-content-animate">
             <CustomerAppTab />
           </TabsContent>
 
-          <TabsContent value="notifications" className="mt-0">
+          <TabsContent value="notifications" className="mt-0 tabs-content-animate">
             <NotificationsTab />
           </TabsContent>
 
-          <TabsContent value="demo" className="mt-0">
-            <DemoTab />
+          <TabsContent value="users" className="mt-0 tabs-content-animate">
+            <UserManagementTab />
           </TabsContent>
         </Tabs>
       </main>
 
       {/* Footer */}
-      <footer className="mt-auto border-t border-[#E8DFD0] bg-white">
+      <footer className="mt-auto border-t border-border bg-card transition-colors duration-300">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg gold-gradient flex items-center justify-center">
-                <Store className="h-5 w-5 text-white" />
+              <div className="w-14 h-14 rounded-full gold-gradient flex items-center justify-center overflow-hidden shadow-lg logo-shine-container animate-floating">
+                <Image 
+                  src="/logo.png" 
+                  alt="Al Malika Logo" 
+                  width={56} 
+                  height={56} 
+                  className="object-contain p-1"
+                />
               </div>
               <div>
                 <div className="font-bold text-[#3D3229]">{t('app.title')}</div>
@@ -2265,7 +616,7 @@ function AppContent() {
             </div>
             <div className="text-center md:text-right text-sm text-[#7A6F63]">
               <p>Amsterdam, Netherlands</p>
-              <p>© 2025 {t('app.title')} - جميع الحقوق محفوظة</p>
+              <p>© 2025 {t('app.title')} - {t('app.allRightsReserved')}</p>
             </div>
           </div>
         </div>

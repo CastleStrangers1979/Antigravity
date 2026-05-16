@@ -1,98 +1,92 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
-// GET - جلب طلب واحد
-export async function GET(
+export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const id = params.id;
+    const body = await request.json();
+    const { 
+      status, 
+      signatureImage, 
+      signedByName, 
+      items, 
+      managerId 
+    } = body;
+
+    // Fetch existing order
     const order = await db.order.findUnique({
       where: { id },
-      include: {
-        customer: true,
-        driver: true,
-        deliveryLine: true,
-        orderItems: {
-          include: {
-            product: true,
-          },
-        },
-      },
+      include: { orderItems: true }
     });
 
     if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
-    return NextResponse.json(order);
-  } catch (error) {
-    console.error('Error fetching order:', error);
-    return NextResponse.json({ error: 'Failed to fetch order' }, { status: 500 });
-  }
-}
+    const data: any = { status };
 
-// PUT - تحديث طلب
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-    const body = await request.json();
-    const { status, driverId, deliveryLineId, deliveryDate, deliveryTime, notes } = body;
+    if (signatureImage) {
+      data.signatureImage = signatureImage;
+      data.signedByName = signedByName || 'Customer';
+      data.signedAt = new Date();
+    }
 
-    const order = await db.order.update({
+    if (status === 'delivered') {
+      data.deliveredAt = new Date();
+    }
+
+    // Handle Adjustments (Returns/Extras) - Requires Manager Approval
+    if (items && items.length > 0) {
+      if (!managerId) {
+        return NextResponse.json({ error: 'Manager approval required for adjustments' }, { status: 403 });
+      }
+
+      // Update total amount based on new items
+      let newTotal = 0;
+      
+      // We delete existing items and recreate or update them
+      // For simplicity in this demo, we'll update quantities
+      for (const item of items) {
+        await db.orderItem.update({
+          where: { id: item.id },
+          data: { quantity: item.quantity, total: item.quantity * item.unitPrice }
+        });
+        newTotal += item.quantity * item.unitPrice;
+      }
+
+      data.totalAmount = newTotal;
+      data.notes = `${order.notes || ''} [Adjusted by Manager: ${managerId}]`;
+
+      // Log activity
+      await db.activityLog.create({
+        data: {
+          userId: managerId,
+          userType: 'manager',
+          action: 'ORDER_ADJUSTED',
+          entity: 'Order',
+          entityId: id,
+          details: `Order adjusted by manager. New total: ${newTotal}€`
+        }
+      });
+    }
+
+    const updatedOrder = await db.order.update({
       where: { id },
-      data: {
-        status,
-        driverId,
-        deliveryLineId,
-        deliveryDate: deliveryDate ? new Date(deliveryDate) : undefined,
-        deliveryTime,
-        notes,
-      },
+      data,
       include: {
         customer: true,
-        driver: true,
-        deliveryLine: true,
         orderItems: {
-          include: {
-            product: true,
-          },
-        },
-      },
+          include: { product: true }
+        }
+      }
     });
 
-    return NextResponse.json(order);
+    return NextResponse.json(updatedOrder);
   } catch (error) {
     console.error('Error updating order:', error);
     return NextResponse.json({ error: 'Failed to update order' }, { status: 500 });
-  }
-}
-
-// DELETE - حذف طلب
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-    
-    // حذف عناصر الطلب أولاً
-    await db.orderItem.deleteMany({
-      where: { orderId: id },
-    });
-
-    // حذف الطلب
-    await db.order.delete({
-      where: { id },
-    });
-
-    return NextResponse.json({ message: 'Order deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting order:', error);
-    return NextResponse.json({ error: 'Failed to delete order' }, { status: 500 });
   }
 }
