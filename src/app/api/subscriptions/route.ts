@@ -273,7 +273,7 @@ export async function PUT(request: NextRequest) {
         
         // Calculate total amount
         let subTotalAmount = 0;
-        const orderItemsData = [];
+        const orderItemsData: { productId: string; quantity: number; unitPrice: number; total: number }[] = [];
         for (const item of existingSubscription.subscriptionItems) {
           if (!item.isActive) continue;
           const product = item.product;

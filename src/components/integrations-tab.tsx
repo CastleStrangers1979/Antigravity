@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/set-state-in-effect */
+ 
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -45,7 +45,7 @@ interface SyncLog {
   id: string;
   timestamp: string;
   type: 'sync' | 'export' | 'import';
-  status: 'success' | 'failed' | 'partial';
+  status: 'success' | 'failed' | 'partial' | 'in_progress';
   recordsProcessed: number;
   recordsFailed: number;
   message: string;

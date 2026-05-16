@@ -220,7 +220,7 @@ export async function POST() {
     ]);
 
     // Create Orders with different statuses
-    const orders = [];
+    const orders: Awaited<ReturnType<typeof db.order.create>>[] = [];
     const orderData = [
       { customerId: 'cust_1', status: 'pending', amount: 45.00, driverId: null },
       { customerId: 'cust_2', status: 'pending', amount: 18.50, driverId: null },

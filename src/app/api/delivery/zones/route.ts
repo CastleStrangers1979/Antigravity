@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
-// GET - Fetch all delivery zones
+// GET - Fetch all delivery zones (using deliveryLine as zones)
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const zoneId = searchParams.get('zoneId');
 
     if (zoneId) {
-      const zone = await db.deliveryZone.findUnique({
+      const zone = await db.deliveryLine.findUnique({
         where: { id: zoneId }
       });
 
@@ -19,21 +19,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(zone);
     }
 
-    const zones = await db.deliveryZone.findMany({
-      orderBy: { name: 'asc' }
-    });
-
-    // Get delivery lines for reference
+    // Use deliveryLine as delivery zones
     const deliveryLines = await db.deliveryLine.findMany({
       include: {
         _count: { select: { drivers: true, orders: true } }
-      }
+      },
+      orderBy: { nameEn: 'asc' }
     });
 
     // Calculate zone statistics (simulated for demo)
-    const zonesWithStats = zones.map(zone => ({
-      ...zone,
-      ordersCount: Math.floor(Math.random() * 100) + 10,
+    const zonesWithStats = deliveryLines.map(line => ({
+      ...line,
+      ordersCount: line._count.orders,
       avgDeliveryTime: Math.floor(Math.random() * 20) + 15,
       satisfactionRate: (Math.random() * 10 + 90).toFixed(1)
     }));
@@ -58,18 +55,19 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create a new delivery zone
+// POST - Create a new delivery zone (using deliveryLine)
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, postalCodes, deliveryFee, minOrderAmount, estimatedTime } = body;
+    const { nameAr, nameEn, nameNl, region, color, estimatedTime } = body;
 
-    const zone = await db.deliveryZone.create({
+    const zone = await db.deliveryLine.create({
       data: {
-        name,
-        postalCodes: postalCodes ? JSON.stringify(postalCodes) : null,
-        deliveryFee: deliveryFee || 0,
-        minOrderAmount,
+        nameAr: nameAr || body.name || 'منطقة جديدة',
+        nameEn: nameEn || body.name || 'New Zone',
+        nameNl: nameNl || body.name || 'Nieuwe Zone',
+        region: region || 'Unknown',
+        color: color || '#3B82F6',
         estimatedTime,
         isActive: true
       }
@@ -83,19 +81,20 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT - Update a delivery zone
+// PUT - Update a delivery zone (using deliveryLine)
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, name, postalCodes, deliveryFee, minOrderAmount, estimatedTime, isActive } = body;
+    const { id, nameAr, nameEn, nameNl, region, color, estimatedTime, isActive } = body;
 
-    const zone = await db.deliveryZone.update({
+    const zone = await db.deliveryLine.update({
       where: { id },
       data: {
-        name,
-        postalCodes: postalCodes ? JSON.stringify(postalCodes) : undefined,
-        deliveryFee,
-        minOrderAmount,
+        nameAr,
+        nameEn,
+        nameNl,
+        region,
+        color,
         estimatedTime,
         isActive
       }
@@ -109,7 +108,7 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// DELETE - Delete a delivery zone
+// DELETE - Delete a delivery zone (using deliveryLine)
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -119,7 +118,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Zone ID is required' }, { status: 400 });
     }
 
-    await db.deliveryZone.delete({
+    await db.deliveryLine.delete({
       where: { id }
     });
 

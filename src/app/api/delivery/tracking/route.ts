@@ -13,18 +13,21 @@ export async function GET(request: NextRequest) {
       const tracks = await db.deliveryTrack.findMany({
         where: { orderId },
         include: {
-          driver: {
-            select: { id: true, name: true, phone: true }
-          },
           order: {
             include: {
+              driver: { select: { id: true, name: true, phone: true } },
               customer: { select: { name: true, address: true, city: true, phone: true } }
             }
           }
         },
         orderBy: { createdAt: 'desc' }
       });
-      return NextResponse.json(tracks);
+      // Transform to include driver at root level
+      const transformedTracks = tracks.map(track => ({
+        ...track,
+        driver: track.order?.driver || null
+      }));
+      return NextResponse.json(transformedTracks);
     }
 
     // If driverId is provided, get tracking for specific driver
@@ -100,10 +103,19 @@ export async function GET(request: NextRequest) {
       take: 50,
       orderBy: { createdAt: 'desc' },
       include: {
-        driver: { select: { name: true } },
-        order: { select: { orderNumber: true } }
+        order: {
+          select: {
+            orderNumber: true,
+            driver: { select: { name: true } }
+          }
+        }
       }
     });
+    // Transform to include driver at root level
+    const transformedRecentTracks = recentTracks.map(track => ({
+      ...track,
+      driver: track.order?.driver || null
+    }));
 
     // Calculate traffic conditions (simulated)
     const trafficConditions = [
@@ -136,7 +148,7 @@ export async function GET(request: NextRequest) {
           distance: (Math.random() * 10 + 1).toFixed(1)
         }))
       })),
-      recentTracks,
+      recentTracks: transformedRecentTracks,
       trafficConditions,
       summary: {
         totalActiveDrivers: activeDrivers.length,

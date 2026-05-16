@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
 
     // Driver ratings
     const driverRatings = await db.driver.findMany({
-      where: { rating: { not: null } },
+      where: { rating: { gte: 0 } },
       select: {
         id: true,
         name: true,

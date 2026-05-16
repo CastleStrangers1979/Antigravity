@@ -17,6 +17,7 @@ interface Recommendation {
     frequency?: number;
     seasonality?: string;
     customerSegment?: string;
+    aiSuggestion?: string;
   };
 }
 

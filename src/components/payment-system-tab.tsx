@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/set-state-in-effect */
+ 
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -117,7 +117,7 @@ const mockProviders: PaymentProvider[] = [
   },
   {
     id: 'cash',
-    name: language => language === 'ar' ? 'نقداً' : 'Cash',
+    name: 'Cash',
     type: 'cash',
     logo: '/icons/cash.svg',
     isActive: true,
@@ -250,7 +250,7 @@ export default function PaymentSystemTab() {
   const toggleProvider = async (providerId: string) => {
     const provider = providers.find(p => p.id === providerId);
     if (!provider?.isConfigured) {
-      setSelectedProvider(provider);
+      setSelectedProvider(provider ?? null);
       setConfigDialog(true);
       return;
     }
@@ -595,7 +595,7 @@ export default function PaymentSystemTab() {
                         {provider.type === 'cash' && <DollarSign className="h-5 w-5 text-[#D4A853]" />}
                       </div>
                       <div>
-                        <CardTitle className="text-base text-[#3D3229]">{typeof provider.name === 'function' ? provider.name(language) : provider.name}</CardTitle>
+                        <CardTitle className="text-base text-[#3D3229]">{provider.name}</CardTitle>
                         <p className="text-xs text-[#7A6F63]">{provider.type.replace('_', ' ')}</p>
                       </div>
                     </div>

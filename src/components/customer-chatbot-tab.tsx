@@ -346,11 +346,11 @@ export default function CustomerChatbotTab() {
         isActive: true
       },
     ];
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setFaqs(faqData);
 
     // Load sessions
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setSessions([
       { id: '1', customerName: 'أحمد محمد', customerPhone: '06-12345678', startedAt: new Date(Date.now() - 3600000), endedAt: new Date(Date.now() - 3000000), messages: [], status: 'resolved', satisfaction: 5 },
       { id: '2', customerName: 'سارة علي', customerPhone: '06-98765432', startedAt: new Date(Date.now() - 7200000), messages: [], status: 'active' },
@@ -358,7 +358,7 @@ export default function CustomerChatbotTab() {
     ]);
 
     // Load analytics
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setAnalytics({
       totalSessions: 1256,
       activeSessions: 12,

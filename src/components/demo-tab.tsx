@@ -143,7 +143,7 @@ export default function DemoTab() {
 
   useEffect(() => {
     fetchAllData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, []);
 
   // Calculate dashboard stats
@@ -700,18 +700,18 @@ export default function DemoTab() {
                 <CardHeader className="bg-[#D4A853] text-white rounded-t-lg">
                   <CardTitle className="flex items-center gap-2">
                     <Package className="h-5 w-5" />
-                    طلباتي ({orders.filter(o => o.driverId === selectedDriver).length})
+                    طلباتي ({orders.filter(o => o.driver?.id === selectedDriver).length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-4">
                   <ScrollArea className="h-[400px]">
-                    {orders.filter(o => o.driverId === selectedDriver).length === 0 ? (
+                    {orders.filter(o => o.driver?.id === selectedDriver).length === 0 ? (
                       <div className="text-center py-8 text-[#7A6F63]">
                         لا توجد طلبات مخصصة لك حالياً
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        {orders.filter(o => o.driverId === selectedDriver).map(order => (
+                        {orders.filter(o => o.driver?.id === selectedDriver).map(order => (
                           <div key={order.id} className="p-4 bg-[#F5EDE0] rounded-lg">
                             <div className="flex justify-between items-start mb-3">
                               <div>

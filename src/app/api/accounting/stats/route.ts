@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
       .map(([category, total]) => ({ category, total }));
 
     // Monthly trend (last 6 months)
-    const monthlyTrend = [];
+    const monthlyTrend: { month: string; year: number; revenue: number; expenses: number; profit: number }[] = [];
     for (let i = 5; i >= 0; i--) {
       const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);

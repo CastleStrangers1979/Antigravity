@@ -48,7 +48,7 @@ export async function GET(request: Request) {
       });
 
       // Daily trends (last 7 days)
-      const dailyTrends = [];
+      const dailyTrends: { date: string; count: number; amount: number; completed: number }[] = [];
       for (let i = 6; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);

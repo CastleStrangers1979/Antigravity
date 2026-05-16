@@ -229,7 +229,7 @@ export async function PATCH(request: NextRequest) {
           action: 'CASH_PAYMENT_APPROVED',
           entity: 'Invoice',
           entityId: invoiceId,
-          details: `Approved cash payment of ${invoice?.totalAmount}€ with signature.`
+          details: `Approved cash payment with signature.`
         }
       });
 

@@ -313,7 +313,7 @@ export default function CustomerAppTab() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-[#7A6F63]">{t('avgSession')}</p>
-                        <p className="text-2xl font-bold text-[#3D3229]">{stats.avgSession}m</p>
+                        <p className="text-2xl font-bold text-[#3D3229]">{stats.avgSessionDuration}m</p>
                       </div>
                       <Clock className="h-6 w-6 text-[#D4A853]" />
                     </div>

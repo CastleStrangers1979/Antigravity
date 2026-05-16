@@ -40,7 +40,6 @@ export default function RootLayout({
           enableSystem={false}
           enableColorScheme={false}
           disableTransitionOnChange
-          suppressHydrationWarning
         >
           {children}
           <Toaster />

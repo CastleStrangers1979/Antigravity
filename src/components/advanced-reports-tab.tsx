@@ -72,7 +72,7 @@ export default function AdvancedReportsTab() {
 
   // Generate daily data function - defined before use
   const generateDailyData = () => {
-    const data = [];
+    const data: { date: string; sales: number; orders: number }[] = [];
     for (let i = 6; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
@@ -570,10 +570,10 @@ export default function AdvancedReportsTab() {
                           <TableCell>
                             <span className="text-red-600 font-bold">{item.current}</span>
                           </TableCell>
-                          <TableCell>{item.minimum}</TableCell>
+                          <TableCell>{item.min}</TableCell>
                           <TableCell>
                             <Progress 
-                              value={(item.current / item.minimum) * 100} 
+                              value={(item.current / item.min) * 100} 
                               className="h-2 w-24"
                             />
                           </TableCell>

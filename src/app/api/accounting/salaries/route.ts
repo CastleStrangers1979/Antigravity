@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
     const drivers = await db.driver.findMany({
       where: { isActive: true },
       include: {
+        deliveryLine: true,
         orders: {
           where: {
             status: 'delivered',

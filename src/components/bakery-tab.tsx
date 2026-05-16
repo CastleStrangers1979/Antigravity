@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/set-state-in-effect */
+ 
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -18,7 +18,7 @@ import { Progress } from '@/components/ui/progress';
 import { 
   Cookie, ChefHat, Thermometer, Timer, Plus, Edit, Trash2, Eye,
   Play, CheckCircle, Clock, AlertTriangle, Package, RefreshCw,
-  TrendingUp, Settings, Oven
+  TrendingUp, Settings, Flame
 } from 'lucide-react';
 
 // Types
@@ -1011,7 +1011,7 @@ function EquipmentManagementTab() {
       await fetch('/api/bakery/equipment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'oven', ...ovenFormData, ovenType: ovenFormData.type }),
+        body: JSON.stringify({ type: 'oven', name: ovenFormData.name, capacity: ovenFormData.capacity, minTemp: ovenFormData.minTemp, maxTemp: ovenFormData.maxTemp, notes: ovenFormData.notes, ovenType: ovenFormData.type }),
       });
       setIsOvenDialogOpen(false);
       setOvenFormData({ name: '', type: 'electric', capacity: '', minTemp: '50', maxTemp: '300', notes: '' });

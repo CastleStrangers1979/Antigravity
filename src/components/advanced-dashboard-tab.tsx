@@ -182,7 +182,7 @@ export default function AdvancedDashboardTab() {
     setLoading(false);
   }, [period, customDateRange]);
 
-  /* eslint-disable react-hooks/set-state-in-effect */
+   
   useEffect(() => {
     void fetchAnalytics();
   }, [fetchAnalytics]);

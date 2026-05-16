@@ -10,17 +10,16 @@ export async function GET() {
             customer: true,
           },
         },
-        customer: true,
       },
       orderBy: {
         createdAt: 'desc',
       },
     });
     
-    // Transform to include customer at root level
+    // Transform to include customer at root level from order
     const transformed = invoices.map(inv => ({
       ...inv,
-      customer: inv.customer || inv.order?.customer || null,
+      customer: inv.order?.customer || null,
     }));
     
     return NextResponse.json(transformed);

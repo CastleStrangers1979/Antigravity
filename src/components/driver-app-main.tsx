@@ -181,7 +181,7 @@ export default function DriverApp() {
           </div>
           <div className="flex gap-2 mb-4">
             <Button 
-              size="xs" 
+              size="sm" 
               variant="outline" 
               className={`h-6 text-[10px] bg-white/10 border-white/20 text-white ${!isOnline && 'bg-red-500/50'}`}
               onClick={() => {
@@ -193,7 +193,7 @@ export default function DriverApp() {
               {isOnline ? 'Phone GPS: ON' : 'Phone GPS: OFF (ALERT)'}
             </Button>
             <Button 
-              size="xs" 
+              size="sm" 
               variant="outline" 
               className="h-6 text-[10px] bg-white/10 border-white/20 text-white cursor-default"
             >

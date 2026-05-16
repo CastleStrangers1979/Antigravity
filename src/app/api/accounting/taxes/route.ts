@@ -215,7 +215,13 @@ function getFilingReminders(currentQuarter: number, currentYear: number): Array<
   status: string;
   daysRemaining: number;
 }> {
-  const reminders = [];
+  const reminders: Array<{
+    type: string;
+    period: string;
+    dueDate: Date;
+    status: string;
+    daysRemaining: number;
+  }> = [];
   const now = new Date();
 
   // BTW (VAT) reminder

@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/set-state-in-effect */
+ 
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -242,7 +242,7 @@ export default function PackingDashboard() {
                         <p className="text-xs text-muted-foreground">{isRTL ? 'الهدف:' : 'Target:'} {item.plannedQty}</p>
                       </div>
                     </div>
-                    <Badge variant={remaining === 0 ? 'success' : 'secondary'} className={remaining === 0 ? 'bg-green-100 text-green-700' : ''}>
+                    <Badge variant={remaining === 0 ? 'default' : 'secondary'} className={remaining === 0 ? 'bg-green-100 text-green-700 hover:bg-green-100' : ''}>
                       {remaining === 0 ? (isRTL ? 'مكتمل' : 'Completed') : (isRTL ? 'قيد التغليف' : 'Packing')}
                     </Badge>
                   </div>

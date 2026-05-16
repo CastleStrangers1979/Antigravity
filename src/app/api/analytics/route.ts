@@ -330,7 +330,27 @@ export async function GET(request: Request) {
     });
 
     // ==================== AI PREDICTIONS ====================
-    let predictions = null;
+    let predictions: {
+      salesForecast: {
+        nextWeekRevenue: number;
+        nextWeekOrders: number;
+        confidenceLevel: number;
+        trendDirection: string;
+      };
+      stockRecommendations: {
+        productName: string;
+        currentStock: number;
+        recommendedStock: number;
+        reason: string;
+      }[];
+      promotionTiming: {
+        bestDay: string;
+        bestTime: string;
+        recommendedProducts: string[];
+        expectedImpact: string;
+      };
+      insights: string[];
+    } | null = null;
     
     if (includePredictions) {
       try {
