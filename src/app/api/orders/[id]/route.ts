@@ -1,6 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
+// PATCH - تحديث جزئي للطلب (مثل تحديث الحالة فقط)
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const body = await request.json();
+    const { status, paymentStatus } = body;
+
+    const data: any = {};
+    if (status) data.status = status;
+    if (paymentStatus) data.paymentStatus = paymentStatus;
+
+    const updatedOrder = await db.order.update({
+      where: { id },
+      data,
+      include: {
+        customer: true,
+        driver: true,
+        orderItems: {
+          include: { product: true }
+        }
+      }
+    });
+
+    return NextResponse.json(updatedOrder);
+  } catch (error) {
+    console.error('Error patching order:', error);
+    return NextResponse.json({ error: 'Failed to update order' }, { status: 500 });
+  }
+}
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

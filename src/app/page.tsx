@@ -1,634 +1,634 @@
- 
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import dynamic from 'next/dynamic';
-import Image from 'next/image';
-import { LanguageProvider, useLanguage, Language } from '@/lib/i18n';
+import { useState, useEffect, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  BarChart3, ShoppingBag, Package, Users, Truck, Wallet, FileText, 
-  RefreshCw, Menu, ChevronDown, MapPin, MapPinned, Cookie, ChefHat, 
-  ShieldCheck, Warehouse, CreditCard, ShoppingCart, Store, Calendar, 
-  Car, TrendingUp, Star, Smartphone, Bot, Bell, Link2, Globe, Shield
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Separator } from '@/components/ui/separator';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Order, Product, Driver, DeliveryLine, Vehicle } from '@/lib/types';
+  LayoutDashboard, 
+  FileText, 
+  Truck, 
+  MapPin, 
+  Smartphone, 
+  Calculator, 
+  Package, 
+  Bot, 
+  Lock, 
+  Menu, 
+  X, 
+  Plus, 
+  RefreshCw,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  DollarSign,
+  ShoppingBag,
+  Users,
+  TrendingUp,
+  ChevronLeft,
+  ChevronRight,
+  Sun,
+  Moon
+} from "lucide-react";
+import { toast } from "sonner";
 
-// Loading fallback
-const TabLoading = () => (
-  <div className="space-y-6 animate-pulse">
-    <div className="flex justify-between items-center">
-      <div className="h-8 w-48 bg-[#F5EDE0] rounded-lg" />
-      <div className="h-10 w-32 bg-[#F5EDE0] rounded-lg" />
-    </div>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {[1, 2, 3, 4, 5, 6].map((i) => (
-        <div key={i} className="h-48 bg-[#F5EDE0] rounded-2xl" />
-      ))}
-    </div>
-  </div>
-);
-
-// Dynamic Imports
-const AdvancedDashboardTab = dynamic(() => import('@/components/advanced-dashboard-tab'), { loading: () => <TabLoading /> });
-const OrdersTab = dynamic(() => import('@/components/orders-tab-main'), { loading: () => <TabLoading /> });
-const ProductsTab = dynamic(() => import('@/components/products-tab-main'), { loading: () => <TabLoading /> });
-const DriversTab = dynamic(() => import('@/components/drivers-tab-main'), { loading: () => <TabLoading /> });
-const AdvancedCustomerManagementTab = dynamic(() => import('@/components/AdvancedCustomerManagementTab'), { loading: () => <TabLoading /> });
-const DeliveryLinesTab = dynamic(() => import('@/components/delivery-lines-tab-main'), { loading: () => <TabLoading /> });
-const DriverApp = dynamic(() => import('@/components/driver-app-main'), { loading: () => <TabLoading /> });
-const AIPredictionsTab = dynamic(() => import('@/components/ai-predictions-tab'), { loading: () => <TabLoading /> });
-const QualitySafetyTab = dynamic(() => import('@/components/quality-safety-tab'), { loading: () => <TabLoading /> });
-const AccountingTab = dynamic(() => import('@/components/accounting-tab'), { loading: () => <TabLoading /> });
-const PreOrdersTab = dynamic(() => import('@/components/preorders-tab'), { loading: () => <TabLoading /> });
-const InventoryTab = dynamic(() => import('@/components/inventory-tab'), { loading: () => <TabLoading /> });
-const VehiclesTab = dynamic(() => import('@/components/vehicles-tab'), { loading: () => <TabLoading /> });
-const BakeryTab = dynamic(() => import('@/components/bakery-tab'), { loading: () => <TabLoading /> });
-const WebshopTab = dynamic(() => import('@/components/webshop-tab'), { loading: () => <TabLoading /> });
-const IntegrationsTab = dynamic(() => import('@/components/integrations-tab'), { loading: () => <TabLoading /> });
-const AdvancedReportsTab = dynamic(() => import('@/components/advanced-reports-tab'), { loading: () => <TabLoading /> });
-const PaymentSystemTab = dynamic(() => import('@/components/payment-system-tab'), { loading: () => <TabLoading /> });
-const POSTab = dynamic(() => import('@/components/pos-tab'), { loading: () => <TabLoading /> });
-const DailyProductionTab = dynamic(() => import('@/components/daily-production-tab'), { loading: () => <TabLoading /> });
-const CustomerReviewsTab = dynamic(() => import('@/components/customer-reviews-tab'), { loading: () => <TabLoading /> });
-const CustomerChatbotTab = dynamic(() => import('@/components/customer-chatbot-tab'), { loading: () => <TabLoading /> });
-const LiveTrackingTab = dynamic(() => import('@/components/live-tracking-tab'), { loading: () => <TabLoading /> });
-const CustomerAppTab = dynamic(() => import('@/components/customer-app-tab'), { loading: () => <TabLoading /> });
-const NotificationsTab = dynamic(() => import('@/components/NotificationsTab'), { loading: () => <TabLoading /> });
-const ProductionAutomationTab = dynamic(() => import('@/components/production-automation-tab'), { loading: () => <TabLoading /> });
-const UserManagementTab = dynamic(() => import('@/components/user-management-tab'), { loading: () => <TabLoading /> });
-
-
-
-
-
-interface VehicleExpense {
+// Types
+interface Product {
   id: string;
-  vehicleId: string;
-  vehicle: Vehicle;
-  type: string;
-  description: string;
-  amount: number;
-  date: string;
-  receiptUrl: string | null;
-  notes: string | null;
+  nameAr: string;
+  nameEn: string;
+  price: number;
 }
 
-function GoldDust() {
-  const [isClient, setIsClient] = useState(false);
-  
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-  
-  // Don't render on server to avoid hydration mismatch
-  if (!isClient) return null;
-  
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {[...Array(12)].map((_, i) => (
-        <div 
-          key={i}
-          className="gold-dust-particle"
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${100 + Math.random() * 20}%`,
-            animationDelay: `${Math.random() * 4}s`,
-            width: `${Math.random() * 4 + 1}px`,
-            height: `${Math.random() * 4 + 1}px`,
-            opacity: Math.random() * 0.5 + 0.3
-          }}
-        />
-      ))}
-    </div>
-  );
+interface Customer {
+  id: string;
+  name: string;
+  phone: string;
+  address: string;
+  city: string;
 }
 
-
-
-
-
-// Language Selector Component
-function LanguageSelector() {
-  const { language, setLanguage, t } = useLanguage();
-
-  return (
-    <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5">
-      <Globe className="h-4 w-4 text-[#D4A853]" />
-      <Select value={language} onValueChange={(value: Language) => setLanguage(value)}>
-        <SelectTrigger className="w-[130px] border-0 bg-transparent text-white focus:ring-0">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent className="bg-white border-[#E8DFD0]">
-          <SelectItem value="ar" className="hover:bg-[#F5EDE0]">العربية</SelectItem>
-          <SelectItem value="en" className="hover:bg-[#F5EDE0]">English</SelectItem>
-          <SelectItem value="nl" className="hover:bg-[#F5EDE0]">Nederlands</SelectItem>
-          <SelectItem value="ku" className="hover:bg-[#F5EDE0]">Kurdish</SelectItem>
-          <SelectItem value="tr" className="hover:bg-[#F5EDE0]">Turkish</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-  );
+interface Driver {
+  id: string;
+  name: string;
+  phone: string;
+  deliveryLineId?: string;
 }
 
+interface DeliveryLine {
+  id: string;
+  nameAr: string;
+  nameEn: string;
+  isActive: boolean;
+}
 
+interface Order {
+  id: string;
+  orderNumber: string;
+  customerId: string;
+  driverId?: string;
+  status: string;
+  paymentStatus: string;
+  totalAmount: number;
+  createdAt: string;
+  customer?: Customer;
+  driver?: Driver;
+  orderItems?: OrderItem[];
+}
 
+interface OrderItem {
+  id: string;
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+  product?: Product;
+}
 
+interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  customerId: string;
+  totalAmount: number;
+  status: string;
+  dueDate?: string;
+  paidAt?: string;
+  customer?: Customer;
+}
 
-// Main App Component
-function AppContent() {
-  const { t, language, isRTL } = useLanguage();
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [stats, setStats] = useState({ todayOrders: 0, pendingOrders: 0, inDelivery: 0, totalRevenue: 0 });
-  const [seeded, setSeeded] = useState(false);
+export default function BakeryDashboard() {
+  const [sidebarOpen,SidebarOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [loading, setLoading] = useState(false);
+  
+  // Data states
+  const [products, setProducts] = useState<Product[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [deliveryLines, setDeliveryLines] = useState<DeliveryLine[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  
+  // Stats
+  const [todayOrders, setTodayOrders] = useState(0);
+  const [todaySales, setTodaySales] = useState(0);
+  const [activeLines, setActiveLines] = useState(0);
+  
+  // Lock dialog
+  const [lockDialogOpen, setLockDialogOpen] = useState(false);
+  const [lockedFeature, setLockedFeature] = useState("");
 
-  // Role Simulator for Testing (In production, this comes from Auth)
-  const [userRole, setUserRole] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('simulated_role') || 'admin';
-    }
-    return 'admin';
-  });
-
-  const isProductionUser = userRole === 'production_head';
-  const isAccountant = userRole === 'senior_accountant' || userRole === 'junior_accountant';
-  const isAdmin = userRole === 'admin';
-
-  const fetchStats = useCallback(async () => {
+  // Fetch data function
+  const fetchAllData = useCallback(async () => {
+    setLoading(true);
     try {
-      const res = await fetch('/api/orders');
-      const orders: Order[] = await res.json();
+      const [productsRes, customersRes, driversRes, linesRes, ordersRes, invoicesRes] = await Promise.all([
+        fetch("/api/products").then(r => r.json()).catch(() => []),
+        fetch("/api/customers").then(r => r.json()).catch(() => []),
+        fetch("/api/drivers").then(r => r.json()).catch(() => []),
+        fetch("/api/delivery-lines").then(r => r.json()).catch(() => []),
+        fetch("/api/orders").then(r => r.json()).catch(() => []),
+        fetch("/api/invoices").then(r => r.json()).catch(() => []),
+      ]);
+      
+      setProducts(Array.isArray(productsRes) ? productsRes : []);
+      setCustomers(Array.isArray(customersRes) ? customersRes : []);
+      setDrivers(Array.isArray(driversRes) ? driversRes : []);
+      setDeliveryLines(Array.isArray(linesRes) ? linesRes : []);
+      setOrders(Array.isArray(ordersRes) ? ordersRes : []);
+      setInvoices(Array.isArray(invoicesRes) ? invoicesRes : []);
+      
+      // Calculate stats
       const today = new Date().toDateString();
-      const todayOrders = orders.filter(o => new Date(o.createdAt).toDateString() === today);
-      setStats({
-        todayOrders: todayOrders.length,
-        pendingOrders: orders.filter(o => o.status === 'pending').length,
-        inDelivery: orders.filter(o => o.status === 'in_delivery').length,
-        totalRevenue: orders.reduce((sum, o) => sum + o.totalAmount, 0),
-      });
+      const todayOrdersData = Array.isArray(ordersRes) ? ordersRes.filter((o: Order) => 
+        new Date(o.createdAt).toDateString() === today
+      ) : [];
+      
+      setTodayOrders(todayOrdersData.length);
+      setTodaySales(todayOrdersData.reduce((sum: number, o: Order) => sum + o.totalAmount, 0));
+      setActiveLines(Array.isArray(linesRes) ? linesRes.filter((l: DeliveryLine) => l.isActive).length : 0);
+      
     } catch (error) {
-      console.error('Error fetching stats:', error);
+      console.error("Error fetching data:", error);
     }
+    setLoading(false);
   }, []);
 
-  const seedDatabase = async () => {
+  // Fetch data on mount
+  useEffect(() => {
+    fetchAllData();
+  }, [fetchAllData]);
+
+  // Create demo data
+  const createDemoData = async () => {
+    setLoading(true);
     try {
-      await fetch('/api/seed', { method: 'POST' });
-      setSeeded(true);
-      fetchStats();
-      alert(t('messages.success'));
+      const response = await fetch("/api/seed-demo", { method: "POST" });
+      const data = await response.json();
+      
+      if (data.success) {
+        toast.success("تم إنشاء البيانات التجريبية بنجاح!");
+        await fetchAllData();
+      } else {
+        toast.error("حدث خطأ أثناء إنشاء البيانات");
+      }
     } catch (error) {
-      console.error('Error seeding database:', error);
+      toast.error("حدث خطأ أثناء إنشاء البيانات");
+    }
+    setLoading(false);
+  };
+
+  // Update order status
+  const updateOrderStatus = async (orderId: string, status: string) => {
+    try {
+      const response = await fetch(`/api/orders/${orderId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      
+      if (response.ok) {
+        toast.success("تم تحديث حالة الطلب");
+        await fetchAllData();
+      }
+    } catch (error) {
+      toast.error("حدث خطأ");
     }
   };
 
-  useEffect(() => {
-    void fetchStats();
-  }, [fetchStats]);
+  // Show locked feature dialog
+  const showLockedFeature = (featureName: string) => {
+    setLockedFeature(featureName);
+    setLockDialogOpen(true);
+  };
+
+  // Menu items
+  const menuItems = [
+    { id: "dashboard", label: "لوحة التحكم", icon: LayoutDashboard, locked: false },
+    { id: "invoices", label: "الفواتير", icon: FileText, locked: false },
+    { id: "drivers", label: "واجهة السائقين", icon: Truck, locked: false },
+    { id: "gps-tracking", label: "تتبع السائقين GPS", icon: MapPin, locked: true },
+    { id: "customer-app", label: "تطبيق العملاء", icon: Smartphone, locked: true },
+    { id: "cost-centers", label: "مراكز التكلفة", icon: Calculator, locked: true },
+    { id: "tracking", label: "تتبع الصناديق", icon: Package, locked: true },
+    { id: "robot", label: "روبوت التحصيل", icon: Bot, locked: true },
+  ];
+
+  // Status colors
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "pending": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
+      case "in_delivery": return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+      case "completed": return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+      case "cancelled": return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
+      case "paid": return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+      case "unpaid": return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
+      default: return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200";
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "pending": return "جديد";
+      case "in_delivery": return "قيد التوصيل";
+      case "completed": return "مكتمل";
+      case "cancelled": return "ملغي";
+      case "paid": return "مدفوع";
+      case "unpaid": return "غير مدفوع";
+      default: return status;
+    }
+  };
 
   return (
-    <div className={`min-h-screen bg-background text-foreground ${isRTL ? 'rtl' : 'ltr'} arabic-pattern transition-colors duration-300`} dir={isRTL ? 'rtl' : 'ltr'}>
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-gradient-to-r from-[#1A1A1A] via-[#2D2D2D] to-[#1A1A1A] shadow-lg overflow-hidden">
-        <GoldDust />
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="flex justify-between items-center h-16">
+    <div className={`min-h-screen ${theme === "dark" ? "dark" : ""}`} dir="rtl">
+      {/* Background */}
+      <div className="fixed inset-0 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 -z-10" />
+      
+      <div className="flex h-screen overflow-hidden">
+        {/* Sidebar */}
+        <aside className={`${sidebarOpen ? "w-72" : "w-20"} transition-all duration-300 bg-gradient-to-b from-amber-900 to-amber-800 text-white flex flex-col shadow-xl`}>
+          {/* Logo */}
+          <div className="p-4 border-b border-amber-700/50">
             <div className="flex items-center gap-3">
-              <div className="relative group">
-                <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center shadow-xl overflow-hidden border-2 border-white/30 logo-shine-container animate-floating transition-all duration-500 group-hover:scale-110 group-hover:rotate-6">
-                  <Image 
-                    src="/logo.png" 
-                    alt="Al Malika Logo" 
-                    width={56} 
-                    height={56} 
-                    className="object-contain p-1"
-                    priority
-                  />
+              <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-xl flex items-center justify-center shadow-lg">
+                <span className="text-2xl">🍞</span>
+              </div>
+              {sidebarOpen && (
+                <div>
+                  <h1 className="font-bold text-lg text-amber-100">مخبز الملكة</h1>
+                  <p className="text-xs text-amber-300">Al-Malika Bakery</p>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Menu */}
+          <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => item.locked ? showLockedFeature(item.label) : setActiveTab(item.id)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                  activeTab === item.id
+                    ? "bg-amber-600 text-white shadow-lg"
+                    : "text-amber-200 hover:bg-amber-700/50 hover:text-white"
+                }`}
+              >
+                <item.icon className="w-5 h-5 flex-shrink-0" />
+                {sidebarOpen && (
+                  <>
+                    <span className="flex-1 text-right">{item.label}</span>
+                    {item.locked && <Lock className="w-4 h-4 text-amber-400" />}
+                  </>
+                )}
+              </button>
+            ))}
+          </nav>
+          
+          {/* Toggle button */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-3 border-t border-amber-700/50 hover:bg-amber-700/50 transition-colors"
+          >
+            {sidebarOpen ? <ChevronRight className="w-5 h-5 mx-auto" /> : <ChevronLeft className="w-5 h-5 mx-auto" />}
+          </button>
+        </aside>
+        
+        {/* Main content */}
+        <main className="flex-1 overflow-y-auto">
+          {/* Header */}
+          <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-amber-200 dark:border-gray-700">
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center gap-4">
+                <h2 className="text-2xl font-bold text-amber-900 dark:text-amber-100">
+                  {menuItems.find(m => m.id === activeTab)?.label}
+                </h2>
+                <Badge variant="outline" className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+                  حزمة 5,000 €
+                </Badge>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <Button
+                  onClick={createDemoData}
+                  disabled={loading}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  إنشاء بيانات تجريبية
+                </Button>
+                
+                <Button
+                  onClick={fetchAllData}
+                  disabled={loading}
+                  variant="outline"
+                  className="gap-2 border-amber-300 text-amber-800 hover:bg-amber-50"
+                >
+                  <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+                  تحديث
+                </Button>
+                
+                <Button
+                  onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+                  variant="ghost"
+                  size="icon"
+                  className="text-amber-800 dark:text-amber-200"
+                >
+                  {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+                </Button>
+              </div>
+            </div>
+          </header>
+          
+          {/* Content */}
+          <div className="p-6">
+            {/* Dashboard Tab */}
+            {activeTab === "dashboard" && (
+              <div className="space-y-6">
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-xl">
+                    <CardHeader className="pb-2">
+                      <CardDescription className="text-blue-100">طلبات اليوم</CardDescription>
+                      <CardTitle className="text-4xl font-bold">{todayOrders}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center gap-2 text-blue-100">
+                        <ShoppingBag className="w-4 h-4" />
+                        <span className="text-sm">طلب جديد</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white border-0 shadow-xl">
+                    <CardHeader className="pb-2">
+                      <CardDescription className="text-green-100">مبيعات اليوم</CardDescription>
+                      <CardTitle className="text-4xl font-bold">€{todaySales.toFixed(2)}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center gap-2 text-green-100">
+                        <DollarSign className="w-4 h-4" />
+                        <span className="text-sm">إجمالي المبيعات</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-gradient-to-br from-amber-500 to-orange-600 text-white border-0 shadow-xl">
+                    <CardHeader className="pb-2">
+                      <CardDescription className="text-amber-100">خطوط التوزيع النشطة</CardDescription>
+                      <CardTitle className="text-4xl font-bold">{activeLines}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center gap-2 text-amber-100">
+                        <Truck className="w-4 h-4" />
+                        <span className="text-sm">خط توزيع</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                {/* Delivery Lines */}
+                <Card className="border-amber-200 dark:border-gray-700 shadow-lg">
+                  <CardHeader>
+                    <CardTitle className="text-amber-900 dark:text-amber-100">خطوط التوزيع</CardTitle>
+                    <CardDescription>قائمة خطوط التوزيع التسعة النشطة</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {deliveryLines.length > 0 ? deliveryLines.map((line, idx) => (
+                        <div
+                          key={line.id}
+                          className={`p-4 rounded-xl border-2 ${line.isActive ? "border-green-300 bg-green-50 dark:bg-green-900/20" : "border-gray-200 bg-gray-50 dark:bg-gray-800/20"}`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium text-amber-900 dark:text-amber-100">{line.nameAr}</span>
+                            {line.isActive && <CheckCircle className="w-5 h-5 text-green-500" />}
+                          </div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{line.nameEn}</p>
+                        </div>
+                      )) : (
+                        <div className="col-span-3 text-center py-8 text-gray-500 dark:text-gray-400">
+                          <AlertCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                          <p>لا توجد خطوط توزيع. اضغط على "إنشاء بيانات تجريبية" للبدء.</p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                {/* Orders Table */}
+                <Card className="border-amber-200 dark:border-gray-700 shadow-lg">
+                  <CardHeader>
+                    <CardTitle className="text-amber-900 dark:text-amber-100">الطلبات الواردة</CardTitle>
+                    <CardDescription>تحديث حالة الطلبات</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-amber-200 dark:border-gray-700">
+                            <th className="text-right p-3 text-amber-800 dark:text-amber-200">رقم الطلب</th>
+                            <th className="text-right p-3 text-amber-800 dark:text-amber-200">العميل</th>
+                            <th className="text-right p-3 text-amber-800 dark:text-amber-200">المبلغ</th>
+                            <th className="text-right p-3 text-amber-800 dark:text-amber-200">الحالة</th>
+                            <th className="text-right p-3 text-amber-800 dark:text-amber-200">الدفع</th>
+                            <th className="text-right p-3 text-amber-800 dark:text-amber-200">إجراء</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {orders.length > 0 ? orders.slice(0, 10).map((order) => (
+                            <tr key={order.id} className="border-b border-amber-100 dark:border-gray-800 hover:bg-amber-50 dark:hover:bg-gray-800/50">
+                              <td className="p-3 font-mono text-amber-900 dark:text-amber-100">{order.orderNumber}</td>
+                              <td className="p-3 text-gray-700 dark:text-gray-300">{order.customer?.name || "—"}</td>
+                              <td className="p-3 text-gray-700 dark:text-gray-300">€{order.totalAmount.toFixed(2)}</td>
+                              <td className="p-3">
+                                <Badge className={getStatusColor(order.status)}>
+                                  {getStatusText(order.status)}
+                                </Badge>
+                              </td>
+                              <td className="p-3">
+                                <Badge className={getStatusColor(order.paymentStatus)}>
+                                  {getStatusText(order.paymentStatus)}
+                                </Badge>
+                              </td>
+                              <td className="p-3">
+                                <Select
+                                  value={order.status}
+                                  onValueChange={(value) => updateOrderStatus(order.id, value)}
+                                >
+                                  <SelectTrigger className="w-36">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="pending">جديد</SelectItem>
+                                    <SelectItem value="in_delivery">قيد التوصيل</SelectItem>
+                                    <SelectItem value="completed">مكتمل</SelectItem>
+                                    <SelectItem value="cancelled">ملغي</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </td>
+                            </tr>
+                          )) : (
+                            <tr>
+                              <td colSpan={6} className="text-center py-8 text-gray-500 dark:text-gray-400">
+                                <AlertCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                                <p>لا توجد طلبات. اضغط على "إنشاء بيانات تجريبية" للبدء.</p>
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {/* Invoices Tab */}
+            {activeTab === "invoices" && (
+              <div className="space-y-6">
+                <Card className="border-amber-200 dark:border-gray-700 shadow-lg">
+                  <CardHeader>
+                    <CardTitle className="text-amber-900 dark:text-amber-100">فواتير الزبائن</CardTitle>
+                    <CardDescription>عرض حالة الدفع للفواتير</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-amber-200 dark:border-gray-700">
+                            <th className="text-right p-3 text-amber-800 dark:text-amber-200">رقم الفاتورة</th>
+                            <th className="text-right p-3 text-amber-800 dark:text-amber-200">العميل</th>
+                            <th className="text-right p-3 text-amber-800 dark:text-amber-200">المبلغ</th>
+                            <th className="text-right p-3 text-amber-800 dark:text-amber-200">الحالة</th>
+                            <th className="text-right p-3 text-amber-800 dark:text-amber-200">تاريخ الاستحقاق</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {invoices.length > 0 ? invoices.map((invoice) => (
+                            <tr key={invoice.id} className="border-b border-amber-100 dark:border-gray-800 hover:bg-amber-50 dark:hover:bg-gray-800/50">
+                              <td className="p-3 font-mono text-amber-900 dark:text-amber-100">{invoice.invoiceNumber}</td>
+                              <td className="p-3 text-gray-700 dark:text-gray-300">{invoice.customer?.name || "—"}</td>
+                              <td className="p-3 text-gray-700 dark:text-gray-300">€{invoice.totalAmount.toFixed(2)}</td>
+                              <td className="p-3">
+                                <Badge className={getStatusColor(invoice.status)}>
+                                  {getStatusText(invoice.status)}
+                                </Badge>
+                              </td>
+                              <td className="p-3 text-gray-700 dark:text-gray-300">
+                                {invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString("ar-SA") : "—"}
+                              </td>
+                            </tr>
+                          )) : (
+                            <tr>
+                              <td colSpan={5} className="text-center py-8 text-gray-500 dark:text-gray-400">
+                                <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                                <p>لا توجد فواتير. اضغط على "إنشاء بيانات تجريبية" للبدء.</p>
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {/* Drivers Tab */}
+            {activeTab === "drivers" && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {drivers.length > 0 ? drivers.map((driver) => (
+                    <Card key={driver.id} className="border-amber-200 dark:border-gray-700 shadow-lg">
+                      <CardHeader>
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+                            {driver.name.charAt(0)}
+                          </div>
+                          <div>
+                            <CardTitle className="text-amber-900 dark:text-amber-100">{driver.name}</CardTitle>
+                            <CardDescription>{driver.phone}</CardDescription>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <h4 className="font-medium mb-3 text-amber-800 dark:text-amber-200">مهام اليوم</h4>
+                        <div className="space-y-2">
+                          {orders
+                            .filter(o => o.driverId === driver.id && o.status !== "completed")
+                            .slice(0, 5)
+                            .map((order) => (
+                              <div key={order.id} className="flex items-center justify-between p-3 bg-amber-50 dark:bg-gray-800 rounded-lg">
+                                <div>
+                                  <span className="font-mono text-sm text-amber-900 dark:text-amber-100">{order.orderNumber}</span>
+                                  <p className="text-xs text-gray-500 dark:text-gray-400">{order.customer?.name}</p>
+                                </div>
+                                <Select
+                                  value={order.status}
+                                  onValueChange={(value) => updateOrderStatus(order.id, value)}
+                                >
+                                  <SelectTrigger className="w-32">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="pending">جديد</SelectItem>
+                                    <SelectItem value="in_delivery">قيد التوصيل</SelectItem>
+                                    <SelectItem value="completed">مكتمل</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            ))}
+                          {orders.filter(o => o.driverId === driver.id).length === 0 && (
+                            <p className="text-center text-gray-500 dark:text-gray-400 py-4">لا توجد مهام لهذا السائق</p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )) : (
+                    <div className="col-span-2 text-center py-8 text-gray-500 dark:text-gray-400">
+                      <Truck className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                      <p>لا يوجد سائقون. اضغط على "إنشاء بيانات تجريبية" للبدء.</p>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-white font-arabic-premium leading-tight">{t('app.title')}</h1>
-                <p className="text-xs text-white/80 font-medium tracking-wide uppercase">{t('app.subtitle')}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <ThemeToggle />
-              <LanguageSelector />
-              <Button variant="ghost" size="icon" onClick={fetchStats} className="text-white/70 hover:text-white hover:bg-white/10">
-                <RefreshCw className="h-5 w-5" />
-              </Button>
-            </div>
+            )}
           </div>
-        </div>
-      </header>
-
-      {/* Navigation Tabs */}
-      <div className="sticky top-16 z-40 bg-card border-b border-border shadow-sm transition-colors duration-300">
-        <div className="container mx-auto px-4 py-2">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <div className="flex items-center gap-2">
-              {/* Dropdown Menu for All Tabs */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2 border-[#D4A853] text-[#5C4033] hover:bg-[#F5EDE0]">
-                    <Menu className="h-4 w-4" />
-                    <span>{t('nav.allSections')}</span>
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64 max-h-[70vh] overflow-y-auto bg-white" align="start">
-                  {/* Main Sections */}
-                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                    {t('nav.mainSections')}
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => setActiveTab('dashboard')} className="gap-2 cursor-pointer">
-                    <BarChart3 className="h-4 w-4 text-primary" />
-                    <span>{t('app.dashboard')}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('orders')} className="gap-2 cursor-pointer">
-                    <ShoppingBag className="h-4 w-4 text-primary" />
-                    <span>{t('nav.orders')}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('products')} className="gap-2 cursor-pointer">
-                    <Package className="h-4 w-4 text-primary" />
-                    <span>{t('nav.products')}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('customers')} className="gap-2 cursor-pointer">
-                    <Users className="h-4 w-4 text-[#D4A853]" />
-                    <span>{t('nav.customers')}</span>
-                  </DropdownMenuItem>
-                  
-                  <DropdownMenuSeparator />
-                  
-                  {/* Delivery & Drivers */}
-                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                    {t('nav.deliveryDrivers')}
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => setActiveTab('drivers')} className="gap-2 cursor-pointer">
-                    <Users className="h-4 w-4 text-primary" />
-                    <span>{t('nav.drivers')}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('deliveryLines')} className="gap-2 cursor-pointer">
-                    <MapPin className="h-4 w-4 text-primary" />
-                    <span>{t('nav.deliveryLines')}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('driverApp')} className="gap-2 cursor-pointer">
-                    <Truck className="h-4 w-4 text-[#D4A853]" />
-                    <span>{t('app.driverApp')}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('tracking')} className="gap-2 cursor-pointer">
-                    <MapPinned className="h-4 w-4 text-[#D4A853]" />
-                    <span>{t('nav.liveTracking')}</span>
-                  </DropdownMenuItem>
-                  
-                  <DropdownMenuSeparator />
-                  
-                  {/* Production & Quality - Hidden from Accountants unless Admin */}
-                  {(isAdmin || isProductionUser) && (
-                    <>
-                      <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                        {t('nav.productionQuality')}
-                      </DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => setActiveTab('bakery')} className="gap-2 cursor-pointer">
-                        <Cookie className="h-4 w-4 text-[#D4A853]" />
-                        <span>{t('nav.bakery')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab('production')} className="gap-2 cursor-pointer">
-                        <ChefHat className="h-4 w-4 text-[#2D5A3D]" />
-                        <span>{t('nav.dailyProduction')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab('packing')} className="gap-2 cursor-pointer">
-                        <Package className="h-4 w-4 text-[#2D5A3D]" />
-                        <span>{t('nav.packingDashboard')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab('qualitySafety')} className="gap-2 cursor-pointer">
-                        <ShieldCheck className="h-4 w-4 text-[#D4A853]" />
-                        <span>{t('nav.qualitySafety')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab('inventory')} className="gap-2 cursor-pointer">
-                        <Warehouse className="h-4 w-4 text-[#D4A853]" />
-                        <span>{t('nav.inventory')}</span>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  
-                  <DropdownMenuSeparator />
-                  
-                  {/* Sales & Finance - Hidden from Production unless Admin */}
-                  {(isAdmin || isAccountant) && (
-                    <>
-                      <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                        {t('nav.salesFinance')}
-                      </DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => setActiveTab('accounting')} className="gap-2 cursor-pointer">
-                        <Wallet className="h-4 w-4 text-[#2D5A3D]" />
-                        <span>{t('nav.accounting')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab('payments')} className="gap-2 cursor-pointer">
-                        <CreditCard className="h-4 w-4 text-[#2D5A3D]" />
-                        <span>{t('nav.paymentSystem')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab('pos')} className="gap-2 cursor-pointer">
-                        <ShoppingCart className="h-4 w-4 text-[#D4A853]" />
-                        <span>{t('nav.pos')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab('webshop')} className="gap-2 cursor-pointer">
-                        <Store className="h-4 w-4 text-[#D4A853]" />
-                        <span>{t('nav.webshop')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab('preorders')} className="gap-2 cursor-pointer">
-                        <Calendar className="h-4 w-4 text-[#D4A853]" />
-                        <span>{t('nav.preorders')}</span>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  
-                  <DropdownMenuSeparator />
-                  
-                  {/* Vehicles & Assets */}
-                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                    {t('nav.vehiclesAssets')}
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => setActiveTab('vehicles')} className="gap-2 cursor-pointer">
-                    <Car className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{t('nav.vehicles')}</span>
-                  </DropdownMenuItem>
-                  
-                  <DropdownMenuSeparator />
-                  
-                  {/* Analytics & Reports */}
-                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                    {t('nav.analyticsReports')}
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => setActiveTab('aiPredictions')} className="gap-2 cursor-pointer">
-                    <TrendingUp className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{t('nav.aiPredictions')}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('reports')} className="gap-2 cursor-pointer">
-                    <FileText className="h-4 w-4 text-[#D4A853]" />
-                    <span>{t('nav.reports')}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('reviews')} className="gap-2 cursor-pointer">
-                    <Star className="h-4 w-4 text-[#D4A853]" />
-                    <span>{t('nav.reviews')}</span>
-                  </DropdownMenuItem>
-                  
-                  <DropdownMenuSeparator />
-                  
-                  {/* Customer Experience */}
-                  <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                    {t('nav.customerExperience')}
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => setActiveTab('customerApp')} className="gap-2 cursor-pointer">
-                    <Smartphone className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{t('nav.customerApp')}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('chatbot')} className="gap-2 cursor-pointer">
-                    <Bot className="h-4 w-4 text-[#2D5A3D]" />
-                    <span>{t('nav.chatbot')}</span>
-                  </DropdownMenuItem>
-                  
-                  {/* System & Settings - Hidden unless Admin */}
-                  {isAdmin && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuLabel className="text-[#D4A853] font-bold">
-                        {t('nav.system')}
-                      </DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => setActiveTab('users')} className="gap-2 cursor-pointer">
-                        <Shield className="h-4 w-4 text-red-600" />
-                        <span>{isRTL ? 'إدارة المستخدمين' : 'User Management'}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab('notifications')} className="gap-2 cursor-pointer">
-                        <Bell className="h-4 w-4 text-[#D4A853]" />
-                        <span>{t('nav.notifications')}</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab('integrations')} className="gap-2 cursor-pointer">
-                        <Link2 className="h-4 w-4 text-[#D4A853]" />
-                        <span>{t('nav.integrations')}</span>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              
-              {/* Quick Access Tabs - Horizontal Scrollable */}
-              <div className="flex-1 overflow-x-auto scrollbar-thin">
-                <TabsList className="h-10 bg-transparent gap-1 w-max min-w-full flex-nowrap inline-flex">
-                  <TabsTrigger value="dashboard" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground px-3 py-1.5 whitespace-nowrap text-sm">
-                    <BarChart3 className="h-4 w-4 mr-1 flex-shrink-0" />
-                    <span className="hidden sm:inline">{t('app.dashboard')}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="orders" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground px-3 py-1.5 whitespace-nowrap text-sm">
-                    <ShoppingBag className="h-4 w-4 mr-1 flex-shrink-0" />
-                    <span className="hidden sm:inline">{t('nav.orders')}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="products" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground px-3 py-1.5 whitespace-nowrap text-sm">
-                    <Package className="h-4 w-4 mr-1 flex-shrink-0" />
-                    <span className="hidden sm:inline">{t('nav.products')}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="customers" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground px-3 py-1.5 whitespace-nowrap text-sm">
-                    <Users className="h-4 w-4 mr-1 flex-shrink-0" />
-                    <span className="hidden sm:inline">{t('nav.customers')}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="drivers" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground px-3 py-1.5 whitespace-nowrap text-sm">
-                    <Truck className="h-4 w-4 mr-1 flex-shrink-0" />
-                    <span className="hidden sm:inline">{t('nav.drivers')}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="accounting" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground px-3 py-1.5 whitespace-nowrap text-sm">
-                    <Wallet className="h-4 w-4 mr-1 flex-shrink-0" />
-                    <span className="hidden md:inline">{t('accounting.title')}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="reports" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground px-3 py-1.5 whitespace-nowrap text-sm">
-                    <FileText className="h-4 w-4 mr-1 flex-shrink-0" />
-                    <span className="hidden lg:inline">{t('nav.reports')}</span>
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-            </div>
-          </Tabs>
-        </div>
+        </main>
       </div>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsContent value="dashboard" className="mt-0 space-y-6 tabs-content-animate">
-            <AdvancedDashboardTab />
-          </TabsContent>
-
-          <TabsContent value="orders" className="mt-0 tabs-content-animate">
-            <OrdersTab />
-          </TabsContent>
-
-          <TabsContent value="products" className="mt-0 tabs-content-animate">
-            <ProductsTab />
-          </TabsContent>
-
-          <TabsContent value="drivers" className="mt-0 tabs-content-animate">
-            <DriversTab />
-          </TabsContent>
-
-          <TabsContent value="customers" className="mt-0 tabs-content-animate">
-            <AdvancedCustomerManagementTab />
-          </TabsContent>
-
-          <TabsContent value="deliveryLines" className="mt-0 tabs-content-animate">
-            <DeliveryLinesTab />
-          </TabsContent>
-
-          <TabsContent value="driverApp" className="mt-0 tabs-content-animate">
-            <DriverApp />
-          </TabsContent>
-
-          <TabsContent value="aiPredictions" className="mt-0 tabs-content-animate">
-            <AIPredictionsTab />
-          </TabsContent>
-
-          <TabsContent value="qualitySafety" className="mt-0 tabs-content-animate">
-            <QualitySafetyTab />
-          </TabsContent>
-
-          <TabsContent value="accounting" className="mt-0 tabs-content-animate">
-            <AccountingTab />
-          </TabsContent>
-
-          <TabsContent value="preorders" className="mt-0 tabs-content-animate">
-            <PreOrdersTab />
-          </TabsContent>
-
-          <TabsContent value="inventory" className="mt-0 tabs-content-animate">
-            <InventoryTab />
-          </TabsContent>
-
-          <TabsContent value="vehicles" className="mt-0 tabs-content-animate">
-            <VehiclesTab />
-          </TabsContent>
-
-          <TabsContent value="bakery" className="mt-0 tabs-content-animate">
-            <BakeryTab />
-          </TabsContent>
-
-          <TabsContent value="webshop" className="mt-0 tabs-content-animate">
-            <WebshopTab />
-          </TabsContent>
-
-          <TabsContent value="integrations" className="mt-0 tabs-content-animate">
-            <IntegrationsTab />
-          </TabsContent>
-
-          <TabsContent value="reports" className="mt-0 tabs-content-animate">
-            <AdvancedReportsTab />
-          </TabsContent>
-
-          <TabsContent value="payments" className="mt-0 tabs-content-animate">
-            <PaymentSystemTab />
-          </TabsContent>
-
-          <TabsContent value="pos" className="mt-0 tabs-content-animate">
-            <POSTab />
-          </TabsContent>
-
-          <TabsContent value="production" className="mt-0 tabs-content-animate">
-            <DailyProductionTab />
-          </TabsContent>
-
-          <TabsContent value="packing" className="mt-0 tabs-content-animate">
-            <ProductionAutomationTab />
-          </TabsContent>
-
-          <TabsContent value="reviews" className="mt-0 tabs-content-animate">
-            <CustomerReviewsTab />
-          </TabsContent>
-
-          <TabsContent value="chatbot" className="mt-0 tabs-content-animate">
-            <CustomerChatbotTab />
-          </TabsContent>
-
-          <TabsContent value="tracking" className="mt-0 tabs-content-animate">
-            <LiveTrackingTab />
-          </TabsContent>
-
-          <TabsContent value="customerApp" className="mt-0 tabs-content-animate">
-            <CustomerAppTab />
-          </TabsContent>
-
-          <TabsContent value="notifications" className="mt-0 tabs-content-animate">
-            <NotificationsTab />
-          </TabsContent>
-
-          <TabsContent value="users" className="mt-0 tabs-content-animate">
-            <UserManagementTab />
-          </TabsContent>
-        </Tabs>
-      </main>
-
-      {/* Footer */}
-      <footer className="mt-auto border-t border-border bg-card transition-colors duration-300">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-14 h-14 rounded-full gold-gradient flex items-center justify-center overflow-hidden shadow-lg logo-shine-container animate-floating">
-                <Image 
-                  src="/logo.png" 
-                  alt="Al Malika Logo" 
-                  width={56} 
-                  height={56} 
-                  className="object-contain p-1"
-                />
-              </div>
-              <div>
-                <div className="font-bold text-[#3D3229]">{t('app.title')}</div>
-                <div className="text-sm text-[#7A6F63]">{t('app.subtitle')}</div>
-              </div>
-            </div>
-            <div className="text-center md:text-right text-sm text-[#7A6F63]">
-              <p>Amsterdam, Netherlands</p>
-              <p>© 2025 {t('app.title')} - {t('app.allRightsReserved')}</p>
-            </div>
+      
+      {/* Locked Feature Dialog */}
+      <Dialog open={lockDialogOpen} onOpenChange={setLockDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-amber-900">
+              <Lock className="w-5 h-5" />
+              ميزة مقفلة
+            </DialogTitle>
+            <DialogDescription className="text-lg py-4">
+              <span className="font-medium text-amber-800">"{lockedFeature}"</span>
+              <br />
+              <br />
+              هذه الميزة متوفرة في الحزمة المتقدمة.
+              <br />
+              <br />
+              <span className="text-amber-600 font-medium">يرجى التواصل مع المطور للتفعيل.</span>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end">
+            <Button onClick={() => setLockDialogOpen(false)} className="bg-amber-600 hover:bg-amber-700 text-white">
+              حسناً
+            </Button>
           </div>
-        </div>
-      </footer>
+        </DialogContent>
+      </Dialog>
     </div>
-  );
-}
-
-export default function Home() {
-  return (
-    <LanguageProvider>
-      <AppContent />
-    </LanguageProvider>
   );
 }
