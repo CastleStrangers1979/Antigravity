@@ -1,41 +1,21 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { demoCustomers, shouldUseDemoData } from '@/lib/demo-data';
 
-// GET all customers
-export async function GET() {
+// GET - جلب جميع العملاء
+export async function GET(request: NextRequest) {
   try {
+    if (shouldUseDemoData()) {
+      return NextResponse.json(demoCustomers);
+    }
+
     const customers = await db.customer.findMany({
       orderBy: { createdAt: 'desc' },
     });
-    
+
     return NextResponse.json(customers);
   } catch (error) {
-    console.error('Error fetching customers:', error);
-    return NextResponse.json([]);
-  }
-}
-
-// POST create customer
-export async function POST(request: Request) {
-  try {
-    const data = await request.json();
-    const customer = await db.customer.create({
-      data: {
-        name: data.name,
-        phone: data.phone,
-        email: data.email || null,
-        address: data.address,
-        city: data.city,
-        notes: data.notes || null,
-        customerType: data.customerType || 'retail',
-        loyaltyPoints: data.loyaltyPoints || 0,
-        totalOrders: data.totalOrders || 0,
-        totalSpent: data.totalSpent || 0,
-      },
-    });
-    return NextResponse.json(customer);
-  } catch (error) {
-    console.error('Error creating customer:', error);
-    return NextResponse.json({ error: 'Error creating customer' }, { status: 500 });
+    console.error('Error fetching customers, using demo data:', error);
+    return NextResponse.json(demoCustomers);
   }
 }

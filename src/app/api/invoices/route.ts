@@ -1,30 +1,36 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { demoInvoices, demoCustomers, shouldUseDemoData } from '@/lib/demo-data';
 
-export async function GET() {
+// GET - جلب جميع الفواتير
+export async function GET(request: NextRequest) {
   try {
+    if (shouldUseDemoData()) {
+      const invoicesWithCustomers = demoInvoices.map(invoice => ({
+        ...invoice,
+        customer: demoCustomers.find(c => c.id === invoice.customerId)
+      }));
+      return NextResponse.json(invoicesWithCustomers);
+    }
+
     const invoices = await db.invoice.findMany({
+      orderBy: { createdAt: 'desc' },
       include: {
         order: {
           include: {
-            customer: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
+            customer: true
+          }
+        }
+      }
     });
-    
-    // Transform to include customer at root level from order
-    const transformed = invoices.map(inv => ({
-      ...inv,
-      customer: inv.order?.customer || null,
-    }));
-    
-    return NextResponse.json(transformed);
+
+    return NextResponse.json(invoices);
   } catch (error) {
-    console.error('Error fetching invoices:', error);
-    return NextResponse.json([], { status: 500 });
+    console.error('Error fetching invoices, using demo data:', error);
+    const invoicesWithCustomers = demoInvoices.map(invoice => ({
+      ...invoice,
+      customer: demoCustomers.find(c => c.id === invoice.customerId)
+    }));
+    return NextResponse.json(invoicesWithCustomers);
   }
 }

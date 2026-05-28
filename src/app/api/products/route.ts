@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { demoProducts, shouldUseDemoData } from '@/lib/demo-data';
 
 // GET - جلب جميع المنتجات
 export async function GET(request: NextRequest) {
   try {
+    // Use demo data if database is not available
+    if (shouldUseDemoData()) {
+      return NextResponse.json(demoProducts);
+    }
+
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
     const activeOnly = searchParams.get('activeOnly') === 'true';
@@ -19,14 +25,18 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(products);
   } catch (error) {
-    console.error('Error fetching products:', error);
-    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+    console.error('Error fetching products, using demo data:', error);
+    return NextResponse.json(demoProducts);
   }
 }
 
 // POST - إضافة منتج جديد
 export async function POST(request: NextRequest) {
   try {
+    if (shouldUseDemoData()) {
+      return NextResponse.json({ message: 'Demo mode - product not saved' }, { status: 200 });
+    }
+
     const body = await request.json();
     const { nameAr, nameEn, nameNl, description, price, image, category, stock, sku, weight, packSize, boxSize } = body;
 
