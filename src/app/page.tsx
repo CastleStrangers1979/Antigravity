@@ -102,7 +102,7 @@ interface Invoice {
 }
 
 export default function BakeryDashboard() {
-  const [sidebarOpen,SidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [loading, setLoading] = useState(false);
