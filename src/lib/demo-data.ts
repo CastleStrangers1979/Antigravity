@@ -69,9 +69,28 @@ export const demoInvoices = [
 
 // Helper to check if we should use demo data
 export function shouldUseDemoData(): boolean {
-  // Use demo data if DATABASE_URL is not set or if we're in Vercel preview
+  // Use demo data on cloud platforms that don't support SQLite persistence
+  // Render, Netlify, Vercel all use ephemeral file systems
   if (typeof process !== 'undefined') {
-    return !process.env.DATABASE_URL || process.env.VERCEL === '1';
+    const nodeEnv = process.env.NODE_ENV;
+    const render = process.env.RENDER || process.env.RENDER_SERVICE_ID;
+    const netlify = process.env.NETLIFY || process.env.NETLIFY_SITE_NAME;
+    const vercel = process.env.VERCEL;
+    
+    // Always use demo data on cloud platforms
+    if (render || netlify || vercel) {
+      return true;
+    }
+    
+    // Use demo data if DATABASE_URL is not set
+    if (!process.env.DATABASE_URL) {
+      return true;
+    }
+    
+    // In production on cloud, use demo data
+    if (nodeEnv === 'production') {
+      return true;
+    }
   }
   return false;
 }
