@@ -179,12 +179,65 @@ function LanguageSelector() {
 
 
 
+// Locked Features Configuration
+const LOCKED_FEATURES = [
+  'tracking',      // التتبع المباشر للسائقين عبر الخرائط والـ GPS
+  'customerApp',   // تطبيق العملاء الكامل وسلة الشراء والطلب المباشر
+  'packing',       // نظام تتبع الصناديق البلاستيكية والربطات
+  'notifications', // روبوت الاتصال التلقائي ونظام الإشعارات
+];
+
+// Locked Feature Popup Component
+function LockedFeatureDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md bg-gradient-to-br from-[#F5EDE0] to-white border-[#D4A853]">
+        <DialogHeader>
+          <DialogTitle className="text-2xl text-[#3D3229] flex items-center gap-2">
+            <span className="text-3xl">🔒</span>
+            <span>ميزة متقدمة</span>
+          </DialogTitle>
+        </DialogHeader>
+        <div className="py-6">
+          <div className="bg-gradient-to-r from-[#D4A853]/20 to-[#F5EDE0] rounded-xl p-6 border border-[#D4A853]/30">
+            <p className="text-lg text-[#3D3229] leading-relaxed text-center">
+              🔒 هذه الميزة متوفرة حصرياً في <span className="font-bold text-[#D4A853]">الحزمة المتقدمة</span>
+            </p>
+            <div className="mt-4 space-y-2 text-sm text-[#5C4033]">
+              <p>✨ لتفعيل:</p>
+              <ul className="list-disc list-inside space-y-1 mr-4">
+                <li>النظام المحاسبي المتكامل</li>
+                <li>تتبع الـ GPS المباشر</li>
+                <li>تطبيق العملاء والروبوت الآلي</li>
+                <li>تتبع الصناديق والربطات</li>
+                <li>نظام الإشعارات الملونة</li>
+              </ul>
+            </div>
+            <p className="mt-4 text-center text-[#D4A853] font-semibold">
+              📞 يرجى التواصل مع مطور النظام للترقية
+            </p>
+          </div>
+        </div>
+        <div className="flex justify-center">
+          <Button 
+            onClick={() => onOpenChange(false)}
+            className="bg-gradient-to-r from-[#D4A853] to-[#B8963D] text-white hover:opacity-90 px-8"
+          >
+            حسناً، فهمت
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 // Main App Component
 function AppContent() {
   const { t, language, isRTL } = useLanguage();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [stats, setStats] = useState({ todayOrders: 0, pendingOrders: 0, inDelivery: 0, totalRevenue: 0 });
   const [seeded, setSeeded] = useState(false);
+  const [showLockedDialog, setShowLockedDialog] = useState(false);
 
   // Role Simulator for Testing (In production, this comes from Auth)
   // Always use 'admin' role to show all sections in demo mode
@@ -193,6 +246,23 @@ function AppContent() {
   const isProductionUser = userRole === 'production_head';
   const isAccountant = userRole === 'senior_accountant' || userRole === 'junior_accountant';
   const isAdmin = userRole === 'admin';
+
+  // Handler for locked features
+  const handleLockedFeature = (featureId: string) => {
+    if (LOCKED_FEATURES.includes(featureId)) {
+      setShowLockedDialog(true);
+      return true; // Indicates the feature is locked
+    }
+    return false; // Feature is unlocked
+  };
+
+  // Safe tab change handler
+  const handleTabChange = (tabId: string) => {
+    if (handleLockedFeature(tabId)) {
+      return; // Don't change tab if locked
+    }
+    setActiveTab(tabId);
+  };
 
   const fetchStats = useCallback(async () => {
     try {
@@ -316,9 +386,10 @@ function AppContent() {
                     <Truck className="h-4 w-4 text-[#D4A853]" />
                     <span>{t('app.driverApp')}</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('tracking')} className="gap-2 cursor-pointer">
+                  <DropdownMenuItem onClick={() => handleTabChange('tracking')} className="gap-2 cursor-pointer opacity-75">
                     <MapPinned className="h-4 w-4 text-[#D4A853]" />
                     <span>{t('nav.liveTracking')}</span>
+                    <span className="mr-auto">🔒</span>
                   </DropdownMenuItem>
                   
                   <DropdownMenuSeparator />
@@ -337,9 +408,10 @@ function AppContent() {
                         <ChefHat className="h-4 w-4 text-[#2D5A3D]" />
                         <span>{t('nav.dailyProduction')}</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab('packing')} className="gap-2 cursor-pointer">
+                      <DropdownMenuItem onClick={() => handleTabChange('packing')} className="gap-2 cursor-pointer opacity-75">
                         <Package className="h-4 w-4 text-[#2D5A3D]" />
                         <span>{t('nav.packingDashboard')}</span>
+                        <span className="mr-auto">🔒</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => setActiveTab('qualitySafety')} className="gap-2 cursor-pointer">
                         <ShieldCheck className="h-4 w-4 text-[#D4A853]" />
@@ -419,9 +491,10 @@ function AppContent() {
                   <DropdownMenuLabel className="text-[#D4A853] font-bold">
                     {t('nav.customerExperience')}
                   </DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => setActiveTab('customerApp')} className="gap-2 cursor-pointer">
+                  <DropdownMenuItem onClick={() => handleTabChange('customerApp')} className="gap-2 cursor-pointer opacity-75">
                     <Smartphone className="h-4 w-4 text-[#2D5A3D]" />
                     <span>{t('nav.customerApp')}</span>
+                    <span className="mr-auto">🔒</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setActiveTab('chatbot')} className="gap-2 cursor-pointer">
                     <Bot className="h-4 w-4 text-[#2D5A3D]" />
@@ -439,9 +512,10 @@ function AppContent() {
                         <Shield className="h-4 w-4 text-red-600" />
                         <span>{isRTL ? 'إدارة المستخدمين' : 'User Management'}</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab('notifications')} className="gap-2 cursor-pointer">
+                      <DropdownMenuItem onClick={() => handleTabChange('notifications')} className="gap-2 cursor-pointer opacity-75">
                         <Bell className="h-4 w-4 text-[#D4A853]" />
                         <span>{t('nav.notifications')}</span>
+                        <span className="mr-auto">🔒</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => setActiveTab('integrations')} className="gap-2 cursor-pointer">
                         <Link2 className="h-4 w-4 text-[#D4A853]" />
@@ -629,6 +703,9 @@ function AppContent() {
           </div>
         </div>
       </footer>
+
+      {/* Locked Feature Dialog */}
+      <LockedFeatureDialog open={showLockedDialog} onOpenChange={setShowLockedDialog} />
     </div>
   );
 }
