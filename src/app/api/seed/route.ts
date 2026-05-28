@@ -1,19 +1,30 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
-// POST - إنشاء بيانات أولية
+// POST - إنشاء بيانات تجريبية لحزمة الدخول السهل
+// منتجات الخبز فقط + 3 طلبات + سائقين اثنين
 export async function POST() {
   try {
     // حذف البيانات القديمة
     await db.orderItem.deleteMany();
     await db.order.deleteMany();
+    await db.invoice.deleteMany();
+    await db.payment.deleteMany();
     await db.customer.deleteMany();
     await db.driver.deleteMany();
     await db.deliveryLine.deleteMany();
     await db.product.deleteMany();
 
-    // إنشاء خطوط التوزيع التسعة
+    // إنشاء 9 خطوط توزيع تغطي جميع أنحاء هولندا
     const deliveryLines = await Promise.all([
+      db.deliveryLine.create({
+        data: {
+          nameAr: 'خط أمستردام',
+          nameEn: 'Amsterdam Line',
+          nameNl: 'Amsterdam Route',
+          region: 'Amsterdam',
+        },
+      }),
       db.deliveryLine.create({
         data: {
           nameAr: 'خط روتردام',
@@ -24,7 +35,7 @@ export async function POST() {
       }),
       db.deliveryLine.create({
         data: {
-          nameAr: 'خط دين هاخ',
+          nameAr: 'خط لاهاي',
           nameEn: 'The Hague Line',
           nameNl: 'Den Haag Route',
           region: 'The Hague',
@@ -32,39 +43,23 @@ export async function POST() {
       }),
       db.deliveryLine.create({
         data: {
-          nameAr: 'خط الكمار',
-          nameEn: 'Alkmaar Line',
-          nameNl: 'Alkmaar Route',
-          region: 'Alkmaar',
+          nameAr: 'خط أوترخت',
+          nameEn: 'Utrecht Line',
+          nameNl: 'Utrecht Route',
+          region: 'Utrecht',
         },
       }),
       db.deliveryLine.create({
         data: {
-          nameAr: 'خط امستردام',
-          nameEn: 'Amsterdam Line',
-          nameNl: 'Amsterdam Route',
-          region: 'Amsterdam',
+          nameAr: 'خط ألميلو',
+          nameEn: 'Almelo Line',
+          nameNl: 'Almelo Route',
+          region: 'Almelo',
         },
       }),
       db.deliveryLine.create({
         data: {
-          nameAr: 'خط اوترخت ايندهوفن',
-          nameEn: 'Utrecht-Eindhoven Line',
-          nameNl: 'Utrecht-Eindhoven Route',
-          region: 'Utrecht-Eindhoven',
-        },
-      }),
-      db.deliveryLine.create({
-        data: {
-          nameAr: 'خط زفولا',
-          nameEn: 'Zwolle Line',
-          nameNl: 'Zwolle Route',
-          region: 'Zwolle',
-        },
-      }),
-      db.deliveryLine.create({
-        data: {
-          nameAr: 'خط انشخيده',
+          nameAr: 'خط إنشوله',
           nameEn: 'Enschede Line',
           nameNl: 'Enschede Route',
           region: 'Enschede',
@@ -72,23 +67,31 @@ export async function POST() {
       }),
       db.deliveryLine.create({
         data: {
-          nameAr: 'خط ارنهم',
-          nameEn: 'Arnhem Line',
-          nameNl: 'Arnhem Route',
-          region: 'Arnhem',
+          nameAr: 'خط خرونينغن',
+          nameEn: 'Groningen Line',
+          nameNl: 'Groningen Route',
+          region: 'Groningen',
         },
       }),
       db.deliveryLine.create({
         data: {
-          nameAr: 'خط غرب المانيا',
-          nameEn: 'West Germany Line',
-          nameNl: 'West-Duitsland Route',
-          region: 'West Germany',
+          nameAr: 'خط آيندهوفن',
+          nameEn: 'Eindhoven Line',
+          nameNl: 'Eindhoven Route',
+          region: 'Eindhoven',
+        },
+      }),
+      db.deliveryLine.create({
+        data: {
+          nameAr: 'خط نيميغن',
+          nameEn: 'Nijmegen Line',
+          nameNl: 'Nijmegen Route',
+          region: 'Nijmegen',
         },
       }),
     ]);
 
-    // إنشاء السائقين (سائق لكل خط)
+    // إنشاء سائقين اثنين فقط (كما طلب المستخدم)
     const drivers = await Promise.all([
       db.driver.create({
         data: {
@@ -96,6 +99,10 @@ export async function POST() {
           phone: '+31612345678',
           email: 'ahmed@alqueen.nl',
           deliveryLineId: deliveryLines[0].id,
+          isOnline: true,
+          completedToday: 12,
+          totalDeliveries: 450,
+          rating: 4.8,
         },
       }),
       db.driver.create({
@@ -104,183 +111,99 @@ export async function POST() {
           phone: '+31623456789',
           email: 'mohammed@alqueen.nl',
           deliveryLineId: deliveryLines[1].id,
-        },
-      }),
-      db.driver.create({
-        data: {
-          name: 'خالد حسن',
-          phone: '+31634567890',
-          email: 'khalid@alqueen.nl',
-          deliveryLineId: deliveryLines[2].id,
-        },
-      }),
-      db.driver.create({
-        data: {
-          name: 'عمر سعيد',
-          phone: '+31645678901',
-          email: 'omar@alqueen.nl',
-          deliveryLineId: deliveryLines[3].id,
-        },
-      }),
-      db.driver.create({
-        data: {
-          name: 'يوسف إبراهيم',
-          phone: '+31656789012',
-          email: 'youssef@alqueen.nl',
-          deliveryLineId: deliveryLines[4].id,
-        },
-      }),
-      db.driver.create({
-        data: {
-          name: 'عبدالله أحمد',
-          phone: '+31667890123',
-          email: 'abdullah@alqueen.nl',
-          deliveryLineId: deliveryLines[5].id,
-        },
-      }),
-      db.driver.create({
-        data: {
-          name: 'محمود خالد',
-          phone: '+31678901234',
-          email: 'mahmoud@alqueen.nl',
-          deliveryLineId: deliveryLines[6].id,
-        },
-      }),
-      db.driver.create({
-        data: {
-          name: 'سعيد عبدالرحمن',
-          phone: '+31689012345',
-          email: 'saeed@alqueen.nl',
-          deliveryLineId: deliveryLines[7].id,
-        },
-      }),
-      db.driver.create({
-        data: {
-          name: 'فهد السعود',
-          phone: '+31690123456',
-          email: 'fahad@alqueen.nl',
-          deliveryLineId: deliveryLines[8].id,
+          isOnline: true,
+          completedToday: 8,
+          totalDeliveries: 320,
+          rating: 4.6,
         },
       }),
     ]);
 
-    // إنشاء المنتجات - خبز الملكة والشام والشهباء
+    // إنشاء منتجات الخبز فقط (كما طلب المستخدم)
     const products = await Promise.all([
-      // 1. خبز الملكة ابيض ستاندر
+      // 1. خبز عربي كبير - €2.00
       db.product.create({
         data: {
-          nameAr: 'خبز الملكة ابيض ستاندر',
-          nameEn: 'Al-Malika White Standard Bread',
-          nameNl: 'Al-Malika Wit Standaard Brood',
-          description: 'ربطة ٥ أرغفة - وزن ٣٢٠ غرام - الصندوق ١٥ ربطة',
-          price: 2.50,
-          category: 'bread',
-          sku: 'B001',
-          weight: 320,
-          packSize: 5,
-          boxSize: 15,
-          stock: 200,
-        },
-      }),
-      // 2. خبز الملكة اسمر ستاندر
-      db.product.create({
-        data: {
-          nameAr: 'خبز الملكة اسمر ستاندر',
-          nameEn: 'Al-Malika Brown Standard Bread',
-          nameNl: 'Al-Malika Bruin Standaard Brood',
-          description: 'ربطة ٥ أرغفة - وزن ٢٦٠ غرام - الصندوق ١٥ ربطة',
-          price: 2.50,
-          category: 'bread',
-          sku: 'B002',
-          weight: 260,
-          packSize: 5,
-          boxSize: 15,
-          stock: 180,
-        },
-      }),
-      // 3. خبز الملكة فاميلي ستاندر
-      db.product.create({
-        data: {
-          nameAr: 'خبز الملكة فاميلي ستاندر',
-          nameEn: 'Al-Malika Family Standard Bread',
-          nameNl: 'Al-Malika Familie Standaard Brood',
-          description: 'ربطة ٥ أرغفة - وزن ٤٢٠ غرام - الصندوق ١٠ ربطات',
-          price: 3.50,
-          category: 'bread',
-          sku: 'B003',
-          weight: 420,
-          packSize: 5,
-          boxSize: 10,
-          stock: 150,
-        },
-      }),
-      // 4. خبز الشام قياس صغير
-      db.product.create({
-        data: {
-          nameAr: 'خبز الشام قياس صغير',
-          nameEn: 'Al-Sham Small Size Bread',
-          nameNl: 'Al-Sham Klein Formaat Brood',
-          description: 'ربطة ٥ أرغفة - وزن ٢٦٠ غرام - الصندوق ١٥ ربطة',
+          nameAr: 'خبز عربي كبير',
+          nameEn: 'Large Arabic Bread',
+          nameNl: 'Groot Arabisch Brood',
+          description: 'ربطة ٥ أرغفة - مثالي للعائلات الكبيرة',
           price: 2.00,
           category: 'bread',
-          sku: 'B004',
-          weight: 260,
+          sku: 'B001',
+          weight: 350,
           packSize: 5,
           boxSize: 15,
           stock: 200,
         },
       }),
-      // 5. خبز الشهباء ابيض وسط
+      // 2. خبز عربي صغير - €1.00
       db.product.create({
         data: {
-          nameAr: 'خبز الشهباء ابيض وسط',
-          nameEn: 'Al-Shahba White Medium Bread',
-          nameNl: 'Al-Shahba Wit Medium Brood',
-          description: 'ربطة ٥ أرغفة - وزن ٣٢٠ غرام - الصندوق ١٥ ربطة',
+          nameAr: 'خبز عربي صغير',
+          nameEn: 'Small Arabic Bread',
+          nameNl: 'Klein Arabisch Brood',
+          description: 'ربطة ٥ أرغفة - مناسب للأفراد',
+          price: 1.00,
+          category: 'bread',
+          sku: 'B002',
+          weight: 200,
+          packSize: 5,
+          boxSize: 20,
+          stock: 250,
+        },
+      }),
+      // 3. خبز بر - €2.50
+      db.product.create({
+        data: {
+          nameAr: 'خبز بر',
+          nameEn: 'Whole Wheat Bread',
+          nameNl: 'Volkoren Brood',
+          description: 'ربطة ٥ أرغفة - صحي ومغذي',
           price: 2.50,
           category: 'bread',
-          sku: 'B005',
+          sku: 'B003',
           weight: 320,
           packSize: 5,
           boxSize: 15,
           stock: 180,
         },
       }),
-      // 6. خبز الشهباء فاميلي
+      // 4. خبز سمسم - €2.20
       db.product.create({
         data: {
-          nameAr: 'خبز الشهباء فاميلي',
-          nameEn: 'Al-Shahba Family Bread',
-          nameNl: 'Al-Shahba Familie Brood',
-          description: 'ربطة ٥ أرغفة - وزن ٤٢٠ غرام - الصندوق ١٠ ربطات',
-          price: 3.50,
+          nameAr: 'خبز سمسم',
+          nameEn: 'Sesame Bread',
+          nameNl: 'Sesam Brood',
+          description: 'ربطة ٥ أرغفة - طعم مميز بالسمسم',
+          price: 2.20,
           category: 'bread',
-          sku: 'B006',
-          weight: 420,
+          sku: 'B004',
+          weight: 300,
           packSize: 5,
-          boxSize: 10,
+          boxSize: 15,
           stock: 150,
         },
       }),
-      // 7. خبز الشهباء اسمر ستاندر
+      // 5. خبز تورتيلا - €1.80
       db.product.create({
         data: {
-          nameAr: 'خبز الشهباء اسمر ستاندر',
-          nameEn: 'Al-Shahba Brown Standard Bread',
-          nameNl: 'Al-Shahba Bruin Standaard Brood',
-          description: 'ربطة ٥ أرغفة - وزن ٢٦٠ غرام - الصندوق ١٥ ربطة',
-          price: 2.50,
+          nameAr: 'خبز تورتيلا',
+          nameEn: 'Tortilla Bread',
+          nameNl: 'Tortilla Brood',
+          description: 'عبوة ١٠ قطع - مثالي للسندويشات',
+          price: 1.80,
           category: 'bread',
-          sku: 'B007',
-          weight: 260,
-          packSize: 5,
-          boxSize: 15,
-          stock: 180,
+          sku: 'B005',
+          weight: 250,
+          packSize: 10,
+          boxSize: 20,
+          stock: 220,
         },
       }),
     ]);
 
-    // إنشاء بعض العملاء والطلبات التجريبية
+    // إنشاء 3 عملاء تجريبيين
     const customers = await Promise.all([
       db.customer.create({
         data: {
@@ -289,6 +212,9 @@ export async function POST() {
           email: 'sham@restaurant.nl',
           address: 'Damrak 123',
           city: 'Amsterdam',
+          customerType: 'wholesale',
+          totalOrders: 45,
+          totalSpent: 1250.00,
         },
       }),
       db.customer.create({
@@ -298,6 +224,9 @@ export async function POST() {
           email: 'halal@market.nl',
           address: 'Coolsingel 456',
           city: 'Rotterdam',
+          customerType: 'wholesale',
+          totalOrders: 78,
+          totalSpent: 2340.00,
         },
       }),
       db.customer.create({
@@ -307,26 +236,30 @@ export async function POST() {
           email: 'happiness@bakery.nl',
           address: 'Spui 789',
           city: 'The Hague',
+          customerType: 'wholesale',
+          totalOrders: 32,
+          totalSpent: 890.00,
         },
       }),
     ]);
 
-    // إنشاء طلبات تجريبية
+    // إنشاء 3 طلبات تجريبية
     await db.order.create({
       data: {
         orderNumber: 'ORD-00001',
         customerId: customers[0].id,
-        driverId: drivers[3].id,
-        deliveryLineId: deliveryLines[3].id,
+        driverId: drivers[0].id,
+        deliveryLineId: deliveryLines[0].id,
         status: 'pending',
+        paymentStatus: 'pending',
         totalAmount: 25.00,
         deliveryDate: new Date(),
         deliveryTime: '09:00',
-        notes: 'توصيل مبكر',
+        notes: 'توصيل مبكر من فضلك',
         orderItems: {
           create: [
-            { productId: products[0].id, quantity: 5, unitPrice: 2.50, total: 12.50 },
-            { productId: products[2].id, quantity: 3, unitPrice: 3.50, total: 10.50 },
+            { productId: products[0].id, quantity: 5, unitPrice: 2.00, total: 10.00 },
+            { productId: products[2].id, quantity: 6, unitPrice: 2.50, total: 15.00 },
           ],
         },
       },
@@ -336,17 +269,19 @@ export async function POST() {
       data: {
         orderNumber: 'ORD-00002',
         customerId: customers[1].id,
-        driverId: drivers[0].id,
-        deliveryLineId: deliveryLines[0].id,
+        driverId: drivers[1].id,
+        deliveryLineId: deliveryLines[1].id,
         status: 'confirmed',
-        totalAmount: 35.00,
+        paymentStatus: 'pending',
+        totalAmount: 42.20,
         deliveryDate: new Date(),
-        deliveryTime: '10:00',
+        deliveryTime: '10:30',
         notes: '',
         orderItems: {
           create: [
-            { productId: products[1].id, quantity: 10, unitPrice: 2.50, total: 25.00 },
-            { productId: products[4].id, quantity: 4, unitPrice: 2.50, total: 10.00 },
+            { productId: products[1].id, quantity: 10, unitPrice: 1.00, total: 10.00 },
+            { productId: products[3].id, quantity: 8, unitPrice: 2.20, total: 17.60 },
+            { productId: products[4].id, quantity: 8, unitPrice: 1.80, total: 14.40 },
           ],
         },
       },
@@ -356,25 +291,25 @@ export async function POST() {
       data: {
         orderNumber: 'ORD-00003',
         customerId: customers[2].id,
-        driverId: drivers[1].id,
-        deliveryLineId: deliveryLines[1].id,
+        driverId: drivers[0].id,
+        deliveryLineId: deliveryLines[0].id,
         status: 'in_delivery',
-        totalAmount: 50.00,
+        paymentStatus: 'pending',
+        totalAmount: 31.50,
         deliveryDate: new Date(),
         deliveryTime: '11:00',
-        notes: 'عميل مهم',
+        notes: 'عميل مهم - يرجى التواصل قبل الوصول',
         orderItems: {
           create: [
-            { productId: products[5].id, quantity: 5, unitPrice: 3.50, total: 17.50 },
-            { productId: products[3].id, quantity: 8, unitPrice: 2.00, total: 16.00 },
-            { productId: products[6].id, quantity: 6, unitPrice: 2.50, total: 15.00 },
+            { productId: products[0].id, quantity: 7, unitPrice: 2.00, total: 14.00 },
+            { productId: products[2].id, quantity: 7, unitPrice: 2.50, total: 17.50 },
           ],
         },
       },
     });
 
     return NextResponse.json({
-      message: 'Database seeded successfully',
+      message: 'Database seeded successfully - Easy Entry Package',
       data: {
         deliveryLines: deliveryLines.length,
         drivers: drivers.length,

@@ -179,49 +179,66 @@ function LanguageSelector() {
 
 
 
-// Locked Features Configuration
+// Locked Features Configuration - الأقسام المقفلة للحزمة المتقدمة
 const LOCKED_FEATURES = [
-  'tracking',      // التتبع المباشر للسائقين عبر الخرائط والـ GPS
-  'customerApp',   // تطبيق العملاء الكامل وسلة الشراء والطلب المباشر
-  'packing',       // نظام تتبع الصناديق البلاستيكية والربطات
-  'notifications', // روبوت الاتصال التلقائي ونظام الإشعارات
+  'tracking',      // التتبع المباشر للسائقين عبر الخرائط والـ GPS 🔒
+  'customerApp',   // تطبيق العملاء الكامل وسلة الشراء والطلب المباشر 🔒
+  'packing',       // نظام تتبع الصناديق البلاستيكية والربطات لمنع الهدر والسرقة 🔒
+  'notifications', // روبوت الاتصال التلقائي ونظام الإشعارات الملونة للمتأخرين عن الدفع 🔒
 ];
 
-// Locked Feature Popup Component
+// Locked Feature Popup Component - رسالة احترافية ومميزة
 function LockedFeatureDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-gradient-to-br from-[#F5EDE0] to-white border-[#D4A853]">
+      <DialogContent className="sm:max-w-lg bg-gradient-to-br from-[#F5EDE0] via-white to-[#F5EDE0] border-2 border-[#D4A853] shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-[#3D3229] flex items-center gap-2">
-            <span className="text-3xl">🔒</span>
-            <span>ميزة متقدمة</span>
+          <DialogTitle className="text-2xl text-[#3D3229] flex items-center justify-center gap-3">
+            <span className="text-4xl animate-pulse">🔒</span>
+            <span className="font-bold">ميزة الحزمة المتقدمة</span>
           </DialogTitle>
         </DialogHeader>
         <div className="py-6">
-          <div className="bg-gradient-to-r from-[#D4A853]/20 to-[#F5EDE0] rounded-xl p-6 border border-[#D4A853]/30">
-            <p className="text-lg text-[#3D3229] leading-relaxed text-center">
-              🔒 هذه الميزة متوفرة حصرياً في <span className="font-bold text-[#D4A853]">الحزمة المتقدمة</span>
+          <div className="bg-gradient-to-r from-[#D4A853]/10 via-[#D4A853]/20 to-[#D4A853]/10 rounded-2xl p-6 border-2 border-[#D4A853]/40 shadow-inner">
+            <p className="text-xl text-[#3D3229] leading-relaxed text-center font-medium">
+              🔒 هذه الميزة متوفرة حصرياً في <span className="font-bold text-[#D4A853] text-2xl">الحزمة المتقدمة</span>
             </p>
-            <div className="mt-4 space-y-2 text-sm text-[#5C4033]">
-              <p>✨ لتفعيل:</p>
-              <ul className="list-disc list-inside space-y-1 mr-4">
-                <li>النظام المحاسبي المتكامل</li>
-                <li>تتبع الـ GPS المباشر</li>
-                <li>تطبيق العملاء والروبوت الآلي</li>
-                <li>تتبع الصناديق والربطات</li>
-                <li>نظام الإشعارات الملونة</li>
-              </ul>
+            <div className="mt-6 space-y-3 text-base text-[#5C4033] bg-white/50 rounded-xl p-4">
+              <p className="font-semibold text-[#3D3229] mb-3">✨ لتفعيل النظام المحاسبي المتكامل، أو تتبع الـ GPS المباشر، أو تشغيل تطبيق العملاء والربوت الآلي:</p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-[#2D5A3D]">✓</span>
+                  <span>النظام المحاسبي المتكامل</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#2D5A3D]">✓</span>
+                  <span>تتبع الـ GPS المباشر</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#2D5A3D]">✓</span>
+                  <span>تطبيق العملاء والروبوت الآلي</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#2D5A3D]">✓</span>
+                  <span>تتبع الصناديق والربطات لمنع الهدر والسرقة</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#2D5A3D]">✓</span>
+                  <span>نظام الإشعارات الملونة للمتأخرين عن الدفع</span>
+                </div>
+              </div>
             </div>
-            <p className="mt-4 text-center text-[#D4A853] font-semibold">
-              📞 يرجى التواصل مع مطور النظام للترقية
-            </p>
+            <div className="mt-6 text-center">
+              <p className="text-[#D4A853] font-bold text-lg animate-pulse">
+                📞 يرجى التواصل مع مطور النظام للترقية
+              </p>
+            </div>
           </div>
         </div>
         <div className="flex justify-center">
           <Button 
             onClick={() => onOpenChange(false)}
-            className="bg-gradient-to-r from-[#D4A853] to-[#B8963D] text-white hover:opacity-90 px-8"
+            className="bg-gradient-to-r from-[#D4A853] to-[#B8963D] text-white hover:opacity-90 px-10 py-6 text-lg font-bold shadow-lg hover:shadow-xl transition-all"
           >
             حسناً، فهمت
           </Button>

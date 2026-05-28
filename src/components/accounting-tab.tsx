@@ -1301,6 +1301,16 @@ function CostCentersTab() {
 export default function AccountingTab() {
   const { t, language } = useLanguage();
   const [activeSubTab, setActiveSubTab] = useState('dashboard');
+  const [showLockDialog, setShowLockDialog] = useState(false);
+
+  // Handler for locked sub-tabs
+  const handleTabChange = (value: string) => {
+    if (value === 'costCenters') {
+      setShowLockDialog(true);
+      return;
+    }
+    setActiveSubTab(value);
+  };
 
   return (
     <div className="space-y-6">
@@ -1313,7 +1323,7 @@ export default function AccountingTab() {
       </div>
 
       {/* Sub-tabs */}
-      <Tabs value={activeSubTab} onValueChange={setActiveSubTab}>
+      <Tabs value={activeSubTab} onValueChange={handleTabChange}>
         <TabsList className="h-12 bg-[#F5EDE0] gap-1 flex-wrap">
           <TabsTrigger value="dashboard" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
             <BarChart3 className="h-4 w-4 mr-2" />
@@ -1331,9 +1341,10 @@ export default function AccountingTab() {
             <Calculator className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">{t('accounting.taxReports')}</span>
           </TabsTrigger>
-          <TabsTrigger value="costCenters" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4">
+          <TabsTrigger value="costCenters" className="data-[state=active]:bg-[#2D5A3D] data-[state=active]:text-white text-[#7A6F63] px-4 opacity-75">
             <Building2 className="h-4 w-4 mr-2" />
             <span className="hidden lg:inline">{t('accounting.costCenters')}</span>
+            <span className="mr-1">🔒</span>
           </TabsTrigger>
         </TabsList>
 
@@ -1353,6 +1364,63 @@ export default function AccountingTab() {
           <CostCentersTab />
         </TabsContent>
       </Tabs>
+
+      {/* Locked Feature Dialog */}
+      <Dialog open={showLockDialog} onOpenChange={setShowLockDialog}>
+        <DialogContent className="sm:max-w-lg bg-gradient-to-br from-[#F5EDE0] via-white to-[#F5EDE0] border-2 border-[#D4A853] shadow-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-[#3D3229] flex items-center justify-center gap-3">
+              <span className="text-4xl animate-pulse">🔒</span>
+              <span className="font-bold">ميزة الحزمة المتقدمة</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-6">
+            <div className="bg-gradient-to-r from-[#D4A853]/10 via-[#D4A853]/20 to-[#D4A853]/10 rounded-2xl p-6 border-2 border-[#D4A853]/40 shadow-inner">
+              <p className="text-xl text-[#3D3229] leading-relaxed text-center font-medium">
+                🔒 هذه الميزة متوفرة حصرياً في <span className="font-bold text-[#D4A853] text-2xl">الحزمة المتقدمة</span>
+              </p>
+              <div className="mt-6 space-y-3 text-base text-[#5C4033] bg-white/50 rounded-xl p-4">
+                <p className="font-semibold text-[#3D3229] mb-3">✨ لتفعيل النظام المحاسبي المتكامل، أو تتبع الـ GPS المباشر، أو تشغيل تطبيق العملاء والربوت الآلي:</p>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#2D5A3D]">✓</span>
+                    <span>النظام المحاسبي المتكامل</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#2D5A3D]">✓</span>
+                    <span>تتبع الـ GPS المباشر</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#2D5A3D]">✓</span>
+                    <span>تطبيق العملاء والروبوت الآلي</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#2D5A3D]">✓</span>
+                    <span>تتبع الصناديق والربطات لمنع الهدر والسرقة</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#2D5A3D]">✓</span>
+                    <span>نظام الإشعارات الملونة للمتأخرين عن الدفع</span>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6 text-center">
+                <p className="text-[#D4A853] font-bold text-lg animate-pulse">
+                  📞 يرجى التواصل مع مطور النظام للترقية
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-center">
+            <Button 
+              onClick={() => setShowLockDialog(false)}
+              className="bg-gradient-to-r from-[#D4A853] to-[#B8963D] text-white hover:opacity-90 px-10 py-6 text-lg font-bold shadow-lg hover:shadow-xl transition-all"
+            >
+              حسناً، فهمت
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

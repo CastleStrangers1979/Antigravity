@@ -9,11 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { 
   TrendingUp, TrendingDown, DollarSign, ShoppingBag, Truck, Users, 
   Package, Clock, AlertTriangle, ChevronUp, ChevronDown, CalendarDays,
   BarChart3, PieChart, Activity, RefreshCw, ArrowUpRight, ArrowDownRight,
-  Star, Award, Target, Zap
+  Star, Award, Target, Zap, Database, MapPin
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -162,6 +163,9 @@ export default function AdvancedDashboardTab() {
   const [period, setPeriod] = useState<'day' | 'week' | 'month' | 'year' | 'custom'>('week');
   const [customDateRange, setCustomDateRange] = useState<{ from?: Date; to?: Date }>({});
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [seedDialogOpen, setSeedDialogOpen] = useState(false);
+  const [seeding, setSeeding] = useState(false);
+  const [seedResult, setSeedResult] = useState<{success: boolean; message: string} | null>(null);
 
   const fetchAnalytics = useCallback(async () => {
     setLoading(true);
@@ -181,6 +185,36 @@ export default function AdvancedDashboardTab() {
     }
     setLoading(false);
   }, [period, customDateRange]);
+
+  // Seed database function
+  const handleSeedDatabase = async () => {
+    setSeeding(true);
+    setSeedResult(null);
+    try {
+      const res = await fetch('/api/seed', { method: 'POST' });
+      const data = await res.json();
+      if (res.ok) {
+        setSeedResult({
+          success: true,
+          message: language === 'ar' 
+            ? `تم إنشاء ${data.data.deliveryLines} خطوط توزيع، ${data.data.drivers} سائقين، ${data.data.products} منتجات، ${data.data.customers} عملاء، و ${data.data.orders} طلبات`
+            : `Created ${data.data.deliveryLines} delivery lines, ${data.data.drivers} drivers, ${data.data.products} products, ${data.data.customers} customers, and ${data.data.orders} orders`
+        });
+        fetchAnalytics();
+      } else {
+        setSeedResult({
+          success: false,
+          message: language === 'ar' ? 'حدث خطأ أثناء إنشاء البيانات' : 'Error creating data'
+        });
+      }
+    } catch (error) {
+      setSeedResult({
+        success: false,
+        message: language === 'ar' ? 'حدث خطأ في الاتصال' : 'Connection error'
+      });
+    }
+    setSeeding(false);
+  };
 
    
   useEffect(() => {
@@ -318,6 +352,63 @@ export default function AdvancedDashboardTab() {
           <Button onClick={fetchAnalytics} variant="outline" className="border-[#D4A853] text-[#D4A853] hover:bg-[#D4A853] hover:text-white">
             <RefreshCw className="h-4 w-4" />
           </Button>
+          <Dialog open={seedDialogOpen} onOpenChange={setSeedDialogOpen}>
+            <Button 
+              onClick={() => setSeedDialogOpen(true)}
+              className="bg-gradient-to-r from-[#2D5A3D] to-[#1E4A2D] text-white gap-2 hover:opacity-90"
+            >
+              <Database className="h-4 w-4" />
+              <span className="hidden sm:inline">{language === 'ar' ? 'إنشاء بيانات تجريبية' : 'Seed Demo Data'}</span>
+            </Button>
+            <DialogContent className="sm:max-w-md bg-gradient-to-br from-[#F5EDE0] to-white border-2 border-[#D4A853]">
+              <DialogHeader>
+                <DialogTitle className="text-xl text-[#3D3229] flex items-center gap-2">
+                  <Database className="h-5 w-5 text-[#2D5A3D]" />
+                  {language === 'ar' ? 'إنشاء بيانات تجريبية' : 'Create Demo Data'}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="py-4">
+                <p className="text-[#5C4033] mb-4">
+                  {language === 'ar' 
+                    ? 'سيتم إنشاء 9 خطوط توزيع، 2 سائقين، 5 منتجات خبز، 3 عملاء، و 3 طلبات تجريبية'
+                    : 'This will create 9 delivery lines, 2 drivers, 5 bread products, 3 customers, and 3 demo orders'}
+                </p>
+                <div className="bg-[#F5EDE0] rounded-lg p-4 space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <MapPin className="h-4 w-4 text-[#D4A853]" />
+                    <span>{language === 'ar' ? '9 خطوط توزيع تغطي جميع أنحاء هولندا' : '9 delivery lines covering all Netherlands'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Users className="h-4 w-4 text-[#2D5A3D]" />
+                    <span>{language === 'ar' ? '2 سائقين نشطين' : '2 active drivers'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Package className="h-4 w-4 text-[#B8923F]" />
+                    <span>{language === 'ar' ? '5 منتجات خبز (خبز عربي، بر، سمسم، تورتيلا)' : '5 bread products (Arabic, Wheat, Sesame, Tortilla)'}</span>
+                  </div>
+                </div>
+                {seedResult && (
+                  <div className={`mt-4 p-3 rounded-lg ${seedResult.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                    <p className={seedResult.success ? 'text-green-700' : 'text-red-700'}>{seedResult.message}</p>
+                  </div>
+                )}
+              </div>
+              <DialogFooter className="gap-2">
+                <Button variant="ghost" onClick={() => setSeedDialogOpen(false)}>
+                  {language === 'ar' ? 'إلغاء' : 'Cancel'}
+                </Button>
+                <Button 
+                  onClick={handleSeedDatabase} 
+                  disabled={seeding}
+                  className="bg-gradient-to-r from-[#2D5A3D] to-[#1E4A2D] text-white"
+                >
+                  {seeding 
+                    ? (language === 'ar' ? 'جاري الإنشاء...' : 'Creating...') 
+                    : (language === 'ar' ? 'إنشاء البيانات' : 'Create Data')}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
