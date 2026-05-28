@@ -187,15 +187,8 @@ function AppContent() {
   const [seeded, setSeeded] = useState(false);
 
   // Role Simulator for Testing (In production, this comes from Auth)
-  const [userRole, setUserRole] = useState('admin');
-  
-  // Set user role from localStorage on client side only
-  useEffect(() => {
-    const storedRole = localStorage.getItem('simulated_role');
-    if (storedRole) {
-      setUserRole(storedRole);
-    }
-  }, []);
+  // Always use 'admin' role to show all sections in demo mode
+  const [userRole] = useState('admin');
 
   const isProductionUser = userRole === 'production_head';
   const isAccountant = userRole === 'senior_accountant' || userRole === 'junior_accountant';
