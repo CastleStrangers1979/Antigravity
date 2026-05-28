@@ -1,0 +1,16 @@
+# Railway Configuration for Al-Malika Bakery
+# https://docs.railway.app/deploy/config-as-code
+
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "npm start"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+[env]
+NODE_VERSION = "20"
+NODE_ENV = "production"

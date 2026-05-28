@@ -1,0 +1,24 @@
+# Render Blueprint for Al-Malika Bakery
+# https://render.com/docs/blueprint-spec
+
+services:
+  # Web Service (Next.js Application)
+  - type: web
+    name: al-malika-bakery
+    runtime: node
+    plan: free
+    region: frankfurt # Closest to Netherlands
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        value: file:./db/production.db
+    numInstances: 1
+
+# Note: For SQLite persistence on Render, you would need a paid plan with a disk.
+# For free tier, consider upgrading to PostgreSQL or using external database.

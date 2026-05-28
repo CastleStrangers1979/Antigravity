@@ -1,0 +1,32 @@
+# Netlify Configuration for Al-Malika Bakery
+# https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  # Command to build the app
+  command = "npm run build"
+  # Directory to publish
+  publish = ".next"
+
+[build.environment]
+  # Node.js version
+  NODE_VERSION = "20"
+  # Use npm
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# For Next.js with Netlify
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Redirects for API routes
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/nextjs-api/:splat"
+  status = 200
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
