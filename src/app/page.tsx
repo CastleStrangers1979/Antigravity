@@ -1,7 +1,7 @@
  
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { LanguageProvider, useLanguage, Language } from '@/lib/i18n';
@@ -109,6 +109,18 @@ interface VehicleExpense {
 function GoldDust() {
   const [isClient, setIsClient] = useState(false);
   
+  // Pre-generate random values to avoid hydration mismatch
+  const particles = useMemo(() => 
+    [...Array(12)].map((_, i) => ({
+      left: Math.random() * 100,
+      top: 100 + Math.random() * 20,
+      delay: Math.random() * 4,
+      width: Math.random() * 4 + 1,
+      height: Math.random() * 4 + 1,
+      opacity: Math.random() * 0.5 + 0.3
+    })), []
+  );
+  
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -117,18 +129,18 @@ function GoldDust() {
   if (!isClient) return null;
   
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {[...Array(12)].map((_, i) => (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" suppressHydrationWarning>
+      {particles.map((p, i) => (
         <div 
           key={i}
           className="gold-dust-particle"
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `${100 + Math.random() * 20}%`,
-            animationDelay: `${Math.random() * 4}s`,
-            width: `${Math.random() * 4 + 1}px`,
-            height: `${Math.random() * 4 + 1}px`,
-            opacity: Math.random() * 0.5 + 0.3
+            left: `${p.left}%`,
+            top: `${p.top}%`,
+            animationDelay: `${p.delay}s`,
+            width: `${p.width}px`,
+            height: `${p.height}px`,
+            opacity: p.opacity
           }}
         />
       ))}
@@ -175,12 +187,15 @@ function AppContent() {
   const [seeded, setSeeded] = useState(false);
 
   // Role Simulator for Testing (In production, this comes from Auth)
-  const [userRole, setUserRole] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('simulated_role') || 'admin';
+  const [userRole, setUserRole] = useState('admin');
+  
+  // Set user role from localStorage on client side only
+  useEffect(() => {
+    const storedRole = localStorage.getItem('simulated_role');
+    if (storedRole) {
+      setUserRole(storedRole);
     }
-    return 'admin';
-  });
+  }, []);
 
   const isProductionUser = userRole === 'production_head';
   const isAccountant = userRole === 'senior_accountant' || userRole === 'junior_accountant';
