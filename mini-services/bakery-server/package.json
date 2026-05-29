@@ -2,6 +2,7 @@
   "name": "bakery-server",
   "version": "1.0.0",
   "scripts": {
-    "dev": "cd /home/z/my-project && bun --bun next dev -p 3000"
-  }
+    "dev": "bun --hot run index.ts"
+  },
+  "dependencies": {}
 }
