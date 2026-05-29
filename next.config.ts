@@ -7,7 +7,9 @@ const nextConfig: NextConfig = {
   reactStrictMode: false,
   allowedDevOrigins: [
     ".space-z.ai",
+    "preview-chat-d7f22c0f-937a-4bb6-9504-ee537a2e116b.space-z.ai",
     "localhost:3000",
+    "localhost",
   ],
 };
 
