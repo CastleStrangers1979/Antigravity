@@ -30,9 +30,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" suppressHydrationWarning>
+    <html lang="ar" suppressHydrationWarning className="light">
       <body
-        className={`${cairo.variable} ${playfair.variable} antialiased bg-background text-foreground transition-colors duration-300`}
+        className={`${cairo.variable} ${playfair.variable} antialiased bg-[#FFFEF7] text-[#3D3229]`}
         suppressHydrationWarning
       >
         <ThemeProvider
@@ -41,6 +41,7 @@ export default function RootLayout({
           enableSystem={false}
           enableColorScheme={false}
           disableTransitionOnChange
+          forcedTheme="light"
         >
           {children}
           <Toaster />

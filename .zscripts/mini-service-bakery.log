@@ -1,0 +1,22 @@
+[bakery] Installing dependencies...
+bun install v1.3.14 (0d9b296a)
+No packages! Deleted empty lockfile
+
+[9.00ms] done
+[bakery] Running bun run dev...
+$ node index.js
+Starting Al-Malika Bakery on port 3000
+$ next dev -p 3000
+⨯ Failed to start server
+Error: listen EADDRINUSE: address already in use :::3000
+    at <unknown> (Error: listen EADDRINUSE: address already in use :::3000)
+    at new Promise (<anonymous>) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3000
+}
+[?25h
+error: script "dev" exited with code 1
+Server exited with code: 1

@@ -1,0 +1,17 @@
+[bakery-server] Installing dependencies...
+bun install v1.3.14 (0d9b296a)
+No packages! Deleted empty lockfile
+
+[9.00ms] done
+[bakery-server] Running bun run dev...
+$ bun --hot run index.ts
+SStarting Al-Malika Bakery on port 3000...ттип Failed to start server
+Error: Failed to start server. Is port 3000 in use?
+    at serve (null)
+    at Promise (null) {
+  code: 'EADDRINUSE',
+  syscall: 'listen',
+  errno: 0
+}[?25h
+error: "next" exited with code 1
+Server exited with code 1, signal null
