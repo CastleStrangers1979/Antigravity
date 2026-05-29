@@ -857,9 +857,10 @@ function TaxReportsTab() {
     try {
       const res = await fetch('/api/accounting/taxes');
       const data = await res.json();
-      setReports(data || []);
+      setReports(data.taxReports || []);
     } catch (error) {
       console.error('Error fetching tax reports:', error);
+      setReports([]);
     }
     setLoading(false);
   }, []);
