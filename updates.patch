@@ -1,0 +1,283 @@
+diff --git a/next.config.ts b/next.config.ts
+index 618b2d1..de212b2 100755
+--- a/next.config.ts
++++ b/next.config.ts
+@@ -1,16 +1,16 @@
+ import type { NextConfig } from "next";
+ 
+ const nextConfig: NextConfig = {
+-  /* config options here */
+   typescript: {
+     ignoreBuildErrors: true,
+   },
+   reactStrictMode: false,
+-  allowedDevOrigins: [
+-    "preview-chat-d7f22c0f-937a-4bb6-9504-ee537a2e116b.space-z.ai",
+-    ".space-z.ai",
+-    "localhost:3000",
+-  ],
++  // Disable CORS restrictions
++  experimental: {
++    serverActions: {
++      allowedOrigins: ["*"],
++    },
++  },
+ };
+ 
+ export default nextConfig;
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+index bc53876..fef6719 100755
+--- a/src/app/layout.tsx
++++ b/src/app/layout.tsx
+@@ -30,9 +30,9 @@ export default function RootLayout({
+   children: React.ReactNode;
+ }>) {
+   return (
+-    <html lang="ar" suppressHydrationWarning>
++    <html lang="ar" suppressHydrationWarning className="light">
+       <body
+-        className={`${cairo.variable} ${playfair.variable} antialiased bg-background text-foreground transition-colors duration-300`}
++        className={`${cairo.variable} ${playfair.variable} antialiased bg-[#FFFEF7] text-[#3D3229]`}
+         suppressHydrationWarning
+       >
+         <ThemeProvider
+@@ -41,6 +41,7 @@ export default function RootLayout({
+           enableSystem={false}
+           enableColorScheme={false}
+           disableTransitionOnChange
++          forcedTheme="light"
+         >
+           {children}
+           <Toaster />
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+index d4ab84e..43efe9c 100755
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -1,7 +1,7 @@
+  
+ 'use client';
+ 
+-import { useState, useEffect, useCallback } from 'react';
++import { useState, useEffect, useCallback, useMemo } from 'react';
+ import dynamic from 'next/dynamic';
+ import Image from 'next/image';
+ import { LanguageProvider, useLanguage, Language } from '@/lib/i18n';
+@@ -109,6 +109,18 @@ interface VehicleExpense {
+ function GoldDust() {
+   const [isClient, setIsClient] = useState(false);
+   
++  // Pre-generate random values to avoid hydration mismatch
++  const particles = useMemo(() => 
++    [...Array(12)].map((_, i) => ({
++      left: Math.random() * 100,
++      top: 100 + Math.random() * 20,
++      delay: Math.random() * 4,
++      width: Math.random() * 4 + 1,
++      height: Math.random() * 4 + 1,
++      opacity: Math.random() * 0.5 + 0.3
++    })), []
++  );
++  
+   useEffect(() => {
+     setIsClient(true);
+   }, []);
+@@ -117,18 +129,18 @@ function GoldDust() {
+   if (!isClient) return null;
+   
+   return (
+-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+-      {[...Array(12)].map((_, i) => (
++    <div className="absolute inset-0 pointer-events-none overflow-hidden" suppressHydrationWarning>
++      {particles.map((p, i) => (
+         <div 
+           key={i}
+           className="gold-dust-particle"
+           style={{
+-            left: `${Math.random() * 100}%`,
+-            top: `${100 + Math.random() * 20}%`,
+-            animationDelay: `${Math.random() * 4}s`,
+-            width: `${Math.random() * 4 + 1}px`,
+-            height: `${Math.random() * 4 + 1}px`,
+-            opacity: Math.random() * 0.5 + 0.3
++            left: `${p.left}%`,
++            top: `${p.top}%`,
++            animationDelay: `${p.delay}s`,
++            width: `${p.width}px`,
++            height: `${p.height}px`,
++            opacity: p.opacity
+           }}
+         />
+       ))}
+@@ -167,25 +179,108 @@ function LanguageSelector() {
+ 
+ 
+ 
++// Locked Features Configuration - الأقسام المقفلة للحزمة المتقدمة
++const LOCKED_FEATURES = [
++  'tracking',      // التتبع المباشر للسائقين عبر الخرائط والـ GPS 🔒
++  'customerApp',   // تطبيق العملاء الكامل وسلة الشراء والطلب المباشر 🔒
++  'packing',       // نظام تتبع الصناديق البلاستيكية والربطات لمنع الهدر والسرقة 🔒
++  'notifications', // روبوت الاتصال التلقائي ونظام الإشعارات الملونة للمتأخرين عن الدفع 🔒
++];
++
++// Locked Feature Popup Component - رسالة احترافية ومميزة
++function LockedFeatureDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
++  return (
++    <Dialog open={open} onOpenChange={onOpenChange}>
++      <DialogContent className="sm:max-w-lg bg-gradient-to-br from-[#F5EDE0] via-white to-[#F5EDE0] border-2 border-[#D4A853] shadow-2xl">
++        <DialogHeader>
++          <DialogTitle className="text-2xl text-[#3D3229] flex items-center justify-center gap-3">
++            <span className="text-4xl animate-pulse">🔒</span>
++            <span className="font-bold">ميزة الحزمة المتقدمة</span>
++          </DialogTitle>
++        </DialogHeader>
++        <div className="py-6">
++          <div className="bg-gradient-to-r from-[#D4A853]/10 via-[#D4A853]/20 to-[#D4A853]/10 rounded-2xl p-6 border-2 border-[#D4A853]/40 shadow-inner">
++            <p className="text-xl text-[#3D3229] leading-relaxed text-center font-medium">
++              🔒 هذه الميزة متوفرة حصرياً في <span className="font-bold text-[#D4A853] text-2xl">الحزمة المتقدمة</span>
++            </p>
++            <div className="mt-6 space-y-3 text-base text-[#5C4033] bg-white/50 rounded-xl p-4">
++              <p className="font-semibold text-[#3D3229] mb-3">✨ لتفعيل النظام المحاسبي المتكامل، أو تتبع الـ GPS المباشر، أو تشغيل تطبيق العملاء والربوت الآلي:</p>
++              <div className="space-y-2">
++                <div className="flex items-center gap-2">
++                  <span className="text-[#2D5A3D]">✓</span>
++                  <span>النظام المحاسبي المتكامل</span>
++                </div>
++                <div className="flex items-center gap-2">
++                  <span className="text-[#2D5A3D]">✓</span>
++                  <span>تتبع الـ GPS المباشر</span>
++                </div>
++                <div className="flex items-center gap-2">
++                  <span className="text-[#2D5A3D]">✓</span>
++                  <span>تطبيق العملاء والروبوت الآلي</span>
++                </div>
++                <div className="flex items-center gap-2">
++                  <span className="text-[#2D5A3D]">✓</span>
++                  <span>تتبع الصناديق والربطات لمنع الهدر والسرقة</span>
++                </div>
++                <div className="flex items-center gap-2">
++                  <span className="text-[#2D5A3D]">✓</span>
++                  <span>نظام الإشعارات الملونة للمتأخرين عن الدفع</span>
++                </div>
++              </div>
++            </div>
++            <div className="mt-6 text-center">
++              <p className="text-[#D4A853] font-bold text-lg animate-pulse">
++                📞 يرجى التواصل مع مطور النظام للترقية
++              </p>
++            </div>
++          </div>
++        </div>
++        <div className="flex justify-center">
++          <Button 
++            onClick={() => onOpenChange(false)}
++            className="bg-gradient-to-r from-[#D4A853] to-[#B8963D] text-white hover:opacity-90 px-10 py-6 text-lg font-bold shadow-lg hover:shadow-xl transition-all"
++          >
++            حسناً، فهمت
++          </Button>
++        </div>
++      </DialogContent>
++    </Dialog>
++  );
++}
++
+ // Main App Component
+ function AppContent() {
+   const { t, language, isRTL } = useLanguage();
+   const [activeTab, setActiveTab] = useState('dashboard');
+   const [stats, setStats] = useState({ todayOrders: 0, pendingOrders: 0, inDelivery: 0, totalRevenue: 0 });
+   const [seeded, setSeeded] = useState(false);
++  const [showLockedDialog, setShowLockedDialog] = useState(false);
+ 
+   // Role Simulator for Testing (In production, this comes from Auth)
+-  const [userRole, setUserRole] = useState(() => {
+-    if (typeof window !== 'undefined') {
+-      return localStorage.getItem('simulated_role') || 'admin';
+-    }
+-    return 'admin';
+-  });
++  // Always use 'admin' role to show all sections in demo mode
++  const [userRole] = useState('admin');
+ 
+   const isProductionUser = userRole === 'production_head';
+   const isAccountant = userRole === 'senior_accountant' || userRole === 'junior_accountant';
+   const isAdmin = userRole === 'admin';
+ 
++  // Handler for locked features
++  const handleLockedFeature = (featureId: string) => {
++    if (LOCKED_FEATURES.includes(featureId)) {
++      setShowLockedDialog(true);
++      return true; // Indicates the feature is locked
++    }
++    return false; // Feature is unlocked
++  };
++
++  // Safe tab change handler
++  const handleTabChange = (tabId: string) => {
++    if (handleLockedFeature(tabId)) {
++      return; // Don't change tab if locked
++    }
++    setActiveTab(tabId);
++  };
++
+   const fetchStats = useCallback(async () => {
+     try {
+       const res = await fetch('/api/orders');
+@@ -308,9 +403,10 @@ function AppContent() {
+                     <Truck className="h-4 w-4 text-[#D4A853]" />
+                     <span>{t('app.driverApp')}</span>
+                   </DropdownMenuItem>
+-                  <DropdownMenuItem onClick={() => setActiveTab('tracking')} className="gap-2 cursor-pointer">
++                  <DropdownMenuItem onClick={() => handleTabChange('tracking')} className="gap-2 cursor-pointer opacity-75">
+                     <MapPinned className="h-4 w-4 text-[#D4A853]" />
+                     <span>{t('nav.liveTracking')}</span>
++                    <span className="mr-auto">🔒</span>
+                   </DropdownMenuItem>
+                   
+                   <DropdownMenuSeparator />
+@@ -329,9 +425,10 @@ function AppContent() {
+                         <ChefHat className="h-4 w-4 text-[#2D5A3D]" />
+                         <span>{t('nav.dailyProduction')}</span>
+                       </DropdownMenuItem>
+-                      <DropdownMenuItem onClick={() => setActiveTab('packing')} className="gap-2 cursor-pointer">
++                      <DropdownMenuItem onClick={() => handleTabChange('packing')} className="gap-2 cursor-pointer opacity-75">
+                         <Package className="h-4 w-4 text-[#2D5A3D]" />
+                         <span>{t('nav.packingDashboard')}</span>
++                        <span className="mr-auto">🔒</span>
+                       </DropdownMenuItem>
+                       <DropdownMenuItem onClick={() => setActiveTab('qualitySafety')} className="gap-2 cursor-pointer">
+                         <ShieldCheck className="h-4 w-4 text-[#D4A853]" />
+@@ -411,9 +508,10 @@ function AppContent() {
+                   <DropdownMenuLabel className="text-[#D4A853] font-bold">
+                     {t('nav.customerExperience')}
+                   </DropdownMenuLabel>
+-                  <DropdownMenuItem onClick={() => setActiveTab('customerApp')} className="gap-2 cursor-pointer">
++                  <DropdownMenuItem onClick={() => handleTabChange('customerApp')} className="gap-2 cursor-pointer opacity-75">
+                     <Smartphone className="h-4 w-4 text-[#2D5A3D]" />
+                     <span>{t('nav.customerApp')}</span>
++                    <span className="mr-auto">🔒</span>
+                   </DropdownMenuItem>
+                   <DropdownMenuItem onClick={() => setActiveTab('chatbot')} className="gap-2 cursor-pointer">
+                     <Bot className="h-4 w-4 text-[#2D5A3D]" />
+@@ -431,9 +529,10 @@ function AppContent() {
+                         <Shield className="h-4 w-4 text-red-600" />
+                         <span>{isRTL ? 'إدارة المستخدمين' : 'User Management'}</span>
+                       </DropdownMenuItem>
+-                      <DropdownMenuItem onClick={() => setActiveTab('notifications')} className="gap-2 cursor-pointer">
++                      <DropdownMenuItem onClick={() => handleTabChange('notifications')} className="gap-2 cursor-pointer opacity-75">
+                         <Bell className="h-4 w-4 text-[#D4A853]" />
+                         <span>{t('nav.notifications')}</span>
++                        <span className="mr-auto">🔒</span>
+                       </DropdownMenuItem>
+                       <DropdownMenuItem onClick={() => setActiveTab('integrations')} className="gap-2 cursor-pointer">
+                         <Link2 className="h-4 w-4 text-[#D4A853]" />
+@@ -621,6 +720,9 @@ function AppContent() {
+           </div>
+         </div>
+       </footer>
++
++      {/* Locked Feature Dialog */}
++      <LockedFeatureDialog open={showLockedDialog} onOpenChange={setShowLockedDialog} />
+     </div>
+   );
+ }
